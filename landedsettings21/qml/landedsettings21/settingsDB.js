@@ -4,7 +4,9 @@ var symb = '@';
 
 // First, let's create a short helper function to get the database connection
 function getDatabase() {
-     return openDatabaseSync("Landed", "15.0", "StorageDatabase", 100000);
+    //storage location on Sailfish is /home/nemo/.local/share/data/QML/OfflineStorage/Databases
+    //return openDatabaseSync("Landed", "15.0", "StorageDatabase", 100000);
+    return openDatabaseSync("Landed21", "15.0", "StorageDatabase", 100000);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

@@ -24,9 +24,15 @@ AUIPageWithMenu {
 
     function listAllTables() {
         var rs = DBDebug.allTables();
-
-        for(var i = 0; i < rs.rows.length; i++) {
-            console.log("Found Table: " + rs.rows.item(i).name + "; " + countRecords(rs.rows.item(i).name));
+        if (rs.rows.length == 0) {
+            console.log("No database tables found: DB will be initialised‘");
+            DBInit.initiateDb();
+            DBInit.populateDb();
+        }
+        else {
+            for(var i = 0; i < rs.rows.length; i++) {
+                console.log("Found Table: " + rs.rows.item(i).name + "; " + countRecords(rs.rows.item(i).name));
+            }
         }
     }
 

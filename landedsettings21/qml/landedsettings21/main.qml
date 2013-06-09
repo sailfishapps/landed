@@ -1,7 +1,7 @@
 import QtQuick 1.1
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
-import "initiateDB.js" as DB
+//import "initiateDB.js" as DB
 
 /*
 Things to think about:
