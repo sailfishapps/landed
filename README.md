@@ -63,7 +63,7 @@ When the AbstractUI is more mature we may be able to completely remove Sailfish 
 Is available "out-of-the-box" on Harmattan (at least on my N9)
 Can be installed to Sailfish as instructed here. http://flyingsheeponsailfish.blogspot.ch/2013/05/adding-additional-qt-packages-to.html
 
-First Time Use
+First Time Use:
 Fire up LandedSettings first, to setup the templates.
 You may have to Initiate and refresh the DB first (via PullUPMenu), soon I will automate this.
 As the new / edit / delete functionality is not yet fully working you may have to cheat and resort to editing the initiateDB.js in LandedSettings.
