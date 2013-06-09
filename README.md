@@ -55,6 +55,7 @@ For the app to work you will need both GPS reception, and Cell-phone signal
 Requirements:
 
 Both Landed and LandedSettings require:
+
 1) AbstractAUI abstraction Library.
 The Harmattan version can be found here: https://github.com/harmattan/AbstractUI-for-Harmattan
 
@@ -75,6 +76,7 @@ Can be installed to Sailfish as instructed here:
 http://flyingsheeponsailfish.blogspot.ch/2013/05/adding-additional-qt-packages-to.html
 
 First Time Use:
+
 Fire up LandedSettings first, to setup the templates.
 You may have to Initiate and refresh the DB first (via PullUPMenu), soon I will automate this.
 As the new / edit / delete functionality is not yet fully working you may have to cheat and resort to editing the initiateDB.js in LandedSettings.
@@ -83,6 +85,7 @@ Please test the GPS coords shown make sense, before you send your recovery team 
 
 
 Strange Behaviours:
+
 1) Harmattan Device in SDK mode vs from the Device itself.
 If you setup and configure the settings DB in SDK mode on Harmttan (as I do when developing), these settings will not be available when firing up the app from the device itself (non sdk mode). I guess this is down to differences in users between SDK and non SDK mode.
 
