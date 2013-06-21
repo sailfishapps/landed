@@ -21,6 +21,7 @@ AUIBackgroundRectangle {
     property int headerHeight: itemHeight;
     property int closedHeight: itemHeight;
     property int expandedHeight: (closedHeight * 2) + 10
+    property int sideMargin: 10
     property int fontSize: 24
 //Commented out for Sailfish
     //property color backGroundColor: "black"
@@ -96,7 +97,8 @@ AUIBackgroundRectangle {
         id: thisHeader
         ViewHeader {
             text: thisModelView.headerText
-            width: thisModelView.width;
+            //width: thisModelView.width;
+            width: thisView.width
             closedHeight: thisModelView.closedHeight
             expandedHeight: thisModelView.expandedHeight
             fontSize: thisModelView.fontSize
@@ -120,7 +122,8 @@ AUIBackgroundRectangle {
     Component {
         id: thisHighlightBar
         ViewHighlightBar {
-            width: thisModelView.width;
+            //width: thisModelView.width;
+            width: thisView.width;
             height: thisModelView.itemHeight
             y: (thisView.currentIndex != -1) ? thisView.currentItem.y : 0;
         }
@@ -130,33 +133,32 @@ AUIBackgroundRectangle {
         id: thisView
         anchors.left: parent.left
         anchors.right:parent.right
-        anchors.leftMargin: 5
-        anchors.rightMargin: 5
+        anchors.leftMargin: sideMargin
+        anchors.rightMargin: sideMargin
         height: parent.height/8
         model: thisModel
         //delegate: thisDelegate
 
         delegate: Row {
-          Loader {
-            id: loader
-
-            sourceComponent: thisModelView.genericDelegate
-
-            // *** Bind current model and index element to the component delegate
-            // *** when it's loaded
-            Binding {
-              target: loader.item
-              property: "model"
-              value: model
-              when: loader.status == Loader.Ready
+            width: thisView.width
+            Loader {
+                id: loader
+                sourceComponent: thisModelView.genericDelegate
+                // *** Bind current model and index element to the component delegate
+                // *** when it's loaded
+                Binding {
+                    target: loader.item
+                    property: "model"
+                    value: model
+                    when: loader.status == Loader.Ready
+                }
+                Binding {
+                    target: loader.item
+                    property: "index"
+                    value: index
+                    when: loader.status == Loader.Ready
+                }
             }
-            Binding {
-              target: loader.item
-              property: "index"
-              value: index
-              when: loader.status == Loader.Ready
-            }
-          }
         }
 
         header: thisHeader

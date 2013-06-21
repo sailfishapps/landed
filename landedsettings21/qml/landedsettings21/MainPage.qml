@@ -19,7 +19,8 @@ AUIPageWithMenu {
     Component.onCompleted: {
         //theme.inverted = true;
         listAllTables();
-        console.log ("hasMenu: " + thisPage.hasMenu)
+        console.log ("hasMenu: " + thisPage.hasMenu);
+        console.log ("thisPage.width: " + thisPage.width)
     }
 
     function listAllTables() {
@@ -80,16 +81,18 @@ AUIPageWithMenu {
             }
         }
     }
+/*
     onMenuOpening: {
         console.log ("Menu is opening")
     }
     onMenuClosing: {
         console.log ("Menu is closing")
     }
-
+*/
     property int itemHeight: 45;
     property int headerHeight: itemHeight;
     property int viewMargin: 18;
+    property int sideMargin: 20;
     property int fontSize: 24
     property color backGroundColor: "black"
 
@@ -128,6 +131,7 @@ AUIPageWithMenu {
             headerState: "stateView"
             headerText: "Groups:"
             width: thisPage.width
+            sideMargin: thisPage.sideMargin
 //Commented out for Sailfish
             //backGroundColor: thisPage.backGroundColor
             onPopulated: {
@@ -143,10 +147,9 @@ AUIPageWithMenu {
                 var group_id = getGroupId();
                 console.log("groupMVD onHeaderClicked. currentIndex: " + currentIndex);
                 openConfigurePage("Group", currentIndex, group_id, null, null, null);
-
             }
             genericDelegate: ViewDelegate{
-                width: groupMVD.width
+                width: groupMVD.width   - (2 * sideMargin)
                 height: groupMVD.itemHeight
                 text: model.name + ", " + model.id
                 fontSize: groupMVD.fontSize
@@ -185,6 +188,7 @@ AUIPageWithMenu {
             anchors.top: groupMVD.bottom
             anchors.topMargin: viewMargin
             width: thisPage.width
+            sideMargin: thisPage.sideMargin
 //Commented out for Sailfish
             //backGroundColor: thisPage.backGroundColor
             onPopulated: {
@@ -207,7 +211,7 @@ AUIPageWithMenu {
                 openConfigurePage("Template", currentIndex, group_id, template_id, null, null);
             }
             genericDelegate: ViewDelegate{
-                width: templateMVD.width
+                width: templateMVD.width - (2 * sideMargin)
                 height: templateMVD.itemHeight
                 text: model.name + ", " + model.id
                 fontSize: templateMVD.fontSize
@@ -251,10 +255,11 @@ AUIPageWithMenu {
             anchors.top: templateMVD.bottom
             anchors.topMargin: viewMargin
             width: thisPage.width
+            sideMargin: thisPage.sideMargin
 //Commented out for Sailfish
             //backGroundColor: thisPage.backGroundColor
             genericDelegate: ViewDelegate{
-                width: tagMVD.width
+                width: tagMVD.width  - (2 * sideMargin)
                 height: tagMVD.itemHeight
                 text: model.tag_order + ", " + model.name + ", " + model.default_value + ", " + model.template_id + ", " + model.comment
                 fontSize: tagMVD.fontSize
@@ -298,10 +303,11 @@ AUIPageWithMenu {
             anchors.top: tagMVD.bottom
             anchors.topMargin: viewMargin
             width: thisPage.width
+            sideMargin: thisPage.sideMargin
 //Commented out for Sailfish
             //backGroundColor: thisPage.backGroundColor
             genericDelegate: ViewDelegate{
-                width: contactMVD.width
+                width: contactMVD.width - (2 * sideMargin)
                 height: contactMVD.itemHeight
                 text: model.name + ", " + model.phone + ", " + model.id
                 fontSize: contactMVD.fontSize

@@ -33,6 +33,7 @@ AUIPageStackWindow {
     property int smallFonts: (platform == 4) ? 5 : 12
     property color backGroundColor: "black"
 
+
 //TODO: We need to add a property / parameter howActivated
 // which can either be pushed, or popped
 // this is then used by the MVD to decide how the currentIndex should be set
