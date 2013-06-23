@@ -2,6 +2,10 @@ import QtQuick 1.1
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
 
+//This is a generic, resusable Model, View, Delegate, Header and HighlightBar set
+//intended to be used multiple times within this project
+//The only real difference between the various instances of this control is the behavour of the delegates
+//which is why delegates are dynamically loaded from instances on the MainPage
 
 AUIBackgroundRectangle {
     id: thisModelView
@@ -23,18 +27,17 @@ AUIBackgroundRectangle {
     property int expandedHeight: (closedHeight * 2) + 10
     property int sideMargin: 10
     property int fontSize: 24
-//Commented out for Sailfish
-    //property color backGroundColor: "black"
     property string headerState
 
     //inward looking, bound to inner objects.
-    height: thisView.height //cannot be an alias as is a final property of rectangle
-//Commented out for Sailfish
-    //color: backGroundColor
+    height: thisView.height  //cannot be an alias as is a final property of rectangle
+
+    onHeightChanged: console.log ("height: " + height)
+
     property alias currentIndex: thisView.currentIndex;
     property string headerText
 
-    property Component genericDelegate
+    property Component customDelegate
 
     function populate(rs, caller) {
         //if possible we keep the existing index for the selected item,
@@ -55,13 +58,15 @@ AUIBackgroundRectangle {
     }
     function clear() {
         thisModel.clear();
-        resize(0);
+        resize(0, 0);
         thisModelView.cleared();
     }
-    function resize(items){
-        thisView.resize(items);
+
+    function resize(items, extra){
+        thisView.resize(items, extra);
     }
-    function get(index) {
+
+   function get(index) {
         return thisModel.get(index);
     }
     function getId() {
@@ -77,7 +82,7 @@ AUIBackgroundRectangle {
         id: thisModel
         function populate(rs, index){
             thisModel.clear();
-            thisView.resize(rs.rows.length);
+            thisView.resize(rs.rows.length, 0);
             for(var i = 0; i < rs.rows.length; i++) {
                 thisModel.append(rs.rows.item(i));
             }
@@ -97,7 +102,6 @@ AUIBackgroundRectangle {
         id: thisHeader
         ViewHeader {
             text: thisModelView.headerText
-            //width: thisModelView.width;
             width: thisView.width
             closedHeight: thisModelView.closedHeight
             expandedHeight: thisModelView.expandedHeight
@@ -137,13 +141,12 @@ AUIBackgroundRectangle {
         anchors.rightMargin: sideMargin
         height: parent.height/8
         model: thisModel
-        //delegate: thisDelegate
 
         delegate: Row {
             width: thisView.width
             Loader {
                 id: loader
-                sourceComponent: thisModelView.genericDelegate
+                sourceComponent: thisModelView.customDelegate
                 // *** Bind current model and index element to the component delegate
                 // *** when it's loaded
                 Binding {
@@ -159,6 +162,7 @@ AUIBackgroundRectangle {
                     when: loader.status == Loader.Ready
                 }
             }
+
         }
 
         header: thisHeader
@@ -167,8 +171,8 @@ AUIBackgroundRectangle {
         highlight: thisHighlightBar
         highlightFollowsCurrentItem: false
         interactive: false
-        function resize(items){
-            thisView.height = (items * itemHeight) + ((thisModelView.headerState == 'stateConfigure') ? expandedHeight : headerHeight );
+        function resize(items, extra){
+            thisView.height = (items * itemHeight) + ((thisModelView.headerState == 'stateConfigure') ? expandedHeight : headerHeight ) + extra;
         }
     }
 

@@ -28,11 +28,9 @@ LandedPageConfigure {
         fontSize: parent.fontSize
         itemHeight: parent.itemHeight
         headerHeight: parent.headerHeight
-//Commented out for Sailfish
-        //backGroundColor: parent.backGroundColor
         headerText: "Contacts:"
         width: parent.width
-        genericDelegate: ViewDelegate{
+        customDelegate: ViewDelegate{
             width: contactMVD.width
             height: contactMVD.itemHeight
             text: model.name + ", " + model.phone + ", " + model.template_id
@@ -59,7 +57,7 @@ LandedPageConfigure {
             console.log("with contact_id: " + contactMVD.getId());
             thisPage.nextPage("Contact", "Delete", null, thisPage.group_id, thisPage.template_id, null, contactMVD.getId());
         }
-        //onPopulated:
+
     }
 
 }

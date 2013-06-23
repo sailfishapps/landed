@@ -29,11 +29,9 @@ LandedPageConfigure {
         fontSize: parent.fontSize
         itemHeight: parent.itemHeight
         headerHeight: parent.headerHeight
-//Commented out for Sailfish
-        //backGroundColor: parent.backGroundColor
         headerText: "Templates:"
         width: parent.width
-        genericDelegate: ViewDelegate{
+        customDelegate: ViewDelegate{
             width: templateMVD.width
             height: templateMVD.itemHeight
             text: model.name + ", " + model.id

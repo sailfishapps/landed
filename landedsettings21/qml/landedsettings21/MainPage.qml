@@ -1,11 +1,13 @@
 import QtQuick 1.1
 import org.flyingsheep.abstractui 1.0
+import Sailfish.Silica 1.0
 //import com.nokia.meego 1.0
 import "debugDB.js" as DBDebug
 import "settingsDB.js" as DB
 import "initiateDB.js" as DBInit
 
 AUIPageWithMenu {
+//AUIPage {
     id: thisPage
 //    tools: commonTools
     signal nextPage(string configureEntity, string configureAction, int currentIndex, string group_id, string template_id, string tag_id, string contact_id)
@@ -106,6 +108,7 @@ AUIPageWithMenu {
 //it does not allow menu items to be selected, as presumably the menu is sliding under
 //our naughty little mousearea!
 
+    /*
     MouseArea {
         anchors.fill: parent
         //anchors bottomMargin 40 and clip true provides a small margin at the bottom of the
@@ -117,8 +120,12 @@ AUIPageWithMenu {
         drag.axis: "YAxis"
         drag.maximumY: 0
         drag.filterChildren: true
+*/
+    Flickable {
+        anchors.fill: parent
+        flickableDirection: Flickable.VerticalFlick
 
-
+//TODO: pack the MVDs in a column
         ///////////////////////////////////////////////////////////////////////////////////////
         // groupMVD
         ///////////////////////////////////////////////////////////////////////////////////////
@@ -132,8 +139,6 @@ AUIPageWithMenu {
             headerText: "Groups:"
             width: thisPage.width
             sideMargin: thisPage.sideMargin
-//Commented out for Sailfish
-            //backGroundColor: thisPage.backGroundColor
             onPopulated: {
                 populateChildModels(id);
             }
@@ -148,7 +153,8 @@ AUIPageWithMenu {
                 console.log("groupMVD onHeaderClicked. currentIndex: " + currentIndex);
                 openConfigurePage("Group", currentIndex, group_id, null, null, null);
             }
-            genericDelegate: ViewDelegate{
+
+            customDelegate: ViewDelegate{ id: groupDelegate
                 width: groupMVD.width   - (2 * sideMargin)
                 height: groupMVD.itemHeight
                 text: model.name + ", " + model.id
@@ -158,12 +164,25 @@ AUIPageWithMenu {
                     groupMVD.currentIndex = index;
                     groupMVD.populateChildModels(model.id, "parent");
                 }
-                onDoubleClicked:{
-                    console.log("groupMVD Delegate Double Clicked");
+                onPressAndHold: {
+                    console.log("groupMVD Delegate Presed and Held");
                     groupMVD.currentIndex = index;
-                    openConfigurePage("Group", groupMVD.currentIndex, model.id, null, null, null);
+                    console.log ("groupMVD Height is: " + groupMVD.height)
+                    console.log ("groupDelegate.height is: " + groupDelegate.height)
+                    groupMVD.resize(6, 350);
+                    console.log ("groupMVD Height is: " + groupMVD.height)
+                    height = groupMVD.itemHeight + 350
+                    console.log ("groupDelegate.height is: " + groupDelegate.height)
+                    showContextMenu(groupDelegate);
+                }
+                onMenuClosing: {
+                    console.log("groupMVD Delegate Menu Closing");
+                    height = groupMVD.itemHeight
+                    groupMVD.resize(6, 0);
                 }
             }
+
+//will need to add ContextMenu and MenuItem to AbstractUI
 
             function populateChildModels(id) {
                 var group_id = id;
@@ -173,6 +192,7 @@ AUIPageWithMenu {
                 templateMVD.headerState = 'stateView';
             }
         }
+
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // Template ModelViewDelegate
@@ -189,8 +209,6 @@ AUIPageWithMenu {
             anchors.topMargin: viewMargin
             width: thisPage.width
             sideMargin: thisPage.sideMargin
-//Commented out for Sailfish
-            //backGroundColor: thisPage.backGroundColor
             onPopulated: {
                 populateChildModels(id);
             }
@@ -210,7 +228,7 @@ AUIPageWithMenu {
                 var template_id = getTemplateId();
                 openConfigurePage("Template", currentIndex, group_id, template_id, null, null);
             }
-            genericDelegate: ViewDelegate{
+            customDelegate: ViewDelegate{ id: templateDelegate
                 width: templateMVD.width - (2 * sideMargin)
                 height: templateMVD.itemHeight
                 text: model.name + ", " + model.id
@@ -226,6 +244,20 @@ AUIPageWithMenu {
                     //var group_id = getGroupId();
                     //var template_id = getTemplateId();
                     openConfigurePage("Template", templateMVD.currentIndex, model.group_id, model.id, null, null);
+                }
+                onPressAndHold: {
+                    console.log("templateMVD Delegate Presed and Held");
+                    templateMVD.currentIndex = index;
+                    console.log ("templateMVD Height is: " + templateMVD.height)
+                    console.log ("templateMVD.height is: " + templateMVD.height)
+                    showContextMenu(templateDelegate);
+                    height = templateMVD.itemHeight + 350
+                    console.log ("templateMVD Height is: " + templateMVD.height)
+                    console.log ("templateDelegate.height is: " + templateDelegate.height)
+                }
+                onMenuClosing: {
+                    console.log("templateMVD Delegate Menu Closing");
+                    height = templateMVD.itemHeight
                 }
             }
 
@@ -256,9 +288,7 @@ AUIPageWithMenu {
             anchors.topMargin: viewMargin
             width: thisPage.width
             sideMargin: thisPage.sideMargin
-//Commented out for Sailfish
-            //backGroundColor: thisPage.backGroundColor
-            genericDelegate: ViewDelegate{
+            customDelegate: ViewDelegate{
                 width: tagMVD.width  - (2 * sideMargin)
                 height: tagMVD.itemHeight
                 text: model.tag_order + ", " + model.name + ", " + model.default_value + ", " + model.template_id + ", " + model.comment
@@ -304,9 +334,7 @@ AUIPageWithMenu {
             anchors.topMargin: viewMargin
             width: thisPage.width
             sideMargin: thisPage.sideMargin
-//Commented out for Sailfish
-            //backGroundColor: thisPage.backGroundColor
-            genericDelegate: ViewDelegate{
+            customDelegate: ViewDelegate{
                 width: contactMVD.width - (2 * sideMargin)
                 height: contactMVD.itemHeight
                 text: model.name + ", " + model.phone + ", " + model.id
@@ -379,6 +407,8 @@ AUIPageWithMenu {
             text: qsTr("Refresh DB")
             onClicked: DBInit.populateDb();
         }
-    ]
+  ]
+
+
 
 }

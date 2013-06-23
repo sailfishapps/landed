@@ -26,11 +26,9 @@ LandedPageConfigure {id: thisPage
         fontSize: parent.fontSize
         itemHeight: parent.itemHeight
         headerHeight: parent.headerHeight
-//Commented out for Sailfish
-        //backGroundColor: parent.backGroundColor
         headerText: "Groups:"
         width: parent.width
-        genericDelegate: ViewDelegate{
+        customDelegate: ViewDelegate{
             width: groupMVD.width
             height: groupMVD.itemHeight
             text: model.name + ", " + model.id

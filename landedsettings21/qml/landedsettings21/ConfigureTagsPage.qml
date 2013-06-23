@@ -29,10 +29,8 @@ LandedPageConfigure {
         itemHeight: parent.itemHeight
         headerHeight: parent.headerHeight
         headerText: "Tags:"
-//Commented out for Sailfish
-        //backGroundColor: parent.backGroundColor
         width: parent.width
-        genericDelegate: ViewDelegate{
+        customDelegate: ViewDelegate{
             width: tagMVD.width
             height: tagMVD.itemHeight
             text: model.tag_order + ", " + model.name + ", " + model.default_value + ", " + model.template_id + ", " + model.comment
