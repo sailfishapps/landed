@@ -27,6 +27,9 @@ function populateDb() {
             tx.executeSql('INSERT INTO TemplateGroup VALUES(?, ?, ?, ?)', [ null, 'South Africa', '1.0', 1 ]);
             tx.executeSql('INSERT INTO TemplateGroup VALUES(?, ?, ?, ?)', [ null, 'Greece', '1.0', 0 ]);
             tx.executeSql('INSERT INTO TemplateGroup VALUES(?, ?, ?, ?)', [ null, 'Schweiz', '1.0', 0 ]);
+            tx.executeSql('INSERT INTO TemplateGroup VALUES(?, ?, ?, ?)', [ null, 'France', '1.0', 0 ]);
+            tx.executeSql('INSERT INTO TemplateGroup VALUES(?, ?, ?, ?)', [ null, 'Italy', '1.0', 0 ]);
+            tx.executeSql('INSERT INTO TemplateGroup VALUES(?, ?, ?, ?)', [ null, 'Austria', '1.0', 0 ]);
 
             tx.executeSql("DELETE FROM Template");
 
