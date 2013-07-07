@@ -1,5 +1,6 @@
 import QtQuick 1.1
-import Sailfish.Silica 1.0
+//import Sailfish.Silica 1.0
+import org.flyingsheep.abstractui 1.0
 
 Item{
     id: thisDelegate
@@ -32,21 +33,21 @@ Item{
     property Item contextMenu
     Component {
         id: contextMenuComponent
-        ContextMenu {
+        AUIContextMenu {
             id: menu
-            MenuItem {
+            AUIMenuItem {
                 text: "New"
                 onClicked: newPressed();
             }
-            MenuItem {
+            AUIMenuItem {
                 text: "Copy"
                 onClicked: copyPressed();
             }
-            MenuItem {
+            AUIMenuItem {
                 text: "Edit"
                 onClicked: editPressed();
             }
-            MenuItem {
+            AUIMenuItem {
                 text: "Delete"
                 onClicked: deletePressed();
             }

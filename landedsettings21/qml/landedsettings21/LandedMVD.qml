@@ -1,5 +1,5 @@
 import QtQuick 1.1
-import Sailfish.Silica 1.0
+//import Sailfish.Silica 1.0
 import org.flyingsheep.abstractui 1.0
 
 //This is a generic, resusable Model, View, Delegate, Header and HighlightBar set
@@ -8,8 +8,8 @@ import org.flyingsheep.abstractui 1.0
 //a) where they get their data from, b) the events they call when clicked / pressedAndHeld
 //which is why delegates are dynamically loaded from instances on the MainPage
 
-//AUIBackgroundRectangle {
-Item {
+AUIBackgroundRectangle {
+//Item {
     id: thisMVD
 
     signal populated(int id);

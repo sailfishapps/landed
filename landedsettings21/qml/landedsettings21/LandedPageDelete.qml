@@ -4,7 +4,7 @@ import org.flyingsheep.abstractui 1.0
 
 LandedPage {
     id: thisPage
-    tools: commonTools
+    //tools: commonTools
 
     GreenButtonStyle {id: greenButton
     }
