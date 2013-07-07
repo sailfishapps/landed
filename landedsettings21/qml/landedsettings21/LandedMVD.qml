@@ -10,7 +10,7 @@ import org.flyingsheep.abstractui 1.0
 
 //AUIBackgroundRectangle {
 Item {
-    id: thisModelView
+    id: thisMVD
 
     signal populated(int id);
     signal populatedEmpty();
@@ -26,18 +26,12 @@ Item {
     property int itemHeight: 40;
     property int headerHeight: itemHeight;
 
-    property int expandedViewHeight
-    property int viewHeight
-
     property int menuHeight
     property int sideMargin: 10
     property int fontSize: 24
     property string headerState
 
-    //inward looking, bound to inner objects.
-    height: thisView.height  //cannot be an alias as is a final property of rectangle
-
-    onHeightChanged: console.log ("thisModelView.onHeightChanged: height: " + height)
+    onHeightChanged: console.log ("thisMVD.onHeightChanged: height: " + height)
 
     property alias currentIndex: thisView.currentIndex;
     property string headerText
@@ -64,21 +58,23 @@ Item {
     function clear() {
         thisModel.clear();
         resize(0, 0);
-        thisModelView.cleared();
+        thisMVD.cleared();
     }
 
     function resize(menuOpen){
         //Used to adjust the height of the MVD depending on if the menu is open
+        console.log("resize:: thisModel members: " + thisModel.count);
+        console.log("resize:: thisMVD.headerHeight: " + thisMVD.headerHeight);
+        console.log("resize:: thisMVD.itemHeight: " + thisMVD.itemHeight);
         if (menuOpen)  {
             console.log ("Menu is opening, expand the view");
-            thisModelView.height = thisModelView.expandedViewHeight;
+            thisMVD.height = thisMVD.headerHeight + (thisModel.count * thisMVD.itemHeight) + thisMVD.menuHeight;
             //Note delegate height is changed by binding, attempts to change it from here have failed.
         }
-        else {
+        else if (!menuOpen) {
             console.log("Menu is closing, shrink the MVD to its normal nonexpanded height")
-            thisModelView.height = thisModelView.viewHeight;
-            //Note delegate height is changed by binding, attempts to change it from here have failed.
-        }
+            thisMVD.height = thisMVD.headerHeight + (thisModel.count * thisMVD.itemHeight);
+        } 
     }
 
    function get(index) {
@@ -97,19 +93,18 @@ Item {
         id: thisModel
         function populate(rs, index){
             thisModel.clear();
-            //thisView.resize(rs.rows.length, 0);
+            thisMVD.height = thisMVD.headerHeight + (rs.rows.length * thisMVD.itemHeight)
             for(var i = 0; i < rs.rows.length; i++) {
-                thisModelView.viewHeight = thisModelView.viewHeight + thisModelView.itemHeight
                 thisModel.append(rs.rows.item(i));
             }
             console.log(headerText + " model populated with rows: " + rs.rows.length + ", index: " + index);
             if (rs.rows.length > 0) {
                 console.log("sending populated signal with id: " + rs.rows.item(index).id)
-                thisModelView.populated(rs.rows.item(index).id);
+                thisMVD.populated(rs.rows.item(index).id);
                 thisView.currentIndex = index;
             }
             else{
-                thisModelView.populatedEmpty();
+                thisMVD.populatedEmpty();
             }
         }
     }
@@ -117,12 +112,11 @@ Item {
     Component{
         id: thisHeader
         ViewHeader {
-            text: thisModelView.headerText
+            text: thisMVD.headerText
             width: thisView.width
-            headerHeight: thisModelView.headerHeight
-            //expandedHeight: thisModelView.expandedHeight
-            fontSize: thisModelView.fontSize
-            state: thisModelView.headerState
+            headerHeight: thisMVD.headerHeight
+            fontSize: thisMVD.fontSize
+            state: thisMVD.headerState
             //onXXX Event handlers here
         }
     }
@@ -130,9 +124,9 @@ Item {
     Component {
         id: thisHighlightBar
         ViewHighlightBar {
-            //width: thisModelView.width;
+            //width: thisMVD.width;
             width: thisView.width;
-            height: thisModelView.itemHeight
+            height: thisMVD.itemHeight
             y: (thisView.currentIndex != -1) ? thisView.currentItem.y : 0;
         }
     }
@@ -140,11 +134,11 @@ Item {
     ListView {
         id: thisView
         objectName: "landedMVDListView"
+        //anchors.fill: parent
         anchors.left: parent.left
         anchors.right:parent.right
         anchors.leftMargin: sideMargin
         anchors.rightMargin: sideMargin
-        //height: parent.height/8
         height: parent.height
         model: thisModel
 
@@ -152,7 +146,7 @@ Item {
             width: thisView.width
             Loader {
                 id: loader
-                sourceComponent: thisModelView.customDelegate
+                sourceComponent: thisMVD.customDelegate
                 // *** Bind current model and index element to the component delegate
                 // *** when it's loaded
                 Binding {

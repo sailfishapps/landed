@@ -21,7 +21,7 @@ c) MVD repopulated by parent MVD - reset currentIndex
 AUIPageStackWindow {
     id: appWindow
 
-    initialPage: mainPage
+    initialPage: firstPage
 
     //Global properties, affecting the look and feel of the app (theme)
     //most pages will bind to these
@@ -41,34 +41,34 @@ AUIPageStackWindow {
 //The real issue is the indexes and keys transfered between instances of our MVDs
 //This gives us four modes for population:
 //a) Mode INITIAL:
-    //when mainPage is pushed there is no currentIndex, so we set everything to 0 --> OK
+    //when firstPage is pushed there is no currentIndex, so we set everything to 0 --> OK
 //b) Mode TRANSFER:
-    //when we push from mainPage to a configuePage we want to transfer the settings of the mainPage MVG
+    //when we push from firstPage to a configuePage we want to transfer the settings of the firstPage MVG
     //to the configurePage --> OK
 //c) Mode REFRESH:
     //when we pop back from a configuePage to MainPage we want to: --> NOT OK
-    //keep the settings as cose as possible to how mainPage was previously, but take into account
+    //keep the settings as cose as possible to how firstPage was previously, but take into account
     //any changes made in the configure page (add, delete, rename etc), thus a refresh is required.
-    //c1) keep the previous mainPage settings as far as is possible (we may have deleted or added items)
-    //c2) transfer the focus item from the configure Page to the mainPage (and repopulate childs accordingly)
+    //c1) keep the previous firstPage settings as far as is possible (we may have deleted or added items)
+    //c2) transfer the focus item from the configure Page to the firstPage (and repopulate childs accordingly)
 //d) Mode PARENTCLICKED:
-    //on mainPage, repopulate childs according to clicks / double clicks in parent models -->OK
+    //on firstPage, repopulate childs according to clicks / double clicks in parent models -->OK
 
     function copyProps(configureEntity, currentIndex, parentId) {
         //unfortunately pop does not allow properties to be passed, but as we always
-        //return to mainPage we can set them directly
-        mainPage.configureEntity = configureEntity;
-        mainPage.currentIndex = currentIndex;
+        //return to firstPage we can set them directly
+        firstPage.configureEntity = configureEntity;
+        firstPage.currentIndex = currentIndex;
         if (parentId !== null) {
-           mainPage.parentId = parentId;
+           firstPage.parentId = parentId;
         }
         else {
-           mainPage.parentId =  0;
+           firstPage.parentId =  0;
         }
     }
 
-    MainPage {
-        id: mainPage
+    FirstPage {
+        id: firstPage
         fontSize: appWindow.fontSize
         onNextPage: {
             console.log("NextPage signal received: configureEntity: " + configureEntity + ", Index : " + currentIndex);

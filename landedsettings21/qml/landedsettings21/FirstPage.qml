@@ -6,6 +6,12 @@ import "debugDB.js" as DBDebug
 import "settingsDB.js" as DB
 import "initiateDB.js" as DBInit
 
+
+//Open Problems
+//1) when child MVDs are repopulated, they are not resizing, so if the the MVD has less items it does not shrink
+//when we repopulate we need to reset back to the inital viewHight
+
+
 AUIPageWithMenu {
 //AUIPage {
     id: thisPage
@@ -84,11 +90,10 @@ AUIPageWithMenu {
         }
     }
 
-    property int viewHeight: theme.itemSizeLarge
-    property int menuHeight: 4 * theme.itemSizeSmall
-
     property int itemHeight: 45;
     property int headerHeight: itemHeight;
+    property int initialViewHeight: headerHeight
+    property int menuHeight: 4 * theme.itemSizeSmall
     property int viewMargin: 18;
     property int sideMargin: 20;
     property int fontSize: 24
@@ -132,14 +137,11 @@ AUIPageWithMenu {
             fontSize: thisPage.fontSize
             itemHeight: thisPage.itemHeight
             headerHeight: thisPage.headerHeight
+            menuHeight: thisPage.menuHeight
             headerState: "stateView"
             headerText: "Groups:"
             width: thisPage.width
             sideMargin: thisPage.sideMargin
-            height: viewHeight
-            expandedViewHeight: viewHeight + menuHeight
-            viewHeight: thisPage.viewHeight
-            menuHeight: thisPage.menuHeight
 
             onPopulated: {
                 populateChildModels(id);
@@ -195,16 +197,13 @@ AUIPageWithMenu {
             fontSize: thisPage.fontSize
             itemHeight: thisPage.itemHeight
             headerHeight: thisPage.headerHeight
+            menuHeight: thisPage.menuHeight
             headerState: "stateView"
             headerText: "Templates:"
             anchors.top: groupMVD.bottom
             anchors.topMargin: viewMargin
             width: thisPage.width
             sideMargin: thisPage.sideMargin
-            height: viewHeight
-            expandedViewHeight: viewHeight + menuHeight
-            viewHeight: thisPage.viewHeight
-            menuHeight: thisPage.menuHeight
 
             onPopulated: {
                 populateChildModels(id);
@@ -265,16 +264,13 @@ AUIPageWithMenu {
             fontSize: thisPage.fontSize
             itemHeight: thisPage.itemHeight
             headerHeight: thisPage.headerHeight
+            menuHeight: thisPage.menuHeight
             headerState: "stateView"
             headerText: "Tags:"
             anchors.top: templateMVD.bottom
             anchors.topMargin: viewMargin
             width: thisPage.width
             sideMargin: thisPage.sideMargin
-            height: viewHeight
-            expandedViewHeight: viewHeight + menuHeight
-            viewHeight: thisPage.viewHeight
-            menuHeight: thisPage.menuHeight
 
             customDelegate: ViewDelegate{
                 id: tagDelegate
@@ -309,16 +305,13 @@ AUIPageWithMenu {
             fontSize: thisPage.fontSize
             itemHeight: thisPage.itemHeight
             headerHeight: thisPage.headerHeight
+            menuHeight: thisPage.menuHeight
             headerState: "stateView"
             headerText: "Contacts:"
             anchors.top: tagMVD.bottom
             anchors.topMargin: viewMargin
             width: thisPage.width
             sideMargin: thisPage.sideMargin
-            height: viewHeight
-            expandedViewHeight: viewHeight + menuHeight
-            viewHeight: thisPage.viewHeight
-            menuHeight: thisPage.menuHeight
 
             customDelegate: ViewDelegate{
                 id: contactDelegate
