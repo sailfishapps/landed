@@ -83,20 +83,15 @@ AUIPageWithMenu {
             }
         }
     }
-/*
-    onMenuOpening: {
-        console.log ("Menu is opening")
-    }
-    onMenuClosing: {
-        console.log ("Menu is closing")
-    }
-*/
+
+    property int viewHeight: theme.itemSizeLarge
+    property int menuHeight: 4 * theme.itemSizeSmall
+
     property int itemHeight: 45;
     property int headerHeight: itemHeight;
     property int viewMargin: 18;
     property int sideMargin: 20;
     property int fontSize: 24
-    property color backGroundColor: "black"
 
 //This MouseArea Stops the PullUpMenu working
 //My guess is it steals the mouse input
@@ -122,6 +117,7 @@ AUIPageWithMenu {
         drag.filterChildren: true
 */
     Flickable {
+        objectName: "mainPageFlickable"
         anchors.fill: parent
         flickableDirection: Flickable.VerticalFlick
 
@@ -132,6 +128,7 @@ AUIPageWithMenu {
 
         LandedMVD {
             id: groupMVD
+            objectName: "groupMVD"
             fontSize: thisPage.fontSize
             itemHeight: thisPage.itemHeight
             headerHeight: thisPage.headerHeight
@@ -139,6 +136,11 @@ AUIPageWithMenu {
             headerText: "Groups:"
             width: thisPage.width
             sideMargin: thisPage.sideMargin
+            height: viewHeight
+            expandedViewHeight: viewHeight + menuHeight
+            viewHeight: thisPage.viewHeight
+            menuHeight: thisPage.menuHeight
+
             onPopulated: {
                 populateChildModels(id);
             }
@@ -148,38 +150,28 @@ AUIPageWithMenu {
                 templateMVD.headerState = 'stateParentEmpty';
     //TODO: test if this is cascaded, or if we need to explicitly clear the other models and set their states
             }
-            onHeaderClicked:{
-                var group_id = getGroupId();
-                console.log("groupMVD onHeaderClicked. currentIndex: " + currentIndex);
-                openConfigurePage("Group", currentIndex, group_id, null, null, null);
-            }
 
-            customDelegate: ViewDelegate{ id: groupDelegate
+            customDelegate: ViewDelegate{
+                id: groupDelegate
+                height: menuOpen ? contextMenu.height + groupMVD.itemHeight : groupMVD.itemHeight
                 width: groupMVD.width   - (2 * sideMargin)
-                height: groupMVD.itemHeight
                 text: model.name + ", " + model.id
                 fontSize: groupMVD.fontSize
                 onClicked:{
-                    console.log("groupMVD Delegate Clicked");
+                    console.log("groupMVD Delegate Clicked, height is: " + groupMVD.height);
                     groupMVD.currentIndex = index;
                     groupMVD.populateChildModels(model.id, "parent");
                 }
-                onPressAndHold: {
-                    console.log("groupMVD Delegate Presed and Held");
-                    groupMVD.currentIndex = index;
-                    console.log ("groupMVD Height is: " + groupMVD.height)
-                    console.log ("groupDelegate.height is: " + groupDelegate.height)
-                    groupMVD.resize(6, 350);
-                    console.log ("groupMVD Height is: " + groupMVD.height)
-                    height = groupMVD.itemHeight + 350
-                    console.log ("groupDelegate.height is: " + groupDelegate.height)
-                    showContextMenu(groupDelegate);
+                onMenuOpenChanged: {
+                    //Returns true on opening, false when closing
+                    //Used to adjusst the height of the MVD depending on if the menu is open
+                    console.log("menuOpen: " + menuOpen)
+                    groupMVD.resize(menuOpen)
                 }
-                onMenuClosing: {
-                    console.log("groupMVD Delegate Menu Closing");
-                    height = groupMVD.itemHeight
-                    groupMVD.resize(6, 0);
-                }
+                onNewPressed: console.log ("New pressed on the Menu");
+                onCopyPressed: console.log ("Copy pressed on the Menu");
+                onEditPressed: console.log ("Edit pressed on the Menu");
+                onDeletePressed: console.log ("Delete pressed on the Menu")
             }
 
 //will need to add ContextMenu and MenuItem to AbstractUI
@@ -209,6 +201,11 @@ AUIPageWithMenu {
             anchors.topMargin: viewMargin
             width: thisPage.width
             sideMargin: thisPage.sideMargin
+            height: viewHeight
+            expandedViewHeight: viewHeight + menuHeight
+            viewHeight: thisPage.viewHeight
+            menuHeight: thisPage.menuHeight
+
             onPopulated: {
                 populateChildModels(id);
             }
@@ -223,14 +220,11 @@ AUIPageWithMenu {
                 tagMVD.clear();
                 contactMVD.clear();
             }
-            onHeaderClicked:{
-                var group_id = getGroupId();
-                var template_id = getTemplateId();
-                openConfigurePage("Template", currentIndex, group_id, template_id, null, null);
-            }
-            customDelegate: ViewDelegate{ id: templateDelegate
+
+            customDelegate: ViewDelegate{
+                id: templateDelegate
+                height: menuOpen ? contextMenu.height + templateMVD.itemHeight : templateMVD.itemHeight
                 width: templateMVD.width - (2 * sideMargin)
-                height: templateMVD.itemHeight
                 text: model.name + ", " + model.id
                 fontSize: templateMVD.fontSize
                 onClicked:{
@@ -238,27 +232,16 @@ AUIPageWithMenu {
                     templateMVD.currentIndex = index;
                     templateMVD.populateChildModels(model.id);
                 }
-                onDoubleClicked:{
-                    console.log("templateMVD Delegate Double Clicked");
-                    templateMVD.currentIndex = index;
-                    //var group_id = getGroupId();
-                    //var template_id = getTemplateId();
-                    openConfigurePage("Template", templateMVD.currentIndex, model.group_id, model.id, null, null);
+                onMenuOpenChanged: {
+                    //Returns true on opening, false when closing
+                    //Used to adjusst the height of the MVD depending on if the menu is open
+                    console.log("menuOpen: " + menuOpen)
+                    groupMVD.resize(menuOpen)
                 }
-                onPressAndHold: {
-                    console.log("templateMVD Delegate Presed and Held");
-                    templateMVD.currentIndex = index;
-                    console.log ("templateMVD Height is: " + templateMVD.height)
-                    console.log ("templateMVD.height is: " + templateMVD.height)
-                    showContextMenu(templateDelegate);
-                    height = templateMVD.itemHeight + 350
-                    console.log ("templateMVD Height is: " + templateMVD.height)
-                    console.log ("templateDelegate.height is: " + templateDelegate.height)
-                }
-                onMenuClosing: {
-                    console.log("templateMVD Delegate Menu Closing");
-                    height = templateMVD.itemHeight
-                }
+                onNewPressed: console.log ("New pressed on the Menu");
+                onCopyPressed: console.log ("Copy pressed on the Menu");
+                onEditPressed: console.log ("Edit pressed on the Menu");
+                onDeletePressed: console.log ("Delete pressed on the Menu")
             }
 
             function populateChildModels(id) {
@@ -288,9 +271,15 @@ AUIPageWithMenu {
             anchors.topMargin: viewMargin
             width: thisPage.width
             sideMargin: thisPage.sideMargin
+            height: viewHeight
+            expandedViewHeight: viewHeight + menuHeight
+            viewHeight: thisPage.viewHeight
+            menuHeight: thisPage.menuHeight
+
             customDelegate: ViewDelegate{
+                id: tagDelegate
+                height: menuOpen ? contextMenu.height + tagMVD.itemHeight : tagMVD.itemHeight
                 width: tagMVD.width  - (2 * sideMargin)
-                height: tagMVD.itemHeight
                 text: model.tag_order + ", " + model.name + ", " + model.default_value + ", " + model.template_id + ", " + model.comment
                 fontSize: tagMVD.fontSize
                 onClicked:{
@@ -298,24 +287,16 @@ AUIPageWithMenu {
                     tagMVD.currentIndex = index;
                     //no child models to populate
                 }
-                onDoubleClicked:{
-                    console.log("Tag Delegate Double Clicked");
-                    tagMVD.currentIndex = index;
-                    //var group_id = getGroupId();
-                    //var template_id = getTemplateId();
-                    //var tag_id = getTagId();
-                    console.log("opening next page with values:")
-                    console.log("currentIndex: " + tagMVD.currentIndex + ", group_id: " + model.group_id + ", template_id: " + model.template_id + ", tag_id: " + model.id )
-                    openConfigurePage("Tag", tagMVD.currentIndex, model.group_id, model.template_id, model.id, null);
+                onMenuOpenChanged: {
+                    //Returns true on opening, false when closing
+                    //Used to adjusst the height of the MVD depending on if the menu is open
+                    console.log("menuOpen: " + menuOpen)
+                    groupMVD.resize(menuOpen)
                 }
-            }
-            //onPopulated:
-            //onCleared:
-            onHeaderClicked:{
-                var group_id = getGroupId();
-                var template_id = getTemplateId();
-                var tag_id = getTagId();
-                openConfigurePage("Tag", currentIndex, group_id, template_id, tag_id, null);
+                onNewPressed: console.log ("New pressed on the Menu");
+                onCopyPressed: console.log ("Copy pressed on the Menu");
+                onEditPressed: console.log ("Edit pressed on the Menu");
+                onDeletePressed: console.log ("Delete pressed on the Menu")
             }
         }
 
@@ -334,9 +315,15 @@ AUIPageWithMenu {
             anchors.topMargin: viewMargin
             width: thisPage.width
             sideMargin: thisPage.sideMargin
+            height: viewHeight
+            expandedViewHeight: viewHeight + menuHeight
+            viewHeight: thisPage.viewHeight
+            menuHeight: thisPage.menuHeight
+
             customDelegate: ViewDelegate{
+                id: contactDelegate
+                height: menuOpen ? contextMenu.height + contactMVD.itemHeight : contactMVD.itemHeight
                 width: contactMVD.width - (2 * sideMargin)
-                height: contactMVD.itemHeight
                 text: model.name + ", " + model.phone + ", " + model.id
                 fontSize: contactMVD.fontSize
                 onClicked: {
@@ -344,22 +331,16 @@ AUIPageWithMenu {
                     contactMVD.currentIndex = index;
                     //no child models to populate
                 }
-                onDoubleClicked:{
-                    console.log("Contact Delegate Double Clicked");
-                    contactMVD.currentIndex = index;
-                    console.log("opening next page with values:");
-                    console.log("currentIndex: " + contactMVD.currentIndex + ", group_id: " + model.group_id + ", template_id: " + model.template_id + ", contact_id: " + model.id )
-                    openConfigurePage("Contact", contactMVD.currentIndex, model.group_id, model.template_id, null, model.id);
+                onMenuOpenChanged: {
+                    //Returns true on opening, false when closing
+                    //Used to adjusst the height of the MVD depending on if the menu is open
+                    console.log("menuOpen: " + menuOpen)
+                    groupMVD.resize(menuOpen)
                 }
-            }
-            //onPopulated:
-            onHeaderClicked:{
-                console.log("click received");
-                //var group_id = groupMVD.getGroupId();
-                var group_id = getGroupId();
-                var template_id = getTemplateId();
-                var contact_id = getContactId();
-                openConfigurePage("Contact", currentIndex, group_id, template_id, null, contact_id);
+                onNewPressed: console.log ("New pressed on the Menu");
+                onCopyPressed: console.log ("Copy pressed on the Menu");
+                onEditPressed: console.log ("Edit pressed on the Menu");
+                onDeletePressed: console.log ("Delete pressed on the Menu")
             }
         }
     }

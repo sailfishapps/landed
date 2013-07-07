@@ -1,13 +1,15 @@
 import QtQuick 1.1
+import Sailfish.Silica 1.0
 import org.flyingsheep.abstractui 1.0
-//import com.nokia.meego 1.0
 
 //This is a generic, resusable Model, View, Delegate, Header and HighlightBar set
 //intended to be used multiple times within this project
 //The only real difference between the various instances of this control is the behavour of the delegates
+//a) where they get their data from, b) the events they call when clicked / pressedAndHeld
 //which is why delegates are dynamically loaded from instances on the MainPage
 
-AUIBackgroundRectangle {
+//AUIBackgroundRectangle {
+Item {
     id: thisModelView
 
     signal populated(int id);
@@ -23,8 +25,11 @@ AUIBackgroundRectangle {
     //"outward" looking properties, should be set by parent
     property int itemHeight: 40;
     property int headerHeight: itemHeight;
-    property int closedHeight: itemHeight;
-    property int expandedHeight: (closedHeight * 2) + 10
+
+    property int expandedViewHeight
+    property int viewHeight
+
+    property int menuHeight
     property int sideMargin: 10
     property int fontSize: 24
     property string headerState
@@ -32,7 +37,7 @@ AUIBackgroundRectangle {
     //inward looking, bound to inner objects.
     height: thisView.height  //cannot be an alias as is a final property of rectangle
 
-    onHeightChanged: console.log ("height: " + height)
+    onHeightChanged: console.log ("thisModelView.onHeightChanged: height: " + height)
 
     property alias currentIndex: thisView.currentIndex;
     property string headerText
@@ -62,8 +67,18 @@ AUIBackgroundRectangle {
         thisModelView.cleared();
     }
 
-    function resize(items, extra){
-        thisView.resize(items, extra);
+    function resize(menuOpen){
+        //Used to adjust the height of the MVD depending on if the menu is open
+        if (menuOpen)  {
+            console.log ("Menu is opening, expand the view");
+            thisModelView.height = thisModelView.expandedViewHeight;
+            //Note delegate height is changed by binding, attempts to change it from here have failed.
+        }
+        else {
+            console.log("Menu is closing, shrink the MVD to its normal nonexpanded height")
+            thisModelView.height = thisModelView.viewHeight;
+            //Note delegate height is changed by binding, attempts to change it from here have failed.
+        }
     }
 
    function get(index) {
@@ -82,8 +97,9 @@ AUIBackgroundRectangle {
         id: thisModel
         function populate(rs, index){
             thisModel.clear();
-            thisView.resize(rs.rows.length, 0);
+            //thisView.resize(rs.rows.length, 0);
             for(var i = 0; i < rs.rows.length; i++) {
+                thisModelView.viewHeight = thisModelView.viewHeight + thisModelView.itemHeight
                 thisModel.append(rs.rows.item(i));
             }
             console.log(headerText + " model populated with rows: " + rs.rows.length + ", index: " + index);
@@ -103,23 +119,11 @@ AUIBackgroundRectangle {
         ViewHeader {
             text: thisModelView.headerText
             width: thisView.width
-            closedHeight: thisModelView.closedHeight
-            expandedHeight: thisModelView.expandedHeight
+            headerHeight: thisModelView.headerHeight
+            //expandedHeight: thisModelView.expandedHeight
             fontSize: thisModelView.fontSize
             state: thisModelView.headerState
-            onClicked:{
-                console.log(text + " Header Clicked");
-                thisModelView.headerClicked();
-            }
-            onNewClicked: {
-                thisModelView.newClicked();
-            }
-            onEditClicked: {
-                thisModelView.editClicked();
-            }
-            onDeleteClicked: {
-                thisModelView.deleteClicked();
-            }
+            //onXXX Event handlers here
         }
     }
 
@@ -135,11 +139,13 @@ AUIBackgroundRectangle {
 
     ListView {
         id: thisView
+        objectName: "landedMVDListView"
         anchors.left: parent.left
         anchors.right:parent.right
         anchors.leftMargin: sideMargin
         anchors.rightMargin: sideMargin
-        height: parent.height/8
+        //height: parent.height/8
+        height: parent.height
         model: thisModel
 
         delegate: Row {
@@ -171,9 +177,6 @@ AUIBackgroundRectangle {
         highlight: thisHighlightBar
         highlightFollowsCurrentItem: false
         interactive: false
-        function resize(items, extra){
-            thisView.height = (items * itemHeight) + ((thisModelView.headerState == 'stateConfigure') ? expandedHeight : headerHeight ) + extra;
-        }
-    }
 
+    }
 }

@@ -70,7 +70,6 @@ AUIPageStackWindow {
     MainPage {
         id: mainPage
         fontSize: appWindow.fontSize
-        backGroundColor: appWindow.backGroundColor
         onNextPage: {
             console.log("NextPage signal received: configureEntity: " + configureEntity + ", Index : " + currentIndex);
             if (configureEntity =="Contact") pageStack.push(configureContactsPage, {group_id: group_id, template_id: template_id, currentIndex: currentIndex})

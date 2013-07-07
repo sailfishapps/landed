@@ -5,14 +5,19 @@ Item{
     id: thisDelegate
     signal clicked();
     signal doubleClicked();
+    signal pressed();
     signal pressAndHold();
     signal released();
-    signal menuOpening();
-    signal menuClosing();
+
+    signal newPressed();
+    signal editPressed();
+    signal copyPressed();
+    signal deletePressed();
     property int fontSize: 24
     property string text
     property variant model
     property variant index
+    property int closedHeight
 
     Text {
         text: thisDelegate.text
@@ -21,56 +26,38 @@ Item{
         color: "white"
         verticalAlignment: Text.AlignVCenter
         width: thisDelegate.width
-        //clip: true
-        //elide: (paintedWidth > width) ? Text.ElideRight : Text.ElideNone
         elide: Text.ElideRight
-
     }
 
-    property bool contextMenuIsOpen : contextMenu.active
-    //height: contextMenuIsOpen ? contextMenu.childrenRect.height + 45 : 45
-
-    ContextMenu { id: contextMenu
-        MenuItem {
-            text: "new";
-            color: "white"
-            onClicked: console.log("1 clicked")
-        }
-        MenuItem {
-            text: "copy";
-            color: "white"
-            onClicked: console.log("2 clicked")
-        }
-        MenuItem {
-            text: "edit";
-            color: "white"
-            onClicked: console.log("3 clicked")
-        }
-        MenuItem {
-            text: "delete";
-            color: "white"
-            onClicked: console.log("4 clicked")
-        }
-        onStateChanged: console.log ("context menu state changed state is: " + state)
-        onActiveChanged: {
-            console.log ("context menu opening / closing: active is: " + active)
-            if (active == true) {
-                thisDelegate.menuOpening();
+    property Item contextMenu
+    Component {
+        id: contextMenuComponent
+        ContextMenu {
+            id: menu
+            MenuItem {
+                text: "New"
+                onClicked: newPressed();
             }
-            else {
-                thisDelegate.menuClosing();
+            MenuItem {
+                text: "Copy"
+                onClicked: copyPressed();
+            }
+            MenuItem {
+                text: "Edit"
+                onClicked: editPressed();
+            }
+            MenuItem {
+                text: "Delete"
+                onClicked: deletePressed();
             }
         }
     }
+    property bool menuOpen: contextMenu != null && contextMenu.parent === thisDelegate
 
-    function showContextMenu(thisItem) {
-        console.log("thisDelegate.height: " + thisDelegate.height)
-        console.log ("showing ContextMenu: childrenRect.height is: " + contextMenu.childrenRect.height + "; height is: " + contextMenu.height)
-        console.log ("child height is: " + contextMenu.children[1].height)
-        //thisDelegate.height = thisDelegate.height + 350
-        contextMenu.show(thisItem);
-        console.log ("ContextMenu now open: childrenRect.height is: " + contextMenu.childrenRect.height + "; height is: " + contextMenu.height)
-        console.log("thisDelegate.height: " + thisDelegate.height)
+    onPressAndHold: {
+        if (!contextMenu)
+            contextMenu = contextMenuComponent.createObject(thisDelegate);
+        contextMenu.show(thisDelegate);
     }
 
     MouseArea{
@@ -81,6 +68,10 @@ Item{
         onDoubleClicked:{
             thisDelegate.doubleClicked();
         }
+        onPressed: {
+            thisDelegate.pressed();
+        }
+
         onPressAndHold: {
             thisDelegate.pressAndHold();
         }
