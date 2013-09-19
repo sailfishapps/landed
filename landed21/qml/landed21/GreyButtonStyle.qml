@@ -7,4 +7,5 @@ AUIButtonStyle {
     background: "image://theme/meegotouch-button"+__invertedString+"-background";
     pressedBackground: "image://theme/meegotouch-button"+__invertedString+"-background-pressed";
     disabledBackground: "image://theme/meegotouch-button"+__invertedString+"-background-disabled";
+    textColor: "Grey"
 }

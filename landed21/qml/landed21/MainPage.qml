@@ -68,8 +68,8 @@ AUIPageWithMenu {id: pageGPS
 
     GPSApp{id: thisGPSApp
         anchors.top: parent.top
-        //anchors.topMargin: 15
-        anchors.topMargin:150
+        anchors.topMargin: 15
+        //anchors.topMargin:150
         anchors.left: parent.left
         anchors.right: parent.right
         height: 420
@@ -99,6 +99,7 @@ AUIPageWithMenu {id: pageGPS
         height: 120
         font.pointSize: pageGPS.fontSize
         color: "lightGrey"
+        text: "No compass reading yet ..."
 
     }
 
@@ -122,7 +123,7 @@ AUIPageWithMenu {id: pageGPS
     GreyButtonStyle {id: greyButton}
 
     AUIButton {id: smsButton
-        anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; bottom: parent.bottom; bottomMargin: 20}
+        anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: compassText.bottom; topMargin: 15}
         height: 100;
         //width: parent.width;
         text: (privateVars.gpsAcquired) ? qsTr("Create SMS") : qsTr("Acquiring GPS...");

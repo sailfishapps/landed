@@ -57,7 +57,9 @@ AUIPage {id: pageSmsTarget
         onDelegateClicked: {
             rumbleEffect.start();
             if (template_id == -999) {
-                nextPage("SMS", "Custom", template_id, msg_status);
+                console.log("Custom button chosen, for template_id: " + template_id);
+                //nextPage("SMS", "Custom", template_id, msg_status);
+                nextPage("SMS", "Default", template_id, msg_status)
             }
             else {
                 console.log("Default button chosen, for template_id: " + template_id);

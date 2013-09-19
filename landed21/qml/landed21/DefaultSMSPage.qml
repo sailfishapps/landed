@@ -12,10 +12,10 @@ import "settingsDB.js" as DB
 
 
 AUIPage {id: pageDefaultSMS
-    tools: commonTools
+    //tools: commonTools
     width: 480
-    //height: 828
-    height: 748
+    height: 828
+    //height: 748 //height with toolbar
     orientationLock: AUIPageOrientation.LockPortrait
 
     property int toolbarHeight: 0
@@ -61,6 +61,9 @@ AUIPage {id: pageDefaultSMS
                 thisSMSApp.setContact(contactName, contactPhone);
             }
             else if (lastPage == "smsSelectionPage") {
+//TODO: below is how we prefill the contact if in default mode
+//In Custom Mode I suggest we do a seclect distinct of the OK and NotOK contacts for the template_id
+//AND allow the user to override the number by using the keypad.
                 console.log("Page has been pushed, take contact from Template")
                 var rs = getContact(template_id);
                 contactName = rs.rows.item(0).name;
@@ -85,6 +88,7 @@ AUIPage {id: pageDefaultSMS
             PropertyChanges{ target: thisSMSApp; anchors.top: parent.top }
             PropertyChanges{ target: torchApp; visible: false }
             PropertyChanges{ target: frame; color: "black" }
+            PropertyChanges{ target: pageDefaultSMS; height: 828 }
 
         },
         State {
@@ -93,6 +97,7 @@ AUIPage {id: pageDefaultSMS
             PropertyChanges{ target: thisSMSApp; anchors.top: torchApp.bottom }
             PropertyChanges{ target: torchApp; visible: true }
             PropertyChanges{ target: frame; color: "red" }
+            PropertyChanges{ target: pageDefaultSMS; height: 818 }
         }
     ]
 

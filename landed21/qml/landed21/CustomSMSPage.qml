@@ -1,8 +1,27 @@
+//consider here if we really need a separate custom page,
+// or if we cannot add the custom functionality to the DefaultSMSPage with a Custom State
+//The main difference seems to be that
+// a) this page has explicit onKeysOpened/Closed event handlers
+// on the SMSApp instance.
+// b) SMSApp.simpleMode = false --> surely we can set this via the state of DefaultSMSPage
+
+//Action plan
+//1) when custom button pressed, open DefaultSMSPage
+
+
+//BIG QUESTION!!!!
+//Do we need a custom mode / page at all
+
 import QtQuick 1.1
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
+//Might it not be easier to allow editing to default emails
+//a) click in the SMS textbox to edit
+//b) click on the contact to open contactSelectionPage, which should now have an "opend dialer" button
+//to allow entering a custome number
 
+//I think that would merit a new version landed22
 
 AUIPage {id: pageCustomSMS
     width: 480
@@ -29,6 +48,7 @@ AUIPage {id: pageCustomSMS
 
     function addCoords2SMS() {
         //Expose function to MainPage
+//TODO: This function no longer exists in SMSApp component.
         thisSMSApp.addCoords2SMS()
     }
 
@@ -53,7 +73,7 @@ AUIPage {id: pageCustomSMS
         }
 
         onCancelled: {
-            console.log("cancelled Signal received by DefaultSMSPage");
+            console.log("cancelled Signal received by CustomSMSPage");
             parent.cancelled();
         }
 

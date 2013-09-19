@@ -58,6 +58,31 @@ Item {id: rectGPS
     }
 
     function convertDDToDMS(dd, axis){
+
+        /*
+        Distance between 2 GPS points calculated by the Haversine formulae is:
+
+        http://www.movable-type.co.uk/scripts/latlong.html
+
+        Using Patras Greece as a reference
+        38 09 34N
+        21 31 15E
+
+        1 degree North is 111.2 km
+        1 degree East is 87.43 km
+
+        1 minute North is 1.853 km
+        1 degree East is 1.457 km
+
+        1 second North is 0.03089 km --> 31 meters
+        1 second East is 0.02429 km --> 24 meters
+
+        1 tenth of a second North is 0.003089 km --> 3 meters
+        1 tenth of a second East is 0.002429 km --> 2.4 meters
+
+        This means that one decimal point is acurate enough!!!!
+
+        */
         var ddOrig = dd;
         console.log(ddOrig);
         dd = Math.abs(dd);  //make positive
@@ -74,7 +99,8 @@ Item {id: rectGPS
         var min = pad((frac * 60) | 0); // multiply fraction by 60 and truncate
         console.log ("min is: " + min);
         var sec = frac * 3600 - min * 60;
-        sec = pad(Math.round(sec*100)/100); // round to two decmal place
+        //sec = pad(Math.round(sec*100)/100); // round to two decmal places
+        sec = pad(Math.round(sec*10)/10); // round to ONE decmal place
         console.log ("sec is: " + sec);
         var suffix
         if (axis == "Lati") {
@@ -161,6 +187,11 @@ Item {id: rectGPS
         Text {id: alti; text: "Alti: "   + positionSource.position.coordinate.altitude ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
         Text {id: speed; text: "Speed: "   + Math.round(positionSource.position.speed) ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
         //Text {id: time; text: "time: "  + positionSource.position.timestamp ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+        Text {id: horizAcc; text: "horizontal accuracy: " + pad(Math.round(positionSource.position.horizontalAccuracy*10)/10) + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+        Text {id: vertAcc; text: "vertical accuracy: " + pad(Math.round(positionSource.position.verticalAccuracy*10)/10) + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+
+        //TODO: consider using xxxvalid booleans to determine if info shown
+        //http://harmattan-dev.nokia.com/docs/library/html/qtmobility/qml-position.html
 
         Connections {
              target: positionSource.position.coordinate
