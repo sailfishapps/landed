@@ -48,7 +48,7 @@ Both Apps are in the midst of a Harmattan to Sailfish migration using the Abstra
 
 Safety / Legal:
 
-We give no warranty of guarantee that this app will actually work. If you are in a new location, please please test it with your recovery. Check that the coords transmitted make sense, and you and your recovery agree that you know where you are! I have not been able to test this app "all over the world", so I cannot totally eliminate the possibility that there maybe an error in the coordinates algorithm!
+We give no warranty or guarantee that this app will actually work. If you are in a new location, please please test it with your recovery. Check that the coords transmitted make sense, and you and your recovery agree that you know where you are! I have not been able to test this app "all over the world", so I cannot totally eliminate the possibility that there maybe an error in the coordinates algorithm!
 
 For the app to work you will need both GPS reception, and Cell-phone signal
 
