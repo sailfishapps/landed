@@ -17,7 +17,7 @@ Rectangle {
     property string headerText
     property int fontSize: 24
     property bool arrowVisible: true
-    property color backgroundColor: "black"
+    property color backgroundColor: "lightgrey"
 
     //inward looking, bound to inner objects.
     height: groupView.height

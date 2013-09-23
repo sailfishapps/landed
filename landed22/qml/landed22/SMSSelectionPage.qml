@@ -13,7 +13,7 @@ AUIPage {id: pageSmsTarget
 
     property int toolbarHeight: 0
     //property int toolbarHeight: 110
-    property color backgroundColor: "black"
+    backgroundColor: "lightgrey"
     property int itemHeight: 100;
     property int headerHeight: itemHeight;
     property int fontSize: 30

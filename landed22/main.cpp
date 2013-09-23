@@ -3,6 +3,9 @@
 //a) get rid of the explict customSMSPage, make default SMSes be editable
 //   (i.e. are prefilled with text and primary contact, but both text and contact can be changed)
 //b) remove ButtonStyle components as this functionality is now handled by AbstractUI
+//c) make the Dialer available from the contacts selection page to allow dialing of a custom number not stored in the contacts
+//d) make the phone's contacts available (work in progress, not finished yet)
+//e) change from a black to a grey colour scheme (the tabs looked shit in black)
 
 //Landed21
 //a) Move ButtonStyle functionality to AbstractUI (as Sailfish does not have such components)

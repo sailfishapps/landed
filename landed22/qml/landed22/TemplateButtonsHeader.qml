@@ -20,7 +20,7 @@ Item {
         text: thisHeader.text
         font.pointSize: thisHeader.fontSize
         font.weight: Font.DemiBold
-        color: "white"
+        color: "black"
         verticalAlignment: Text.AlignVCenter
     }
     Text{

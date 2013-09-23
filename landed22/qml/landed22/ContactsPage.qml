@@ -5,35 +5,15 @@ import org.flyingsheep.abstractui 1.0
 import QtMobility.contacts 1.1
 
 AUIPage {
-    width: 480
-    height: 854
-    orientationLock: AUIPageOrientation.LockPortrait
-
-    ContactModel {
-        id: contactModel
-        Component.onCompleted : {
-            if (manager == "memory")
-                contactModel.importContacts(Qt.resolvedUrl("contents/example.vcf"));
-        }
-    }
-
-    ContactListView {
-        id: contactListView
+    ListView {
+        id:  contactList
         anchors.fill: parent
-        contacts: contactModel
-//        onOpenContact: {
-//                screen.showContact = true;
-//                contactView.contact = contact;
-//                contactView.update();
-//                }
-//        onNewContact: {
-//                // create new instance of contactComponent
-//                // using createQmlObject does not work here; phoneNumbers and emails list properties do not get initialized for some reason
-//                var contact = contactComponent.createObject(contactModel);
-//                screen.showContact = true;
-//                contactView.contact = contact;
-//                contactView.update();
-//            }
-    }
+        model: ContactModel {}
+        delegate: Text {
+            font.pointSize: 20;
+            text: "Name: " + model.contact.name.firstName + " " + model.contact.name.lastName;
+                  //+ " Number: " + model.contact.phoneNumber.number
+        }
 
+    }
 }

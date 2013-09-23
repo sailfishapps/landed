@@ -39,7 +39,7 @@ AUIPageStackWindow {
     //hack from http://forum.meego.com/showthread.php?t=3924 // to force black theme
     Component.onCompleted: {
         console.log("appWindow.onCompleted");
-        theme.inverted = true;
+        //theme.inverted = true;
         console.log("simulator is : " + simulator);
         console.log("operating system is : " + OperatingSystemId);
         console.log("windowing system is : " + WindowingSystemId);
@@ -104,11 +104,6 @@ AUIPageStackWindow {
             pageStack.pop(defaultSMSPage);
         }
         onCancelled: pageStack.pop(defaultSMSPage);
-     }
-
-    CustomSMSPage {
-        id: customSMSPage
-        onCancelled: pageStack.pop();
      }
 
 /*

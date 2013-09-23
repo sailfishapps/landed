@@ -15,7 +15,9 @@ AUIPageWithMenu {id: pageGPS
 
     //property int toolbarHeight: 0
     property int toolbarHeight: 110
-    property color backgroundColor: "black"
+    //backgroundColor: "slategrey"
+    //backgroundColor: "grey"
+    backgroundColor: "lightgrey"
     property int fontSize: 30
 
     function fakeGPSAquired() {
@@ -75,6 +77,7 @@ AUIPageWithMenu {id: pageGPS
         height: 420
         //color: parent.backgroundColor
         fontSize: parent.fontSize
+        textColor: "blue"
         onPositionChanged: {
             privateVars.gpsAcquired = true;
         }
@@ -125,7 +128,8 @@ AUIPageWithMenu {id: pageGPS
         height: 100;
         //width: parent.width;
         text: (privateVars.gpsAcquired) ? qsTr("Create SMS") : qsTr("Acquiring GPS...");
-        primaryColor: "#808080" // "grey"
+        //primaryColor: "#808080" // "grey"
+        primaryColor: "#008000" //"green"
         enabled: privateVars.gpsAcquired
         onClicked: {
             rumbleEffect.start();

@@ -34,12 +34,57 @@ AUISheet {id: thisSheet
 
         }
 
+
         ContactsPage {id: contactsTab
-            AUIButton{text: "contactsTab"; y: 400; anchors.horizontalCenter: parent.horizontalCenter;}
+            //AUIButton{text: "contactsTab"; y: 400; anchors.horizontalCenter: parent.horizontalCenter;}
             //tools: commonTools
+        }
+
+    }
+    Rectangle {
+        color: "grey"
+        visible: true
+        //height: 109;
+        height: 74;
+        width: parent.width
+        anchors.bottom: parent.bottom;
+
+        AUIButtonRow {id: tabButtonRow
+            visible: true;
+            enabled: true;
+            anchors.bottom: parent.bottom;
+            height: parent.height;
+            width: parent.width;
+
+            AUITabButton { id: button1;
+                visible: true;
+                enabled: true;
+                tab: historyTab;
+                iconSource: "icon-m-toolbar-callhistory.png";
+                onClicked: {console.log("button1.onClicked");
+                }
+            }
+            AUITabButton { id: button2;
+                visible: true;
+                enabled: true;
+                tab: keyPadTab;
+                iconSource: "icon-m-toolbar-dialer.png";
+                onClicked: {
+                    console.log("button2.onClicked");
+                    //console.log("commonTools.parent: " + commonTools.parent)
+                }
+            }
+            AUITabButton { id: button3
+                visible: true;
+                enabled: true;
+                tab: contactsTab;
+                iconSource: "icon-m-toolbar-contact.png";
+                onClicked: console.log("button3.onClicked");
+            }
         }
     }
 
+/*
     //the layout of toolbar: a row of 3 bottons
     AUIToolBarLayout {
         id: commonTools
@@ -83,4 +128,6 @@ AUISheet {id: thisSheet
             }
         }
     }
+
+    */
 }

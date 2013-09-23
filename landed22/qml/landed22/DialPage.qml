@@ -3,13 +3,14 @@ import QtQuick 1.1
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
 
-AUIPage {
+//AUIPage {
+Item {
     signal numberEntered(string phoneNumber)
     signal cancelled()
 
     width: 480
     height: 854
-    orientationLock: AUIPageOrientation.LockPortrait
+    //orientationLock: AUIPageOrientation.LockPortrait
 
     Rectangle {
         anchors.fill: parent
@@ -38,7 +39,11 @@ AUIPage {
                 //y: 50
                 anchors {right: parent.right; verticalCenter: parent.verticalCenter}
                 //iconSource: "assets/icon_" + (pressed ? "pressed" : "normal") + ".png"
-                platformStyle: backSpaceButtonStyle;
+                //platformStyle: backSpaceButtonStyle;
+                transparent: true
+                //primaryColor: "#000000"
+                //primaryColor: "#00000000"; // "transparent"
+                //primaryColor: "#ffff00"
                 iconSource: "icon-m-common-backspace_" + (pressed ? "pressed" : "normal") + ".png"
                 onClicked: {
                     console.log("backSpaceButton.onClicked");
@@ -112,14 +117,9 @@ AUIPage {
             }
         }
 
-        AUIButtonStyle {id: greenButton
-            background: "image://theme/color2-meegotouch-button-accent-background"+(position?"-"+position:"");
-
-        }
-
         AUIButton {id: cancelButton
-            anchors {left: parent.left; leftMargin: 10; top: phoneKeyPad.bottom; topMargin: 25}
-            height: 50;
+            anchors {left: parent.left; leftMargin: 10; top: phoneKeyPad.bottom; topMargin: 15}
+            height: 80;
             width: 200;
             text: qsTr("Cancel");
             onClicked: {
@@ -130,11 +130,11 @@ AUIPage {
         }
 
         AUIButton {id: okButton
-            anchors {right: parent.right; rightMargin: 10; top: phoneKeyPad.bottom; topMargin: 25}
-            height: 50;
+            anchors {right: parent.right; rightMargin: 10; top: phoneKeyPad.bottom; topMargin: 15}
+            height: 80;
             width: 200;
             text: qsTr("Ok");
-            platformStyle: greenButton;
+            primaryColor: "#008000" //"green"
             onClicked: {
                 //thisSheet.accept();
                 numberEntered(numDisplay.phoneNumber);

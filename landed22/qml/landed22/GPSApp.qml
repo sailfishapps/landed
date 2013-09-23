@@ -10,7 +10,7 @@ Item {id: rectGPS
 //Rectangle {id: rectGPS
 
     property bool gpsOn: false
-    property color textColor: "lightGrey"
+    property color textColor: "white"
     property int fontSize: 30
 
     signal positionChanged()
@@ -133,16 +133,6 @@ Item {id: rectGPS
     }
 
 
-    /*
-        HapticsEffect {id: rumbleEffect
-            attackIntensity: 0.0
-            attackTime: 250
-            intensity: 1.0
-            duration: 100
-            fadeTime: 250
-            fadeIntensity: 0.0
-        }
-    */
 
     RumbleEffect {id: rumbleEffect}
 
@@ -176,19 +166,19 @@ Item {id: rectGPS
         anchors.rightMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 10
-        Text {text: "<==== PositionSource ====>" ; font.family: "Arial";font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
-        Text {id: onOff; text: "tbd: " ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
-        //Text {text: "positioningMethod: "  + printableMethod(positionSource.positioningMethod) ; font.family: "Arial";font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
-        //Text {text: "updateInterval: "     + positionSource.updateInterval ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
-        Text {id: stat; text: "active: "     + positionSource.active ; anchors.right: parent.right; anchors.rightMargin: 346; anchors.left: parent.left; anchors.leftMargin: 0; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
-        Text {text: "<==== Position ====>" ; font.family: "Arial";font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
-        Text {id: lati; text: "lati: " ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
-        Text {id: lngi; text: "long: " ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
-        Text {id: alti; text: "Alti: "   + positionSource.position.coordinate.altitude ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
-        Text {id: speed; text: "Speed: "   + Math.round(positionSource.position.speed) ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
-        //Text {id: time; text: "time: "  + positionSource.position.timestamp ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
-        Text {id: horizAcc; text: "horizontal accuracy: " + pad(Math.round(positionSource.position.horizontalAccuracy*10)/10) + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
-        Text {id: vertAcc; text: "vertical accuracy: " + pad(Math.round(positionSource.position.verticalAccuracy*10)/10) + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+        Text {text: "<==== PositionSource ====>" ; font.family: "Arial";font.pointSize: rectGPS.fontSize; color: "black"}
+        Text {id: onOff; text: "tbd: " ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
+        //Text {text: "positioningMethod: "  + printableMethod(positionSource.positioningMethod) ; font.family: "Arial";font.pointSize: rectGPS.fontSize; color: parent.textColor}
+        //Text {text: "updateInterval: "     + positionSource.updateInterval ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: parent.textColor}
+        Text {id: stat; text: "active: "     + positionSource.active ; anchors.right: parent.right; anchors.rightMargin: 346; anchors.left: parent.left; anchors.leftMargin: 0; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
+        Text {text: "<==== Position ====>" ; font.family: "Arial";font.pointSize: rectGPS.fontSize; color: "black"}
+        Text {id: lati; text: "lati: " ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
+        Text {id: lngi; text: "long: " ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
+        Text {id: alti; text: "Alti: "   + positionSource.position.coordinate.altitude ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
+        Text {id: speed; text: "Speed: "   + Math.round(positionSource.position.speed) ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
+        //Text {id: time; text: "time: "  + positionSource.position.timestamp ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
+        Text {id: horizAcc; text: "horizontal accuracy: " + pad(Math.round(positionSource.position.horizontalAccuracy*10)/10) + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
+        Text {id: vertAcc; text: "vertical accuracy: " + pad(Math.round(positionSource.position.verticalAccuracy*10)/10) + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
 
         //TODO: consider using xxxvalid booleans to determine if info shown
         //http://harmattan-dev.nokia.com/docs/library/html/qtmobility/qml-position.html

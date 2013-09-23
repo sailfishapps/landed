@@ -162,6 +162,7 @@ Rectangle{id: rectSMS
                 phoneNrField.text = phoneNumber;
             }
         }
+        //dialDialog2.open();
 
         Rectangle{id: phoneNrField
             property alias text: label.text;
