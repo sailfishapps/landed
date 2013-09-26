@@ -6,8 +6,14 @@ An app for paraglider pilots to send GPS coords via SMS to a recovery team using
 Development Status:
 Landed, LandedSettings, and AbstractUI are all very much work-in-progress and not finished! This is why I have not published the code of Landed until now: but realising very likely they never will be finished as I find new things to add, improve, and play around with, has triggered me to "publish and be dammed".
 
+Landed21 included functionality that I added shortly after using it in anger for the first time under a REGA helicopter on a dark snow covered mountain. In "Helm Me!" mode, landed now has a flashing torch to signal to a searching helicopter.
+
+Landed22 is the latest version of landed, and incorporates changes that I made in the last few days, immediately after using Landed21 under a SAR helicopter in Greece (this time to help recover an injured colleague). This changes make landed even easier to use.
+
 Follow progress on my blog: http://flyingsheeponsailfish.blogspot.ch/
 
+Migration Status
+Landed and LandedSettings as published here work with both Harmattan (Qt 4.7.4) and Sailfish Alpha 1 (Qt 4.8.3). I have versions that work (more or less) with the Sailfish Alpha 2 (Qt 5.x), but work on this migration have taken a backseat to improving the Harmattan versions (because that is what runs on my real life phone, and what I can actually use when up shit creak). I need to back-port the new functionality to the migrated versions, and will then publish the Alphas 2 versions.
 
 Purpose:
 
