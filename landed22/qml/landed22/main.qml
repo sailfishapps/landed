@@ -1,4 +1,5 @@
 import QtQuick 1.1
+//import QtMobility.location 1.2
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
@@ -54,7 +55,8 @@ AUIPageStackWindow {
         id: mainPage
         fontSize: appWindow.fontSize
         onNextPage: {
-            pageStack.push(smsSelectionPage)
+            pageStack.push(smsSelectionPage, {currentLatitude: mainPage.getCurrentCoordinate().latitude, currentLongitude: mainPage.getCurrentCoordinate().longitude });
+            //pageStack.push(smsSelectionPage, {currentLocation: mainPage.getCurrentCoordinate()})
         }
     }
 

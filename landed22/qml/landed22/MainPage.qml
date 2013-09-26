@@ -53,6 +53,10 @@ AUIPageWithMenu {id: pageGPS
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
+    function getCurrentCoordinate() {
+        return thisGPSApp.getCurrentCoordinate();
+    }
+
     function getLati() {
         //return "lati: 123"
         return thisGPSApp.getLati()
@@ -87,7 +91,7 @@ AUIPageWithMenu {id: pageGPS
         id: thisCompass
         onReadingChanged: {
             compassText.text = "Bearing: " + reading.azimuth;
-            console.log("Compass Reading has changed")
+            //console.log("Compass Reading has changed")
         }
     }
 

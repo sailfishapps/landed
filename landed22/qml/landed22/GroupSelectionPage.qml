@@ -35,7 +35,7 @@ AUIPage {id: pageSmsTarget
 
     function getCurrentGroup() {
         var rs = DB.getActiveGroup();
-        console.log ("No records found: " + rs.rows.length)
+        console.log ("Num records found: " + rs.rows.length)
      return rs;
     }
 

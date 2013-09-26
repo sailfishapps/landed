@@ -6,6 +6,9 @@
 //c) make the Dialer available from the contacts selection page to allow dialing of a custom number not stored in the contacts
 //d) make the phone's contacts available (work in progress, not finished yet)
 //e) change from a black to a grey colour scheme (the tabs looked shit in black)
+//f) added latitude and longitude to group, display this for current group on SMSSelectionPage
+//g) based on saved latitude and longitudes of group, automatically set current group to the closest.
+//h) added landed.js for support functions (imported to GPSApp.qml, SMSSelectionPage.qml
 
 //Landed21
 //a) Move ButtonStyle functionality to AbstractUI (as Sailfish does not have such components)

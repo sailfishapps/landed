@@ -3,7 +3,7 @@ import QtQuick 1.1
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
 import QtMobility.location 1.2
-//import QtMobility.feedback 1.1
+import "landed.js" as LJS
 
 
 Item {id: rectGPS
@@ -92,15 +92,16 @@ Item {id: rectGPS
         }
         console.log ("axis is: " + axis);
         console.log ("dd is: " + dd);
-        var deg = pad(dd | 0); // truncate dd to get degrees
+        var deg = LJS.pad(dd | 0); // truncate dd to get degrees
         console.log ("deg is: " + deg);
         var frac = dd - deg; // get fractional part
         console.log ("frac is: " + frac);
-        var min = pad((frac * 60) | 0); // multiply fraction by 60 and truncate
+        var min = LJS.pad((frac * 60) | 0); // multiply fraction by 60 and truncate
         console.log ("min is: " + min);
         var sec = frac * 3600 - min * 60;
         //sec = pad(Math.round(sec*100)/100); // round to two decmal places
-        sec = pad(Math.round(sec*10)/10); // round to ONE decmal place
+        //sec = pad(Math.round(sec*10)/10); // round to ONE decmal place
+        sec = LJS.pad(LJS.round(sec, 1)); // round to ONE decmal place
         console.log ("sec is: " + sec);
         var suffix
         if (axis == "Lati") {
@@ -113,13 +114,13 @@ Item {id: rectGPS
         return deg + "d " + min + "m " + sec + "s " + suffix;
     }
 
-    function pad(num) {
-         return (num < 10) ? ("0" + num) : num;
-    }
-
     function getLati() {
         console.log("getLati Called");
         return "Lati: "   + convertDDToDMS(positionSource.position.coordinate.latitude, "Lati");
+    }
+
+    function getCurrentCoordinate() {
+        return positionSource.position.coordinate;
     }
 
     function getLongi() {
@@ -174,8 +175,10 @@ Item {id: rectGPS
         Text {text: "<==== Position ====>" ; font.family: "Arial";font.pointSize: rectGPS.fontSize; color: "black"}
         Text {id: lati; text: "lati: " ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
         Text {id: lngi; text: "long: " ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
+        //Text {id: lati2; text: "lati2: " + positionSource.position.coordinate.latitude ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
+        //Text {id: lngi2; text: "long2: " + positionSource.position.coordinate.longitude ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
         Text {id: alti; text: "Alti: "   + positionSource.position.coordinate.altitude ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
-        Text {id: speed; text: "Speed: "   + Math.round(positionSource.position.speed) ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
+        Text {id: speed; text: "Speed: "   + Math.round(positionSource.position.speed * 3.6)  +" km/h" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
         //Text {id: time; text: "time: "  + positionSource.position.timestamp ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
         Text {id: horizAcc; text: "horizontal accuracy: " + pad(Math.round(positionSource.position.horizontalAccuracy*10)/10) + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
         Text {id: vertAcc; text: "vertical accuracy: " + pad(Math.round(positionSource.position.verticalAccuracy*10)/10) + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
