@@ -53,7 +53,7 @@ Item {
                 templateModel.append({"button_label": rs.rows.item(i).button_label, "msg_status": rs.rows.item(i).msg_status, "template_id": rs.rows.item(i).id});
                 console.log("button_label is: " + rs.rows.item(i).button_label + ", msg_status is: " + rs.rows.item(i).msg_status);
             }
-            templateModel.append({"button_label":  "Create Custom SMS", "msg_status": "Ok", "template_id": "-999"});
+            //templateModel.append({"button_label":  "Create Custom SMS", "msg_status": "Ok", "template_id": "-999"});
 
             if (rs.rows.length > 0) {
                 thisModel.populated(rs.rows.item(0).id);

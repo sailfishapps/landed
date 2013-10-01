@@ -55,35 +55,25 @@ AUIPageStackWindow {
         id: mainPage
         fontSize: appWindow.fontSize
         onNextPage: {
-            pageStack.push(smsSelectionPage, {currentLatitude: mainPage.getCurrentCoordinate().latitude, currentLongitude: mainPage.getCurrentCoordinate().longitude });
-            //pageStack.push(smsSelectionPage, {currentLocation: mainPage.getCurrentCoordinate()})
-        }
-    }
+            //pageStack.push(smsSelectionPage, {currentLatitude: mainPage.getCurrentCoordinate().latitude, currentLongitude: mainPage.getCurrentCoordinate().longitude });
 
-    SMSSelectionPage {
-        id: smsSelectionPage
-        fontSize: appWindow.fontSize
-        onNextPage: {
             if (pageType =="SMS") {
                 console.log("smsType is: " + smsType)
                 if (smsType =="Default") pageStack.push(defaultSMSPage, {lati: mainPage.getLati(), longi: mainPage.getLongi(), alti: mainPage.getAlti(), template_id: template_id, msg_status: msg_status, lastPage: "smsSelectionPage"})
-                else if (smsType =="Custom") pageStack.push(customSMSPage);
             }
             else {
                 pageStack.push(groupSelectionPage)
             }
-
         }
-        onCancelled: pageStack.pop();
-     }
+    }
 
     GroupSelectionPage {
         id: groupSelectionPage
         fontSize: appWindow.fontSize
         onNextPage: {
-            pageStack.pop(smsSelectionPage)
+            pageStack.push(mainPage, {groupSet: true})
         }
-        onCancelled: pageStack.pop(smsSelectionPage);
+        onCancelled: pageStack.pop(mainPage);
      }
 
     DefaultSMSPage {

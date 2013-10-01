@@ -18,7 +18,7 @@ AUIPage {id: pageSmsTarget
     property int headerHeight: itemHeight;
     property int fontSize: 30
 
-    signal nextPage()
+    signal nextPage(bool groupSet)
     signal cancelled()
 
     Component.onCompleted: {
@@ -53,7 +53,7 @@ AUIPage {id: pageSmsTarget
         onDelegateClicked: {
             rumbleEffect.start();
             DB.activateGroup(group_id)
-            nextPage();
+            nextPage(true);
         }
 
     }
