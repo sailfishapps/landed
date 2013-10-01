@@ -1,6 +1,17 @@
+//Future Changes
+//c) make SMS text editable
+//d) allow switching of coords format from decimal to deg min sec by pressing on GPSApp
+//e) allow selection of contact from phone contacts (is currently partly implemented)
+//f) get SMS functionality working for Sailfish version with QtTelepathy
+//g) improve layout of templateButtons header (so location coords, distance on a second line below name).
+
+//Experiments
+//a) use coordianate component as page property
+//b) on GPSApp, setting of color for text by binding from parent.property (did not seem to work)
+
 //Change History
 //Landed22
-//a) get rid of the explict customSMSPage, make default SMSes be editable
+//a) explict customSMSPage removed (precursor to making text editable)
 //   (i.e. are prefilled with text and primary contact, but both text and contact can be changed)
 //b) remove ButtonStyle components as this functionality is now handled by AbstractUI
 //c) make the Dialer available from the contacts selection page to allow dialing of a custom number not stored in the contacts
@@ -9,6 +20,8 @@
 //f) added latitude and longitude to group, display this for current group on SMSSelectionPage
 //g) based on saved latitude and longitudes of group, automatically set current group to the closest.
 //h) added landed.js for support functions (imported to GPSApp.qml, SMSSelectionPage.qml
+//i) merge mainpage and SMSSelectionPage (reduces one button press) --> SMS Buttons now on mainPage
+//j) fully remove custom functionality (custom button et al.)
 
 //Landed21
 //a) Move ButtonStyle functionality to AbstractUI (as Sailfish does not have such components)
