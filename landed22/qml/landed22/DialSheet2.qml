@@ -1,3 +1,4 @@
+//import QtQuick 2.0
 import QtQuick 1.1
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
@@ -42,7 +43,8 @@ AUISheet {id: thisSheet
 
     }
     Rectangle {
-        color: "grey"
+        //color: "grey"
+        color: "black"
         visible: true
         //height: 109;
         height: 74;
@@ -60,7 +62,7 @@ AUISheet {id: thisSheet
                 visible: true;
                 enabled: true;
                 tab: historyTab;
-                iconSource: "icon-m-toolbar-callhistory.png";
+                iconSource: (theme.inverted) ? "icon-m-toolbar-callhistory-white.png" : "icon-m-toolbar-callhistory.png";
                 onClicked: {console.log("button1.onClicked");
                 }
             }
@@ -68,17 +70,16 @@ AUISheet {id: thisSheet
                 visible: true;
                 enabled: true;
                 tab: keyPadTab;
-                iconSource: "icon-m-toolbar-dialer.png";
+                iconSource: (theme.inverted) ? "icon-m-toolbar-dialer-white.png": "icon-m-toolbar-dialer.png";
                 onClicked: {
                     console.log("button2.onClicked");
-                    //console.log("commonTools.parent: " + commonTools.parent)
                 }
             }
             AUITabButton { id: button3
                 visible: true;
                 enabled: true;
                 tab: contactsTab;
-                iconSource: "icon-m-toolbar-contact.png";
+                iconSource: (theme.inverted) ? "icon-m-toolbar-contact-white.png" : "icon-m-toolbar-contact.png";
                 onClicked: console.log("button3.onClicked");
             }
         }

@@ -1,31 +1,75 @@
+//import QtQuick 2.0
 import QtQuick 1.1
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
-//import com.nokia.meego 1.0
+import com.nokia.meego 1.0
 import QtMobility.location 1.2
 import "landed.js" as LJS
+import SatInfoSource 1.0
 
 
 Item {id: rectGPS
 //Rectangle {id: rectGPS
 
     property bool gpsOn: false
-    property color textColor: "white"
+    property bool coordFormatDMS: true //Degree Minute Second
+    //state is used to switch textColor from textColorActive to textColorInactive
+    property color textColor
+    property color textColorActive
+    property color textColorInactive
+    //state is used to switch labelColor from labelColorActive to labelColorInactive
+    property color labelColor
+    property color labelColorActive
+    property color labelColorInactive
     property int fontSize: 30
+    property int satsInUse: 0
+    property int satsInView: 0
+
+    height: coordsDisplay.height
 
     signal positionChanged()
 
+    function toogleCoordFormat(){
+        if (coordFormatDMS) {
+            coordFormatDMS = false;
+        }
+        else {
+           coordFormatDMS = true;
+        }
+        rect.refreshCoords();
+    }
+//TODO: to avoid nasty state loops, everything that turns the GPS on or off should use the switch
+//as unique entry point
+
+    function activateGPS() {
+        console.log ("activateGPS called. gpsSwitch.checked is: " + gpsSwitch.checked)
+        gpsSwitch.checked = true
+    }
+//TODO: toggleGPS, onGPS and offGPS should be private functions,
+//not externally available: the external gateway is activateGPS
+
     function toggleGPS() {
         console.log ("rectGPS.toggleGPS")
-        if(state == "stateGpsOn") { state = "stateGpsOff" } else { state = "stateGpsOn" };
+        if(state == "stateGpsOn") {
+            offGPS();
+        }
+        else {
+            onGPS();
+        };
     }
 
     function onGPS () {
+        console.log("turning GPS on")
         state = "stateGpsOn";
+        positionSource.start();
+        satInfoSource.startUpdates();
     }
 
     function offGPS () {
+        console.log("turning GPS off")
         state = "stateGpsOff"
+        positionSource.stop();
+        satInfoSource.stopUpdates();
     }
 
     function refreshCoords() {
@@ -37,24 +81,28 @@ Item {id: rectGPS
         State {
             name: "stateGpsOn";
             PropertyChanges{ target: rectGPS; gpsOn: true } // change on variable
-            PropertyChanges{ target: rectGPS; textColor: "lightGrey" }
-            PropertyChanges{ target: onOff; text: "On" }
-            PropertyChanges{ target: positionSource; active: true }
+            PropertyChanges{ target: rectGPS; textColor: rectGPS.textColorActive }
+            PropertyChanges{ target: rectGPS; labelColor: rectGPS.labelColorActive }
+            PropertyChanges{ target: onOff; text: "On;" }
+
+            //PropertyChanges{ target: positionSource; active: true }
             //PropertyChanges{ target: timer; running: true }
         },
         State {
             name: "stateGpsOff";
             PropertyChanges{ target: rectGPS; gpsOn: false } // change on variable
-            PropertyChanges{ target: rectGPS; textColor: "darkGrey" }
-            PropertyChanges{ target: onOff; text: "Off" }
-            PropertyChanges{ target: positionSource; active: false }
+            PropertyChanges{ target: rectGPS; textColor: rectGPS.textColorInactive }
+            PropertyChanges{ target: rectGPS; labelColor: rectGPS.labelColorInactive }
+            PropertyChanges{ target: onOff; text: "Off;" }
+            //PropertyChanges{ target: positionSource; active: false }
             PropertyChanges{ target: timer; running: false }
         }
     ]
 
     Timer{ id: timer;
         interval: 60*1000;
-        onTriggered: {state = "stateGpsOff"}
+        //onTriggered: {state = "stateGpsOff"}
+        onTriggered: {gpsSwitch.checked = false;}
     }
 
     function convertDDToDMS(dd, axis){
@@ -144,6 +192,24 @@ Item {id: rectGPS
         }
     }
 
+    SatInfoSource {
+        id: satInfoSource
+        onSatellitesInUseUpdated: {
+            rectGPS.satsInUse = satsInUse;
+            setSatsText();
+            console.log("SatellitesInUseUpdated! " + satsInUse);
+        }
+        onSatellitesInViewUpdated: {
+            rectGPS.satsInView = satsInView;
+            setSatsText();
+            console.log("SatellitesInViewUpdated! " + satsInView);
+        }
+    }
+
+    function setSatsText() {
+        satsInViewUse.text = rectGPS.satsInView + " / " + rectGPS.satsInUse;
+    }
+
     PositionSource {id: positionSource
         updateInterval: 1000
         active: false
@@ -152,6 +218,7 @@ Item {id: rectGPS
             console.log("PositionChanged Signal Received! inner");
             //this could be used to start the timer,
             //and to enable the sms button
+//TODO: won't the timer be restarted everytime postionChanged is called: reconsider this
             timer.start();
             rectGPS.positionChanged();
         }
@@ -165,22 +232,65 @@ Item {id: rectGPS
         anchors.rightMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 10
-        //Text {text: "<==== PositionSource ====>" ; font.family: "Arial";font.pointSize: rectGPS.fontSize; color: "black"}
-        Text {id: onOff; text: "tbd: " ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
-        //Text {text: "positioningMethod: "  + printableMethod(positionSource.positioningMethod) ; font.family: "Arial";font.pointSize: rectGPS.fontSize; color: parent.textColor}
-        //Text {text: "updateInterval: "     + positionSource.updateInterval ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: parent.textColor}
-        Text {id: stat; text: "active: "     + positionSource.active ; anchors.right: parent.right; anchors.rightMargin: 346; anchors.left: parent.left; anchors.leftMargin: 0; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
-        //Text {text: "<==== Position ====>" ; font.family: "Arial";font.pointSize: rectGPS.fontSize; color: "black"}
-        Text {id: lati; text: "lati: " ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
-        Text {id: lngi; text: "long: " ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
-        //Text {id: lati2; text: "lati2: " + positionSource.position.coordinate.latitude ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
-        //Text {id: lngi2; text: "long2: " + positionSource.position.coordinate.longitude ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
-        Text {id: alti; text: "Alti: "   + positionSource.position.coordinate.altitude ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
-        Text {id: speed; text: "Speed: "   + Math.round(positionSource.position.speed * 3.6)  +" km/h" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
-        //Text {id: time; text: "time: "  + positionSource.position.timestamp ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
-        Text {id: horizAcc; text: "horizontal accuracy: " + Math.round(positionSource.position.horizontalAccuracy*10)/10 + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
-        Text {id: vertAcc; text: "vertical accuracy: " + Math.round(positionSource.position.verticalAccuracy*10)/10 + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: "black"}
-
+        property int rowSpacing: 10
+        spacing: 4
+        Item {
+            //height: childrenRect.height // causes binding-loop
+            height: onOff.height
+            width: parent.width
+            Row {
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: coordsDisplay.rowSpacing;
+                Text {id: onOffLabel; text: "GPS:" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 150}
+                Text {id: onOff; text: "" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+            }
+            AUISwitch {
+                id: gpsSwitch
+                anchors.right: parent.right
+                checked: false
+                anchors.verticalCenter: parent.verticalCenter
+                onCheckedChanged: {
+                    rectGPS.toggleGPS();
+                    console.log("height of gpsSwitch is: " + gpsSwitch.height + " Text height is: " + onOffLabel.height)
+                }
+            }
+        }
+        Row {
+            spacing: coordsDisplay.rowSpacing;
+            Text {id: latiLabel; text: "Lati:" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 150}
+            Text {id: lati; text: "searching ..."; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+        }
+        Row {
+            spacing: coordsDisplay.rowSpacing;
+            Text {id: lngiLabel; text: "Long:" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 150}
+            Text {id: lngi; text: "searching ..."; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+        }
+        Row {
+            spacing: coordsDisplay.rowSpacing;
+            Text {id: altiLabel; text: "Alti:"; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 150}
+            Text {id: alti; text: isNaN(positionSource.position.coordinate.altitude) ? "n/a" : positionSource.position.coordinate.altitude + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+        }
+        Row {
+            spacing: coordsDisplay.rowSpacing;
+            Text {id: speedLabel; text: "Speed:"; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 150}
+            Text {id: speed; text: Math.round(positionSource.position.speed * 3.6)  +" km/h" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+        }
+        Row {
+            spacing: coordsDisplay.rowSpacing;
+            Text {id: horizAccLabel; text: "Horizontal Accuracy:"; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 320}
+            Text {id: horizAcc; text: Math.round(positionSource.position.horizontalAccuracy*10)/10 + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+        }
+        Row {
+            spacing: coordsDisplay.rowSpacing;
+            Text {id: vertAccLabel; text: "Vertical Accuracy:" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 320}
+            Text {id: vertAcc; text: Math.round(positionSource.position.verticalAccuracy*10)/10 + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+        }
+        Row {
+            spacing: coordsDisplay.rowSpacing;
+            Text {id: satsInViewUseLabel; text: "Sats in View / Use:" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 320}
+            Text {id: satsInViewUse; text: "0 / 0" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+        }
         //TODO: consider using xxxvalid booleans to determine if info shown
         //http://harmattan-dev.nokia.com/docs/library/html/qtmobility/qml-position.html
 
@@ -198,8 +308,14 @@ Item {id: rectGPS
 
         function refreshCoords() {
             console.log("refreshCoords called")
-            lati.text = "Lati: "   + rectGPS.convertDDToDMS(positionSource.position.coordinate.latitude, "Lati");
-            lngi.text = "Long: "   + rectGPS.convertDDToDMS(positionSource.position.coordinate.longitude, "Longi");
+            if (coordFormatDMS) {
+                lati.text = rectGPS.convertDDToDMS(positionSource.position.coordinate.latitude, "Lati");
+                lngi.text = rectGPS.convertDDToDMS(positionSource.position.coordinate.longitude, "Longi");
+            }
+            else {
+                lati.text = LJS.round(positionSource.position.coordinate.latitude, 4);
+                lngi.text = LJS.round(positionSource.position.coordinate.longitude, 4);
+            }
         }
     }
 
@@ -210,13 +326,21 @@ Item {id: rectGPS
         {
             //style: ButtonStyle { }
             anchors.horizontalCenter: parent.horizontalCenter
-
+/*
             AUIButton {text: (rectGPS.gpsOn) ? qsTr("Turn GPS Off" ): qsTr("Turn GPS On")
                 onClicked: {
                     rectGPS.toggleGPS()
                     gpsDialog.accept()
                 }
             }
+*/
+            AUIButton {text: (coordFormatDMS) ? qsTr("Coordinates: Decimal" ): qsTr("Coordinates: D M S")
+                onClicked: {
+                    rectGPS.toogleCoordFormat()
+                    gpsDialog.accept()
+                }
+            }
+            /*
             AUIButton {text: "Refresh Coords";
                 enabled: rectGPS.gpsOn;
                 onClicked: {
@@ -224,6 +348,7 @@ Item {id: rectGPS
                     gpsDialog.close();
                 }
             }
+            */
         }
     }
 

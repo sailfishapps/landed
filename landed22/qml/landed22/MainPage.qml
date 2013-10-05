@@ -1,10 +1,10 @@
+//import QtQuick 2.0
 import QtQuick 1.1
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
 import QtMobility.location 1.2
-import QtMobility.sensors 1.2
-//import QtMobility.feedback 1.1
+//import QtMobility.sensors 1.2
 import "settingsDB.js" as DB
 import "landed.js" as LJS
 
@@ -20,10 +20,13 @@ AUIPageWithMenu {id: pageGPS
     property int toolbarHeight: 110
     property int itemHeight: 100;
     property int headerHeight: itemHeight - 40;
-    //backgroundColor: "slategrey"
-    //backgroundColor: "grey"
-    backgroundColor: "lightgrey"
-    property int fontSize: 30
+
+    property color textColorActive
+    property color textColorInactive
+    property color labelColorActive
+    property color labelColorInactive
+
+    property int fontSize
 
     property bool groupSet: false;
 
@@ -36,7 +39,6 @@ AUIPageWithMenu {id: pageGPS
     QtObject {
         id: privateVars
         property bool gpsAcquired: false
-        property bool groupSet: false
     }
 
     signal nextPage(string pageType, string smsType, string template_id, string msg_status)
@@ -55,14 +57,32 @@ AUIPageWithMenu {id: pageGPS
                     setNearestGroup(getCurrentCoordinate());
                 }
             }
-            console.log ("turning GPS on ...");
-            thisGPSApp.onGPS();
-            thisCompass.start();
+            console.log ("MainPage: turning GPS on ...");
+            //thisGPSApp.onGPS();
+            thisGPSApp.activateGPS();
+            compassApp.start();
         }
         else if (status == AUIPageStatus.Inactive) {
             console.log ("turning GPS off ...")
             thisGPSApp.offGPS();
-            thisCompass.stop();
+            compassApp.stop();
+        }
+    }
+
+    Rectangle {
+        id: landedHeader
+        anchors {left: parent.left; leftMargin: 5; right: parent.right; rightMargin: 5; top: parent.top; topMargin: 5}
+        height: 50
+        color: (theme.inverted) ? "#333333" : "#006600"
+        radius: 10
+        Text {
+            text: "Landed!!!"
+            color: (theme.inverted) ? "white" : "white"
+            font.pointSize: pageGPS.fontSize
+            font.weight: Font.DemiBold
+            anchors.leftMargin: 10
+            anchors.fill: parent
+            verticalAlignment: Text.AlignVCenter
         }
     }
 
@@ -92,45 +112,36 @@ AUIPageWithMenu {id: pageGPS
 
 
     GPSApp{id: thisGPSApp
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        //anchors.topMargin:150
+        //anchors.top: parent.top
+        anchors.top: landedHeader.bottom
+        anchors.topMargin: 5
         anchors.left: parent.left
         anchors.right: parent.right
-//TODO: Should not height be determined based on content displayed, rather than fix (as here)?
-        height: 320
         //color: parent.backgroundColor
         fontSize: parent.fontSize
-        textColor: "blue"
+        textColorActive: pageGPS.textColorActive
+        textColorInactive: pageGPS.textColorInactive
+        labelColorActive: pageGPS.labelColorActive
+        labelColorInactive: pageGPS.labelColorInactive
         onPositionChanged: {
             console.log("PositionChanged Signal Received! outer");
             privateVars.gpsAcquired = true;
-            //for some reason, binding smsSelectionApp.enabled to privateVars.gpsAcquired does not work, so actively enable.
-            //smsSelectionApp.enabled = true;
         }
     }
 
-    Compass {
-        id: thisCompass
-        onReadingChanged: {
-            compassText.text = "Bearing: " + reading.azimuth;
-            //console.log("Compass Reading has changed")
-        }
-    }
-
-    Text {
-        id: compassText
+    CompassApp {
+        id: compassApp
         anchors.top: thisGPSApp.bottom
-        anchors.topMargin: 15
+        anchors.topMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 10
-        height: 80
-        font.pointSize: pageGPS.fontSize
-        color: "black"
-        text: "No compass reading yet ..."
-
+        fontSize: parent.fontSize
+        textColorActive: pageGPS.textColorActive
+        textColorInactive: pageGPS.textColorInactive
+        labelColorActive: pageGPS.labelColorActive
+        labelColorInactive: pageGPS.labelColorInactive
     }
 
     RumbleEffect {id: rumbleEffect}
@@ -180,19 +191,19 @@ AUIPageWithMenu {id: pageGPS
         return LJS.round((distance / 1000), 2) + " km";
     }
 
-//TODO: I need to show something instead of the templateButtons when they are inactive
-//e.g. a "GPS not yet acquired" label
-//This should be enabled and visible while the templateButtons is not enabled, and sit in the same place
+//TODO: the notAcquiredText should be better positioned (is too high)
+//TODO: should this not belong to the template buttons?
+// I suppose yes if the buttons become a separate control again.
 
     Text {
         id: notAcquiredText;
         enabled: !templateButtons.enabled
         visible: !templateButtons.enabled
-        anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: compassText.bottom; topMargin: 15}
+        anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: compassApp.bottom; topMargin: 100}
         font.pointSize: parent.fontSize
         font.italic: true
         horizontalAlignment: Text.AlignHCenter
-        color: "darkgrey"
+        color: pageGPS.textColorInactive
         text: "GPS not yet acquired . . ."
     }
 
@@ -211,8 +222,10 @@ AUIPageWithMenu {id: pageGPS
         //Commented out for Sailfish
         //backgroundColor: parent.backgroundColor
         arrowVisible: true
+        textColor: parent.labelColorActive
         width: parent.width
-        anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: compassText.bottom; topMargin: 15}
+        //anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: compassText.bottom; topMargin: 15}
+        anchors {left: parent.left; right: parent.right; top: compassApp.bottom; topMargin: 15}
         //onPopulated:
         onEnabledChanged: {
             console.log ("TemplateButtons: onEnabledChanged: " + enabled);
@@ -221,7 +234,6 @@ AUIPageWithMenu {id: pageGPS
                 rumbleEffect.start();
             }
         }
-
         onDelegateClicked: {
             rumbleEffect.start();
             console.log("Default button chosen, for template_id: " + template_id);
@@ -232,12 +244,16 @@ AUIPageWithMenu {id: pageGPS
             pageGPS.nextPage("Group", null, null, null);
         }
 
-        function setHeaderText(group, distance) {
-            return group.name + ": " + group.latitude + " " + group.longitude + "; " + distance;
+        function setHeaderText(group) {
+            return group.name;
+        }
+        function setHeaderSubText(group, distance) {
+            return "Lat: " + group.latitude + "; Lng: " + group.longitude + "; Dst: " + distance;
         }
 
         function set (group, distance) {
-            templateButtons.headerText = setHeaderText(group, distance);
+            templateButtons.headerText = setHeaderText(group);
+            templateButtons.headerSubText = setHeaderSubText(group, distance);
             templateButtons.populate(group.id);
         }
     }
@@ -249,8 +265,7 @@ AUIPageWithMenu {id: pageGPS
             onClicked: {
                 pageGPS.fakeGPSAquired();
             }
-        }
-        ,
+        },
         AUIMenuAction {
             text: (appWindow.fontSize >= appWindow.largeFonts) ? qsTr("Small Fonts" ) : qsTr("Large Fonts");
             onClicked: (appWindow.fontSize == appWindow.largeFonts) ? appWindow.fontSize = appWindow.smallFonts : appWindow.fontSize = appWindow.largeFonts;
@@ -267,6 +282,12 @@ AUIPageWithMenu {id: pageGPS
             onClicked: {
                appWindow.fontSize--;
                console.log ("fontSize is now: " + appWindow.fontSize + "; Operating System is: " + OSId)
+            }
+        },
+        AUIMenuAction {
+            text: qsTr("Toggle Theme");
+            onClicked: {
+               theme.inverted = !theme.inverted;
             }
         }
     ]

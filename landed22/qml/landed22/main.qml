@@ -1,3 +1,4 @@
+//import QtQuick 2.0
 import QtQuick 1.1
 //import QtMobility.location 1.2
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
@@ -32,15 +33,23 @@ AUIPageStackWindow {
     //Note for some reason on the simulator (platform = 4), fonts are 2 1/3 larger than the N9 and QEMU, and thus smaller sizes must be used.
     //property int largeFonts: (platform == 4) ? 11 : 26
     //property int smallFonts: (platform == 4) ? 6 : 13
-    property int largeFonts: (simulator == true) ? 11 : 26
+    //property int largeFonts: (simulator == true) ? 11 : 26
+    property int largeFonts: (simulator == true) ? 9.5 : 22
     property int smallFonts: (simulator == true) ? 6 : 13
+    property color backgroundColor: (theme.inverted) ? "black" :"lightgrey"
+
+    //switch color scheme according to dark or light theme
+    property color textColorActive: (theme.inverted) ? "lightgreen" : "darkgreen"
+    property color textColorInactive: (theme.inverted) ? "grey" : "grey"
+    property color labelColorActive: (theme.inverted) ? "darkgrey" : "black"
+    property color labelColorInactive: (theme.inverted) ?  "grey" : "darkgrey"
 
     //font { family: platformStyle.fontFamilyRegular; pixelSize: platformStyle.fontSizeLarge }
 
     //hack from http://forum.meego.com/showthread.php?t=3924 // to force black theme
     Component.onCompleted: {
         console.log("appWindow.onCompleted");
-        //theme.inverted = true;
+        theme.inverted = true;
         console.log("simulator is : " + simulator);
         console.log("operating system is : " + OperatingSystemId);
         console.log("windowing system is : " + WindowingSystemId);
@@ -54,6 +63,11 @@ AUIPageStackWindow {
     MainPage {
         id: mainPage
         fontSize: appWindow.fontSize
+        backgroundColor: appWindow.backgroundColor
+        textColorActive: appWindow.textColorActive
+        textColorInactive: appWindow.textColorInactive
+        labelColorActive: appWindow.labelColorActive
+        labelColorInactive: appWindow.labelColorInactive
         onNextPage: {
             //pageStack.push(smsSelectionPage, {currentLatitude: mainPage.getCurrentCoordinate().latitude, currentLongitude: mainPage.getCurrentCoordinate().longitude });
 
@@ -70,6 +84,8 @@ AUIPageStackWindow {
     GroupSelectionPage {
         id: groupSelectionPage
         fontSize: appWindow.fontSize
+        backgroundColor: appWindow.backgroundColor
+        labelColorActive: appWindow.labelColorActive
         onNextPage: {
             pageStack.push(mainPage, {groupSet: true})
         }
@@ -88,6 +104,8 @@ AUIPageStackWindow {
     ContactSelectionPage {
         id: contactSelectionPage
         fontSize: appWindow.fontSize
+        backgroundColor: appWindow.backgroundColor
+        labelColorActive: appWindow.labelColorActive
         onBackPage: {
             console.log("About to pop defaultSMSPage; contactName: " + contactName + ", contactPhone: " + contactPhone);
             defaultSMSPage.contactName = contactName;

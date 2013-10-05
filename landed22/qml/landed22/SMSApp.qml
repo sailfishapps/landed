@@ -204,12 +204,12 @@ Rectangle{id: rectSMS
         }
 
         RumbleEffect {id: rumbleEffect}
-
+/*
         AUIButtonStyle {id: greenButton
             background: "image://theme/color2-meegotouch-button-accent-background"+(position?"-"+position:"");
             //textColor: (smsSent) ? "darkGrey" : "black"
         }
-
+*/
         //Buttons have fixed height, and are anchored to the bottom of the page
         AUIButton {id: sendButton
             height: 60
@@ -217,7 +217,7 @@ Rectangle{id: rectSMS
             anchors{right: parent.right; bottom: parent.bottom; topMargin: 5;}
             //enabled: (smsSent)  ? false : true;
             //text: (smsSent) ? "Sent" : "Send";
-            platformStyle: greenButton;
+            primaryColor: "#008000" //"green"
             onClicked: {
                 rumbleEffect.start();
                 console.log("sendButton.onCicked");
@@ -234,6 +234,7 @@ Rectangle{id: rectSMS
             //anchors{left: parent.left; top: phoneNrField.bottom; topMargin: 10;};
             anchors{left: parent.left; bottom: parent.bottom; topMargin: 5;}
             text: "Cancel";
+            primaryColor: "#808080" //"grey"
             onClicked: {
                 rumbleEffect.start();
                 console.log("SMSApp cancelButton.onCicked");

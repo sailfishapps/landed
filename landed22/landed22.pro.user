@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by Qt Creator 2.6.1, 2013-09-19T08:29:37. -->
+<!-- Written by Qt Creator 2.6.1, 2013-10-05T18:26:49. -->
 <qtcreator>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -279,7 +279,7 @@
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">N9 Qt 4.7.4 (harmattan_10.2011.34-1_rt1.2)</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">N9 Qt 4.7.4 (harmattan_10.2011.34-1_rt1.2)</value>
    <value type="QByteArray" key="ProjectExplorer.ProjectConfiguration.Id">{49ba4f61-fbfa-46b3-b6e8-f5ce7a636809}</value>
-   <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
+   <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">1</value>
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">0</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
@@ -430,18 +430,23 @@
       <value type="QByteArray" key="ProjectExplorer.ProjectConfiguration.Id">MaemoUploadAndInstallDpkgPackageStep</value>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedFiles">
        <value type="QString">/Users/christopherlamb/QTProjects/landed/landed22/landed22-build-N9_Qt_4_7_4_harmattan_10_2011_34_1_rt1_2-Debug/landed22_0.0.1_armel.deb</value>
+       <value type="QString">/Users/christopherlamb/QTProjects/landed/landed22/landed22-build-N9_Qt_4_7_4_harmattan_10_2011_34_1_rt1_2-Release/landed22_0.0.1_armel.deb</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedHosts">
+       <value type="QString">192.168.2.15</value>
        <value type="QString">192.168.2.15</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedRemotePaths">
        <value type="QString"></value>
+       <value type="QString"></value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedSysroots">
        <value type="QString">/Users/christopherlamb/QtSDK/Madde/sysroots/harmattan_sysroot_10.2011.34-1_slim</value>
+       <value type="QString">/Users/christopherlamb/QtSDK/Madde/sysroots/harmattan_sysroot_10.2011.34-1_slim</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedTimes">
-       <value type="QDateTime">2013-09-18T10:41:19</value>
+       <value type="QDateTime">2013-10-04T12:59:47</value>
+       <value type="QDateTime">2013-10-05T18:22:59</value>
       </valuelist>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">5</value>

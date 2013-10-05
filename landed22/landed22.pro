@@ -15,12 +15,14 @@ MOBILITY += location messaging multimedia
 CONFIG += qdeclarative-boostable
 
 HEADERS += smshelper.h landedtorch.h \
+    satinfosource.h \
     sysinf.h \
     operatingsystem.h \
     windowingsystem.h
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp smshelper.cpp landedtorch.cpp \
+    satinfosource.cpp \
     sysinf.cpp
 
 # Please do not modify the following two lines. Required for deployment.
@@ -34,9 +36,4 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/copyright \
     qtc_packaging/debian_harmattan/control \
     qtc_packaging/debian_harmattan/compat \
-    qtc_packaging/debian_harmattan/changelog \
-    qml/landed22/xGreyButtonStyle.qml \
-    qml/landed22/xYellowButtonStyle.qml \
-    qml/landed22/xWhiteButtonStyle.qml \
-    qml/landed22/xRedButtonStyle.qml \
-    qml/landed22/xGreenButtonStyle.qml
+    qtc_packaging/debian_harmattan/changelog

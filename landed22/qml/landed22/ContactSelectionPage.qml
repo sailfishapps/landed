@@ -7,7 +7,6 @@ AUIPage {id: pageContactSelection
 
     property string template_id
 
-    tools: commonTools
     width: 480
     height: 828
     //height: 740
@@ -19,6 +18,7 @@ AUIPage {id: pageContactSelection
     property int itemHeight: 100;
     property int headerHeight: itemHeight;
     property int fontSize: 30
+    property color labelColorActive
 
     signal backPage(string contactName, string contactPhone)
     signal cancelled()
@@ -42,6 +42,7 @@ AUIPage {id: pageContactSelection
         headerHeight: parent.headerHeight
         headerText: "Contacts";
         backgroundColor: parent.backgroundColor
+        labelColorActive: parent.labelColorActive
         arrowVisible: false
         width: parent.width
         onDelegateClicked: {
@@ -83,6 +84,7 @@ AUIPage {id: pageContactSelection
         height: 100;
         text: qsTr("Cancel");
         //platformStyle: greenButton;
+        primaryColor: "#808080" //"grey"
         onClicked: {
             rumbleEffect.start();
             cancelled();

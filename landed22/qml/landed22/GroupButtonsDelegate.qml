@@ -10,11 +10,11 @@ Rectangle {
     property string text
     property bool checked
     property alias pressed: thisButton.pressed
-    color: "lightgrey";
+    property color backgroundColor
+    color: backgroundColor
 
     AUIRadioButton {
         id: thisButton
-
         width: parent.width
         anchors.top: parent.top
         anchors.topMargin: 5

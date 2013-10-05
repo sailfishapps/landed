@@ -1,3 +1,4 @@
+//import QtQuick 2.0
 import QtQuick 1.1
 //import com.nokia.meego 1.0
 import "settingsDB.js" as DB
@@ -14,8 +15,10 @@ Item {
     property int marginWidth: 10;
     property int headerHeight: itemHeight;
     property string headerText
+    property string headerSubText
     property int fontSize: 24
     property bool arrowVisible: true
+    property color textColor
     //Commented out for Sailfish
     //property color backgroundColor: "black"
 
@@ -68,10 +71,13 @@ Item {
         id: templateHeader
         TemplateButtonsHeader {
             text: thisModel.headerText;
+            subText: thisModel.headerSubText
             width: thisModel.width;
-            height: thisModel.headerHeight
+            //TODO: find a better way of calculating the height based on height of text + subText
+            height: thisModel.headerHeight * 1.666
             fontSize: thisModel.fontSize
             arrowVisible: thisModel.arrowVisible
+            textColor: thisModel.textColor
             onClicked:{
                 console.log("Template Header Clicked");
                 thisModel.headerClicked();

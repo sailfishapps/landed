@@ -122,6 +122,7 @@ Item {
             height: 80;
             width: 200;
             text: qsTr("Cancel");
+            primaryColor: "#808080" //"grey"
             onClicked: {
                 //thisSheet.reject();
                 numDisplay.clear();

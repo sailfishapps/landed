@@ -1,9 +1,12 @@
 //Future Changes
 //c) make SMS text editable
-//d) allow switching of coords format from decimal to deg min sec by pressing on GPSApp
 //e) allow selection of contact from phone contacts (is currently partly implemented)
 //f) get SMS functionality working for Sailfish version with QtTelepathy
-//g) improve layout of templateButtons header (so location coords, distance on a second line below name).
+
+
+//i) consider averaging GPS fixes over last 5 fixes.
+
+//m) find out why GPS does not turn off anymore.
 
 //Experiments
 //a) use coordianate component as page property
@@ -22,6 +25,17 @@
 //h) added landed.js for support functions (imported to GPSApp.qml, SMSSelectionPage.qml
 //i) merge mainpage and SMSSelectionPage (reduces one button press) --> SMS Buttons now on mainPage
 //j) fully remove custom functionality (custom button et al.)
+//k) allow switching of coords format from decimal to deg min sec by pressing on GPSApp
+//l) Number of Sats in View / Use added from plugin SatInfoSource
+//m) GPSApp labels and text separated, allowing different colors for lables and text
+//n) alignment / margins of texts, buttons, headers made consistent
+//o) GroupRadioButton and ContactRadioButtons now use SimpleHeader rather than TemplateButtonHeader?
+//p) templateButtonsHeader displays location coords, distance on a second line (subHeader)
+//q) mainpage Compass and CompassText integrated into one component CompassApp
+//r) switch control added to GPSApp allowing easy switching on and off of the GPS (to save power)
+//s) switch control added to CompassApp allowing easy switching on and off of the Compass (to save power)
+//t) decreased font size on GPSApp to increase clarity and make more space
+//u) added title bar to MainPage. This will probably host the icon for the settings page in the future
 
 //Landed21
 //a) Move ButtonStyle functionality to AbstractUI (as Sailfish does not have such components)
@@ -35,6 +49,7 @@
 #include "qmlapplicationviewer.h"
 
 #include "landedtorch.h"
+#include "SatInfoSource.h"
 #include "operatingsystem.h"
 #include "windowingsystem.h"
 
@@ -157,6 +172,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
         qmlRegisterType<SMSHelper>("SMSHelper",1,0,"SMSHelper");
     #endif
     qmlRegisterType<LandedTorch>("LandedTorch",1,0,"LandedTorch");
+    qmlRegisterType<SatInfoSource>("SatInfoSource",1,0,"SatInfoSource");
+
     //qmlRegisterUncreatableType<SysInf>("SysInf", 1, 0, "SysInf", "Expose System Info to QML");
 
     QmlApplicationViewer viewer;

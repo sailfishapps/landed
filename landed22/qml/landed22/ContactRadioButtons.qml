@@ -13,7 +13,8 @@ Rectangle {
     property string headerText
     property int fontSize: 24
     property bool arrowVisible: true
-    property color backgroundColor: "lightgrey"
+    property color backgroundColor
+    property color labelColorActive
 
     //inward looking, bound to inner objects.
     height: contactView.height
@@ -58,12 +59,12 @@ Rectangle {
 
     Component{
         id: contactHeader
-        TemplateButtonsHeader {
+        SimpleHeader {
             text: thisModel.headerText;
+            textColor: thisModel.labelColorActive
             width: thisModel.width;
             height: thisModel.headerHeight
             fontSize: thisModel.fontSize
-            arrowVisible: thisModel.arrowVisible
             onClicked:{
                 console.log("Contact Header Clicked");
                 thisModel.headerClicked();
@@ -81,6 +82,7 @@ Rectangle {
             text: name
             checked: (active == 1) ? true : false
             fontSize: thisModel.fontSize
+            backgroundColor: thisModel.backgroundColor
             onClicked:{
                 console.log("Contact Delegate Clicked: contact_id is: " + contact_id + ", name: " + name);
                 thisModel.delegateClicked(contact_id, name, phone);
