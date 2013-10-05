@@ -7,9 +7,9 @@ Development Status:
 
 Landed, LandedSettings, and AbstractUI are all very much work-in-progress and not finished! This is why I have not published the code of Landed until now: but realising very likely they never will be finished as I find new things to add, improve, and play around with, has triggered me to "publish and be dammed".
 
-2013 Oct 05: Lots of small but important changes to Landed22 (Harmattan / Sailfish Alpha 1). See main.cpp for change history.
+2013 Oct 05: Lots of small but important changes to Landed22 (Harmattan / Sailfish Alpha 1). See main.cpp for a detailed change history.
 
-Landed22 is the latest version of landed, and incorporates changes that I made in the last few days, immediately after using Landed21 under a SAR helicopter in Greece (this time to help recover an injured colleague). These changes make landed even easier to use.
+Landed22 is the latest version of landed, and incorporates changes that I made in the last few days, immediately after using Landed21 under a SAR SuperPuma helicopter in Greece (this time to help recover an injured colleague). These changes make Landed even easier to use (and more are coming soon ...)
 
 Landed21 included functionality that I added shortly after using it in anger for the first time under a REGA helicopter on a dark snow covered mountain. In "Helm Me!" mode, Landed now has a flashing torch to signal to a searching helicopter.
 
