@@ -189,8 +189,6 @@ Item {id: rectGPS
         return "Alt: "+ Math.round(positionSource.position.coordinate.altitude) + " m";
     }
 
-
-
     RumbleEffect {id: rumbleEffect}
 
     MouseArea {id: gpsMouseArea
@@ -226,9 +224,7 @@ Item {id: rectGPS
         // nmeaSource: "nmealog.txt"
         onPositionChanged: {
             console.log("PositionChanged Signal Received! inner");
-            //this could be used to start the timer,
-            //and to enable the sms button
-//TODO: won't the timer be restarted everytime postionChanged is called: reconsider this
+            //If the timer is running, subsequent calls to start() have no effect
             timer.start();
             rectGPS.positionChanged();
         }
@@ -284,24 +280,24 @@ Item {id: rectGPS
         Row {
             spacing: coordsDisplay.rowSpacing;
             Text {id: speedLabel; text: "Speed:"; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 150}
-            Text {id: speed; text: Math.round(positionSource.position.speed * 3.6)  +" km/h" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+            Text {id: speed; text: (positionSource.position.speedValid) ? Math.round(positionSource.position.speed * 3.6)  +" km/h" : "n/a" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
             Text {id: horizAccLabel; text: "Horizontal Accuracy:"; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 320}
-            Text {id: horizAcc; text: Math.round(positionSource.position.horizontalAccuracy*10)/10 + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+            Text {id: horizAcc; text: (positionSource.position.horizontalAccuracyValid) ? Math.round(positionSource.position.horizontalAccuracy*10)/10 + " m" : "n/a" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
             Text {id: vertAccLabel; text: "Vertical Accuracy:" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 320}
-            Text {id: vertAcc; text: Math.round(positionSource.position.verticalAccuracy*10)/10 + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+            Text {id: vertAcc; text: (positionSource.position.verticalAccuracyValid) ? Math.round(positionSource.position.verticalAccuracy*10)/10 + " m" : "n/a" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
             Text {id: satsInViewUseLabel; text: "Sats in View / Use:" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 320}
             Text {id: satsInViewUse; text: "0 / 0" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
         }
-        //TODO: consider using xxxvalid booleans to determine if info shown
+
         //http://harmattan-dev.nokia.com/docs/library/html/qtmobility/qml-position.html
 
         Connections {
@@ -406,36 +402,7 @@ Item {id: rectGPS
                     gpsDialog.accept()
                 }
             }
-
-            /*
-            AUIButton {text: "Refresh Coords";
-                enabled: rectGPS.gpsOn;
-                onClicked: {
-                    rectGPS.refreshCoords();
-                    gpsDialog.close();
-                }
-            }
-            */
         }
-    }
-
-    function pause(millisecs) {
-        var time1 = new Date()
-        do {
-            var time2 = new Date();
-        } while (time2 - time1 < millisecs);
-    }
-
-    function printableMethod(method) {
-        if (method == PositionSource.SatellitePositioningMethod)
-            return "Satellite";
-        else if (method == PositionSource.NoPositioningMethod)
-            return "Not available"
-        else if (method == PositionSource.NonSatellitePositioningMethod)
-            return "Non-satellite"
-        else if (method == PositionSource.AllPositioningMethods)
-            return "All/multiple"
-        return "source error";
     }
 }
 

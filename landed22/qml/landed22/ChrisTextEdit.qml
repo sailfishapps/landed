@@ -1,7 +1,7 @@
-// import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
+//import QtQuick 2.0
 import QtQuick 1.1
-
-
+//user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
+import org.flyingsheep.abstractui 1.0
 
 Rectangle {
     id: rectangle1
@@ -12,73 +12,19 @@ Rectangle {
     property string fontFamily
     //property string textColor
     property color textColor
-    property bool simpleMode: true
-
-    signal pressAndHold
-    signal keysOpened
-    signal keysClosed
-
-    onFontSizeChanged: {
-        console.log("fontSize Changed")
-        //editableText.font.pointSize = fontSize
-    }
-    onFontFamilyChanged:   {
-        editableText.font.family = fontFamily
-    }
-    onTextColorChanged: {
-        editableText.color = textColor
-    }
-
-    Component.onCompleted: {
-        if (simpleMode == true) {
-            editableText.visible = false;
-            editableText.enabled = false;
-            readonlyText.visible = true;
-            readonlyText.enabled = true;
-        }
-        else
-        {
-            editableText.visible = true;
-            editableText.enabled = true;
-            readonlyText.visible = false;
-            readonlyText.enabled = false;
-        }
-
-        console.log("ChrisTextEdit.onCompleted")
-    }
 
     function length() {
-        return readonlyText.text.length + editableText.text.length;
+        return editableText.text.length;
     }
 
     function setText(myText) {
-        if (simpleMode) {
-            readonlyText.text = myText;
-            editableText.text = "";
-        }
-        else{
-            editableText.text = myText;
-            readonlyText.text = "";
-        }
+        editableText.text = myText;
+        //set default cursor position to after standard text
+        editableText.cursorPosition = editableText.text.length
     }
 
     function getText() {
-        if (simpleMode) {
-            return readonlyText.text;
-        }
-        else{
-            return editableText.text;
-        }
-    }
-
-    Text{ id: readonlyText
-        anchors.fill: parent
-        anchors.margins: 10
-        //font.pointSize: editableText.font.pointSize
-        font.pointSize: parent.fontSize
-        //color: editableText.color
-        color: parent.textColor
-        wrapMode: Text.Wrap
+        return editableText.text;
     }
 
     TextEdit {
@@ -88,60 +34,98 @@ Rectangle {
         anchors.bottomMargin: 7
         anchors.leftMargin: 7.
         anchors.rightMargin: 7
-        font.pointSize: parent.fontSize
-        fillColor: parent.color
-        property bool panelOpen: false
+        font.pointSize: rectangle1.fontSize
+        font.family: rectangle1.fontFamily
+        color: rectangle1.textColor
+        fillColor: rectangle1.color
+        wrapMode: TextEdit.Wrap
+        //inputMethodHints: Qt.ImhNoPredictiveText stops a silly bug, whereby when the cursor is repositioned, the last word typed before repositioning
+        //is pasted at the new cursor position!!
+        //thanks to http://psychedelic-tiger.com/qmls-t9-bug/ for suggesting this as a fix to a different (but probably related) bug.
+        inputMethodHints: Qt.ImhNoPredictiveText
 
-        signal pressAndHold
-        onPressAndHold: {
-            parent.pressAndHold();
-        }
+        selectByMouse: true;
+
+        property bool panelOpen: false
         signal keysOpened
+        signal pressAndHold
+
+        AUIButton {
+            id: closeKeyboard
+            visible: editableText.panelOpen
+            text: "Close keyboard"
+            primaryColor: "#008000" //"green"
+            anchors.right: editableText.right
+            z: editableText.z + 1;
+            y: 420
+            width: 240
+            onClicked: {
+                editableText.panelOpen = false;
+                editableText.closeSoftwareInputPanel();
+            }
+        }
+
         onKeysOpened: {
-            console.log("rectangle1.onKeysOpened")
+            console.log("editableText.onKeysOpened")
             if (panelOpen == false) {
+                openSoftwareInputPanel();
+                //editableText.cursorPosition = editableText.text.length
                 panelOpen = true;
-                parent.keysOpened();
             }
         }
 
         onFocusChanged: {
             console.log("focusChanged")
         }
+        onPressAndHold: {
+            if (panelOpen == true) {
+                panelOpen = false;
+                closeSoftwareInputPanel();
+            }
+        }
+        /*
         Keys.onReturnPressed: {
             if (panelOpen == true) {
                 panelOpen = false;
                 closeSoftwareInputPanel();
-                parent.keysClosed();
             }
         }
-
+*/
         MouseArea{
             anchors.fill: parent
+            preventStealing: true
+
+            function characterPositionAt(mouse) {
+                var mappedMouse = mapToItem(editableText, mouse.x, mouse.y);
+                return editableText.positionAt(mappedMouse.x, mappedMouse.y);
+            }
 
             onPressed: {
-                console.log("onPressed")
+                console.log("MouseArea.onPressed: mouseX: " + mouseX + ", mouseY: " + mouseY);
+                if (editableText.panelOpen) {
+                    var pos = characterPositionAt(mouse);
+                    editableText.cursorPosition = pos;
+
+
+                }
                 parent.focus = true;
             }
+            onPressAndHold: {
+                parent.pressAndHold();
+            }
+
             onReleased: {
-                console.log("onReleased")
+                console.log("MouseArea.onReleased")
             }
             onClicked: {
-                console.log("onClicked")
-                parent.openSoftwareInputPanel();
+                console.log("MouseArea.onClicked")
+                //parent.openSoftwareInputPanel();
                 parent.keysOpened();
             }
-            onPressAndHold: {
-                console.log("onPressAndHold")
-                parent.pressAndHold();
-                //smsDialog.open();
-            }
             onDoubleClicked: {
-                console.log("onDoubleClicked")
+                console.log("MouseArea.onDoubleClicked")
             }
 
         }
-
     }
-
 }

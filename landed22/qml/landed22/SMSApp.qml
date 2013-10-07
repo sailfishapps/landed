@@ -9,7 +9,6 @@ import org.flyingsheep.abstractui 1.0
 
 Rectangle{id: rectSMS
 
-    property bool simpleMode: true
     property bool  smsSent: false
     property int defaultBottomMargin: 160
     property int fontSize: 16
@@ -50,10 +49,6 @@ Rectangle{id: rectSMS
         visualParent: rectSMS.parent
     }
 
-    signal keysOpened
-    signal keysClosed
-
-
     //This is variable height
     ChrisTextEdit { id: smsBody
         //height: 320
@@ -67,21 +62,9 @@ Rectangle{id: rectSMS
         anchors.right: parent.right
         anchors.rightMargin: 10
         //color: "white"
-        color: (simpleMode) ? "lightgrey" : "white"
+        color: "white"
         fontFamily: "Arial"
         fontSize: rectSMS.fontSize
-        simpleMode: parent.simpleMode
-
-        onKeysOpened: {
-            console.log("smsBody: keysOpened signal received");
-            parent.keysOpened();
-            //anchors.bottomMargin = 250
-        }
-        onKeysClosed: {
-            console.log("smsBody: keysClosed signal received");
-            parent.keysClosed();
-            //anchors.bottomMargin = defaultBottomMargin
-        }
     }
 
     Rectangle { id: phoneNrGroup
@@ -174,7 +157,7 @@ Rectangle{id: rectSMS
             width: parent.width
             height: 120;
             anchors {top: parent.top; topMargin: 5}
-            color: (simpleMode) ? "lightyellow" : "white"
+            color:  "lightyellow"
             Text { id: label
                 font.pointSize: rectSMS.fontSize;
                 font.family: "Arial";
@@ -190,12 +173,7 @@ Rectangle{id: rectSMS
                 anchors.fill: parent
                 onClicked: {
                     console.log("phoneNrField.MouseArea.onCicked");
-                    if (simpleMode == true) {
-                        phoneNrClicked();
-                    }
-                    if (simpleMode == false) {
-                        dialDialog2.open();
-                    }
+                    phoneNrClicked();
                 }
             }
             function displayText() {

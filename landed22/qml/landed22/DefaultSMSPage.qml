@@ -139,7 +139,6 @@ AUIPage {id: pageDefaultSMS
         color: "black"
         fontSize: pageDefaultSMS.fontSize
         opacity: 1
-        simpleMode: true
 
         onCancelled: {
             console.log("cancelled Signal received by DefaultSMSPage");

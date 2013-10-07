@@ -34,7 +34,7 @@ AUIPageStackWindow {
     //property int largeFonts: (platform == 4) ? 11 : 26
     //property int smallFonts: (platform == 4) ? 6 : 13
     //property int largeFonts: (simulator == true) ? 11 : 26
-    property int largeFonts: (simulator == true) ? 9 : 22
+    property int largeFonts: (simulator == true) ? 8 : 22
     property int smallFonts: (simulator == true) ? 6 : 13
     property color backgroundColor: (theme.inverted) ? "black" :"lightgrey"
 
@@ -55,7 +55,6 @@ AUIPageStackWindow {
         console.log("windowing system is : " + WindowingSystemId);
         console.log("First SysInf Test : " + OperatingSystem.Unix)
         console.log("Second SysInf Test : " + WindowingSystem.X11)
-
     }
 
     initialPage: mainPage

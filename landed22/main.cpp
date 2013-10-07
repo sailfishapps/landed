@@ -37,6 +37,7 @@
 //t) decreased font size on GPSApp to increase clarity and make more space
 //u) added title bar to MainPage. This will probably host the icon for the settings page in the future
 //v) Coordinate Averaging added (lati and longi are an average of multiple hits), can be turned on / off
+//w) SMS text is now editable, Close Keyboard button added
 
 //Landed21
 //a) Move ButtonStyle functionality to AbstractUI (as Sailfish does not have such components)
