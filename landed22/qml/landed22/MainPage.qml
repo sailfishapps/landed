@@ -63,7 +63,8 @@ AUIPageWithMenu {id: pageGPS
             compassApp.start();
         }
         else if (status == AUIPageStatus.Inactive) {
-            console.log ("turning GPS off ...")
+            //console.log ("turning GPS off ...")
+            thisGPSApp.deactivateGPS();
             thisGPSApp.offGPS();
             compassApp.stop();
         }
@@ -123,6 +124,7 @@ AUIPageWithMenu {id: pageGPS
         textColorInactive: pageGPS.textColorInactive
         labelColorActive: pageGPS.labelColorActive
         labelColorInactive: pageGPS.labelColorInactive
+        coordAveraging: true
         onPositionChanged: {
             console.log("PositionChanged Signal Received! outer");
             privateVars.gpsAcquired = true;
@@ -191,7 +193,7 @@ AUIPageWithMenu {id: pageGPS
         return LJS.round((distance / 1000), 2) + " km";
     }
 
-//TODO: the notAcquiredText should be better positioned (is too high)
+
 //TODO: should this not belong to the template buttons?
 // I suppose yes if the buttons become a separate control again.
 

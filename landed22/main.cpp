@@ -36,6 +36,7 @@
 //s) switch control added to CompassApp allowing easy switching on and off of the Compass (to save power)
 //t) decreased font size on GPSApp to increase clarity and make more space
 //u) added title bar to MainPage. This will probably host the icon for the settings page in the future
+//v) Coordinate Averaging added (lati and longi are an average of multiple hits), can be turned on / off
 
 //Landed21
 //a) Move ButtonStyle functionality to AbstractUI (as Sailfish does not have such components)

@@ -12,6 +12,7 @@ Item {id: rectGPS
 //Rectangle {id: rectGPS
 
     property bool gpsOn: false
+    property bool coordAveraging: false
     property bool coordFormatDMS: true //Degree Minute Second
     //state is used to switch textColor from textColorActive to textColorInactive
     property color textColor
@@ -29,6 +30,10 @@ Item {id: rectGPS
 
     signal positionChanged()
 
+    onCoordAveragingChanged: {
+        coordsDisplay.resetAverages();
+    }
+
     function toogleCoordFormat(){
         if (coordFormatDMS) {
             coordFormatDMS = false;
@@ -36,7 +41,7 @@ Item {id: rectGPS
         else {
            coordFormatDMS = true;
         }
-        rect.refreshCoords();
+        rectGPS.refreshCoords();
     }
 //TODO: to avoid nasty state loops, everything that turns the GPS on or off should use the switch
 //as unique entry point
@@ -44,6 +49,11 @@ Item {id: rectGPS
     function activateGPS() {
         console.log ("activateGPS called. gpsSwitch.checked is: " + gpsSwitch.checked)
         gpsSwitch.checked = true
+    }
+
+    function deactivateGPS() {
+        console.log ("deactivateGPS called. gpsSwitch.checked is: " + gpsSwitch.checked)
+        gpsSwitch.checked = false
     }
 //TODO: toggleGPS, onGPS and offGPS should be private functions,
 //not externally available: the external gateway is activateGPS
@@ -304,17 +314,67 @@ Item {id: rectGPS
                  console.log ("signal from positionSource.position.coordinate snatched out of the ether ...");
                  refreshCoords()
              }
-         }
+        }
+
+        Coordinate {
+            id: averagedCoords
+            latitude: 0
+            longitude: 0
+            property real summedLatitude: 0;
+            property real summedLongitude: 0;
+            property int hits: 0;
+            function resetAverages() {
+                latitude = 0;
+                longitude = 0;
+                summedLatitude = 0;
+                summedLongitude = 0;
+                hits = 0;
+            }
+            function averageCoords(coord) {
+                console.log("averageCoords called: " +  rectGPS.coordAveraging);
+                if (rectGPS.coordAveraging) {
+                    console.log("distance from average: "+ coord.distanceTo(averagedCoords) + " m")
+                    if (coord.distanceTo(averagedCoords) > 500) {
+                        //500 m
+                        //difference to average is too great, we are probably moving: reset our averages and start again.
+                        console.log("difference too great, resetting");
+                        resetAverages();
+                    }
+                    hits++;
+                    console.log("coords averaged over hits: " + hits);
+                    console.log("1) averagedCoords.summedLatitude: " + summedLatitude + ", averagedCoords.latitude: " + latitude);
+                    summedLatitude = summedLatitude + coord.latitude;
+                    console.log("2) averagedCoords.summedLatitude: " + summedLatitude);
+                    summedLongitude = summedLongitude + coord.longitude;
+                    latitude = summedLatitude / hits;
+                    longitude = summedLongitude / hits;
+                    console.log("orig lati: " + coord.latitude + ", averaged lati: " + latitude);
+                    console.log("orig longi: " + coord.longitude + ", averaged longi: " + longitude);
+                    return averagedCoords;
+                }
+                else  {
+                    return coord;
+                }
+            }
+        }
+
+        //TODO: refactoring: should not this stuff all be in an abstraction of PositionSource
+        //this would offer both original and averaged coords + relevant changedSignals
+
+        function resetAverages() {
+            averagedCoords.resetAverages();
+        }
 
         function refreshCoords() {
             console.log("refreshCoords called")
+            var newCoord = averagedCoords.averageCoords(positionSource.position.coordinate);
             if (coordFormatDMS) {
-                lati.text = rectGPS.convertDDToDMS(positionSource.position.coordinate.latitude, "Lati");
-                lngi.text = rectGPS.convertDDToDMS(positionSource.position.coordinate.longitude, "Longi");
+                lati.text = rectGPS.convertDDToDMS(newCoord.latitude, "Lati");
+                lngi.text = rectGPS.convertDDToDMS(newCoord.longitude, "Longi");
             }
             else {
-                lati.text = LJS.round(positionSource.position.coordinate.latitude, 4);
-                lngi.text = LJS.round(positionSource.position.coordinate.longitude, 4);
+                lati.text = LJS.round(newCoord.latitude, 4);
+                lngi.text = LJS.round(newCoord.longitude, 4);
             }
         }
     }
@@ -340,6 +400,13 @@ Item {id: rectGPS
                     gpsDialog.accept()
                 }
             }
+            AUIButton {text: (coordAveraging) ? qsTr("Coordinate Averaging off" ): qsTr("Coordinate Averaging on")
+                onClicked: {
+                    coordAveraging = !coordAveraging
+                    gpsDialog.accept()
+                }
+            }
+
             /*
             AUIButton {text: "Refresh Coords";
                 enabled: rectGPS.gpsOn;
