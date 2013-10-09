@@ -35,10 +35,11 @@ AUISheet {id: thisSheet
 
         }
 
-
         ContactsPage {id: contactsTab
-            //AUIButton{text: "contactsTab"; y: 400; anchors.horizontalCenter: parent.horizontalCenter;}
-            //tools: commonTools
+            onContactSelected: {
+                thisSheet.numberEntered(phoneNumber);
+                thisSheet.close();
+            }
         }
 
     }

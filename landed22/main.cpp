@@ -2,6 +2,8 @@
 //c) make SMS text editable
 //e) allow selection of contact from phone contacts (is currently partly implemented)
 //f) get SMS functionality working for Sailfish version with QtTelepathy
+//g) add search box to ContactsPage to allow searching phones contacts
+//h) add alphabet scrolling to right of ContactsPage to allow fast scrolling to corect initial letter of contact name
 
 
 //i) consider averaging GPS fixes over last 5 fixes.
@@ -38,6 +40,7 @@
 //u) added title bar to MainPage. This will probably host the icon for the settings page in the future
 //v) Coordinate Averaging added (lati and longi are an average of multiple hits), can be turned on / off
 //w) SMS text is now editable, Close Keyboard button added
+//x) Selection of contacts from phone's contact is now very very close to working!
 
 //Landed21
 //a) Move ButtonStyle functionality to AbstractUI (as Sailfish does not have such components)
