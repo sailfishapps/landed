@@ -1,7 +1,7 @@
 import QtQuick 1.1
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
-import com.nokia.meego 1.0
+//import com.nokia.meego 1.0
 import QtMobility.contacts 1.1
 
 AUIPage {
@@ -56,7 +56,7 @@ AUIPage {
                 text: model.contact.phoneNumber.number + ", " + model.contact.contactId
             }
 
-            SelectionDialog {id: contactDialog
+            AUISelectionDialog {id: contactDialog
                 visualParent: contactsPage
                 titleText: nameText.text
                 selectedIndex: 1
@@ -79,7 +79,7 @@ AUIPage {
                 }
                 onClicked: {
                     console.log(model.contact.name.firstName + " " + model.contact.name.lastName + " clicked")
-                    phoneNumbersModel.loadNumbers(model.contact.phoneNumbers)
+                    phoneNumbersModel.loadNumbers(model.contact.phoneNumbers, model.contact.name.firstName + " " + model.contact.name.lastName)
                     contactDialog.model = phoneNumbersModel;
                     contactDialog.open();
                 }
@@ -93,14 +93,15 @@ AUIPage {
 
     ListModel {
         id: phoneNumbersModel
-        function loadNumbers(phoneNumbers) {
+        function loadNumbers(phoneNumbers, name) {
             console.log ("numbers to load: " + phoneNumbers.length);
             phoneNumbersModel.clear();
             for(var i = 0; i < phoneNumbers.length; i++) {
                 console.log("appending number" + phoneNumbers[i] + " " + phoneNumbers[i].number + " " + phoneNumbers[i].subTypes[0] )
                 //phoneNumbersModel.append(phoneNumbers[i]);
-                //phoneNumbersModel.append({num: phoneNumbers[i].number, type: phoneNumbers[i].subTypes[0]});
-                phoneNumbersModel.append({name: phoneNumbers[i].number + " " + phoneNumbers[i].subTypes[0]});
+                phoneNumbersModel.append({num: phoneNumbers[i].number, type: phoneNumbers[i].subTypes[0], name: name});
+
+                //phoneNumbersModel.append({name: phoneNumbers[i].number + " " + phoneNumbers[i].subTypes[0]});
             }
         }
         function flushNumbers() {
@@ -117,14 +118,19 @@ AUIPage {
             height: 64
             font.pointSize: 30;
             font.weight: Font.Light
-            //text: model.num + " " + model.type
-            text: model.name
+            //
+            text: model.num + " " + model.type
+
+            //text: model.name
             color: "white"
             MouseArea {
                 anchors.fill: parent
                 onPressed: {
                     console.log ("delegate pressed")
-                    contactsPage.contactSelected(model.name, "fred");
+
+                    contactsPage.contactSelected(model.num, model.name);
+
+                    //contactsPage.contactSelected(model.name, "fred");
                     contactDialog.accept();
 
                     //workaround, otherwise the next time this item is visited, no rows are displayed

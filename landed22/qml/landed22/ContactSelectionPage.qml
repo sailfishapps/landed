@@ -59,6 +59,9 @@ AUIPage {id: pageContactSelection
             //phoneNrField.text = phoneNumber;
             backPage("Custom Number", phoneNumber);
         }
+        onContactSelected: {
+            backPage(name, phoneNumber);
+        }
     }
 
     RumbleEffect {id: rumbleEffect}

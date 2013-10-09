@@ -144,8 +144,11 @@ Rectangle{id: rectSMS
             onNumberEntered: {
                 phoneNrField.text = phoneNumber;
             }
+            onContactSelected: {
+                phoneNrField.text = phoneNumber;
+                //phoneNrField.contactName = name;
+            }
         }
-        //dialDialog2.open();
 
         Rectangle{id: phoneNrField
             property alias text: label.text;

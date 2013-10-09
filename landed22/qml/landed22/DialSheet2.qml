@@ -9,6 +9,7 @@ AUISheet {id: thisSheet
     height: 854-35
 
     signal numberEntered(string phoneNumber)
+    signal contactSelected(string phoneNumber, string name)
 
     Component.onCompleted: {
         //set the initial tab and button selected
@@ -37,7 +38,8 @@ AUISheet {id: thisSheet
 
         ContactsPage {id: contactsTab
             onContactSelected: {
-                thisSheet.numberEntered(phoneNumber);
+                //thisSheet.numberEntered(phoneNumber);
+                thisSheet.contactSelected(phoneNumber, name)
                 thisSheet.close();
             }
         }

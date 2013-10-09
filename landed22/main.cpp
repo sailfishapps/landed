@@ -6,9 +6,6 @@
 //h) add alphabet scrolling to right of ContactsPage to allow fast scrolling to corect initial letter of contact name
 
 
-//i) consider averaging GPS fixes over last 5 fixes.
-
-//m) find out why GPS does not turn off anymore.
 
 //Experiments
 //a) use coordianate component as page property
@@ -40,7 +37,8 @@
 //u) added title bar to MainPage. This will probably host the icon for the settings page in the future
 //v) Coordinate Averaging added (lati and longi are an average of multiple hits), can be turned on / off
 //w) SMS text is now editable, Close Keyboard button added
-//x) Selection of contacts from phone's contact is now very very close to working!
+//x) Selection of contacts from phone's contact is now works!!!!
+//y) in AbastractUI, AUISelectionDialog replaces SelectionDialog. (used by ContactsPage)
 
 //Landed21
 //a) Move ButtonStyle functionality to AbstractUI (as Sailfish does not have such components)
