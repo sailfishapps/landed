@@ -7,9 +7,10 @@ import QtMobility.location 1.2
 import "landed.js" as LJS
 import SatInfoSource 1.0
 
+//TODO: currently this combines both backend GPS functionality and GUI GPS display
+//for porting purposes it may be better to split into 2 halves
 
-Item {id: rectGPS
-//Rectangle {id: rectGPS
+Item {id: thisGPS
 
     property bool gpsOn: false
     property bool coordAveraging: false
@@ -41,7 +42,7 @@ Item {id: rectGPS
         else {
            coordFormatDMS = true;
         }
-        rectGPS.refreshCoords();
+        thisGPS.refreshCoords();
     }
 //TODO: to avoid nasty state loops, everything that turns the GPS on or off should use the switch
 //as unique entry point
@@ -59,7 +60,7 @@ Item {id: rectGPS
 //not externally available: the external gateway is activateGPS
 
     function toggleGPS() {
-        console.log ("rectGPS.toggleGPS")
+        console.log ("thisGPS.toggleGPS")
         if(state == "stateGpsOn") {
             offGPS();
         }
@@ -90,9 +91,9 @@ Item {id: rectGPS
     states: [
         State {
             name: "stateGpsOn";
-            PropertyChanges{ target: rectGPS; gpsOn: true } // change on variable
-            PropertyChanges{ target: rectGPS; textColor: rectGPS.textColorActive }
-            PropertyChanges{ target: rectGPS; labelColor: rectGPS.labelColorActive }
+            PropertyChanges{ target: thisGPS; gpsOn: true } // change on variable
+            PropertyChanges{ target: thisGPS; textColor: thisGPS.textColorActive }
+            PropertyChanges{ target: thisGPS; labelColor: thisGPS.labelColorActive }
             PropertyChanges{ target: onOff; text: "On;" }
 
             //PropertyChanges{ target: positionSource; active: true }
@@ -100,9 +101,9 @@ Item {id: rectGPS
         },
         State {
             name: "stateGpsOff";
-            PropertyChanges{ target: rectGPS; gpsOn: false } // change on variable
-            PropertyChanges{ target: rectGPS; textColor: rectGPS.textColorInactive }
-            PropertyChanges{ target: rectGPS; labelColor: rectGPS.labelColorInactive }
+            PropertyChanges{ target: thisGPS; gpsOn: false } // change on variable
+            PropertyChanges{ target: thisGPS; textColor: thisGPS.textColorInactive }
+            PropertyChanges{ target: thisGPS; labelColor: thisGPS.labelColorInactive }
             PropertyChanges{ target: onOff; text: "Off;" }
             //PropertyChanges{ target: positionSource; active: false }
             PropertyChanges{ target: timer; running: false }
@@ -115,109 +116,52 @@ Item {id: rectGPS
         onTriggered: {gpsSwitch.checked = false;}
     }
 
-    function convertDDToDMS(dd, axis){
 
-        /*
-        Distance between 2 GPS points calculated by the Haversine formulae is:
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //Backend Functionality
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
 
-        http://www.movable-type.co.uk/scripts/latlong.html
-
-        Using Patras Greece as a reference
-        38 09 34N
-        21 31 15E
-
-        1 degree North is 111.2 km
-        1 degree East is 87.43 km
-
-        1 minute North is 1.853 km
-        1 degree East is 1.457 km
-
-        1 second North is 0.03089 km --> 31 meters
-        1 second East is 0.02429 km --> 24 meters
-
-        1 tenth of a second North is 0.003089 km --> 3 meters
-        1 tenth of a second East is 0.002429 km --> 2.4 meters
-
-        This means that one decimal point is acurate enough!!!!
-
-        */
-        var ddOrig = dd;
-        console.log(ddOrig);
-        dd = Math.abs(dd);  //make positive
-        if (isNaN(dd)) {
-            console.log ("yep, Nan");
-            return "No valid position yet";
-        }
-        //console.log ("axis is: " + axis);
-        //console.log ("dd is: " + dd);
-        var deg = LJS.pad(dd | 0); // truncate dd to get degrees
-        //console.log ("deg is: " + deg);
-        var frac = dd - deg; // get fractional part
-        //console.log ("frac is: " + frac);
-        var min = LJS.pad((frac * 60) | 0); // multiply fraction by 60 and truncate
-        //console.log ("min is: " + min);
-        var sec = frac * 3600 - min * 60;
-        sec = LJS.pad(LJS.round(sec, 1)); // round to ONE decmal place
-        //console.log ("sec is: " + sec);
-        var suffix
-        if (axis == "Lati") {
-            (ddOrig >= 0) ? (suffix = 'N') : (suffix = 'S')
-        }
-        else if (axis == "Longi") {
-            (ddOrig >= 0) ? (suffix = 'E') : (suffix = 'W')
-        }
-
-        return deg + "d " + min + "m " + sec + "s " + suffix;
-    }
-
-    function getLati() {
-        console.log("getLati Called");
-        return "Lati: "   + convertDDToDMS(positionSource.position.coordinate.latitude, "Lati");
-    }
-
+    //called from MainPage.qml
     function getCurrentCoordinate() {
         return positionSource.position.coordinate;
     }
 
-    function getLongi() {
-        console.log("getLongi Called");
-        return "Long: "   + convertDDToDMS(positionSource.position.coordinate.longitude, "Longi");
+    //called from MainPage.qml
+    function getLati() {
+        console.log("getLati Called");
+        return "Lati: "   + positionSource.convertDDToDMS(positionSource.position.coordinate.latitude, "Lati");
     }
 
+    //called from MainPage.qml
+    function getLongi() {
+        console.log("getLongi Called");
+        return "Long: "   + positionSource.convertDDToDMS(positionSource.position.coordinate.longitude, "Longi");
+    }
+
+    //called from MainPage.qml
     function getAlti() {
         console.log("getAlti Called");
         return "Alt: "+ Math.round(positionSource.position.coordinate.altitude) + " m";
     }
 
-    RumbleEffect {id: rumbleEffect}
-
-    MouseArea {id: gpsMouseArea
-        anchors.fill: parent
-        onPressAndHold: {
-            console.log("gpsMouseArea.onPressAndHold")
-            rumbleEffect.start();
-            gpsDialog.open();
-        }
-    }
-
+    //gives access to info on number of Sats in view / use
     SatInfoSource {
         id: satInfoSource
         onSatellitesInUseUpdated: {
-            rectGPS.satsInUse = satsInUse;
-            setSatsText();
+            thisGPS.satsInUse = satsInUse;
+            coordsDisplay.setSatsText();
             console.log("SatellitesInUseUpdated! " + satsInUse);
         }
         onSatellitesInViewUpdated: {
-            rectGPS.satsInView = satsInView;
-            setSatsText();
+            thisGPS.satsInView = satsInView;
+            coordsDisplay.setSatsText();
             console.log("SatellitesInViewUpdated! " + satsInView);
         }
     }
 
-    function setSatsText() {
-        satsInViewUse.text = rectGPS.satsInView + " / " + rectGPS.satsInUse;
-    }
-
+    //gives access to GPS info
     PositionSource {id: positionSource
         updateInterval: 1000
         active: false
@@ -226,10 +170,85 @@ Item {id: rectGPS
             console.log("PositionChanged Signal Received! inner");
             //If the timer is running, subsequent calls to start() have no effect
             timer.start();
-            rectGPS.positionChanged();
+            thisGPS.positionChanged();
         }
+        function convertDDToDMS(dd, axis){
+
+            /*
+            Distance between 2 GPS points calculated by the Haversine formulae is:
+
+            http://www.movable-type.co.uk/scripts/latlong.html
+
+            Using Patras Greece as a reference
+            38 09 34N
+            21 31 15E
+
+            1 degree North is 111.2 km
+            1 degree East is 87.43 km
+
+            1 minute North is 1.853 km
+            1 degree East is 1.457 km
+
+            1 second North is 0.03089 km --> 31 meters
+            1 second East is 0.02429 km --> 24 meters
+
+            1 tenth of a second North is 0.003089 km --> 3 meters
+            1 tenth of a second East is 0.002429 km --> 2.4 meters
+
+            This means that one decimal point is acurate enough!!!!
+
+            */
+            var ddOrig = dd;
+            console.log(ddOrig);
+            dd = Math.abs(dd);  //make positive
+            if (isNaN(dd)) {
+                console.log ("yep, Nan");
+                return "No valid position yet";
+            }
+            //console.log ("axis is: " + axis);
+            //console.log ("dd is: " + dd);
+            var deg = LJS.pad(dd | 0); // truncate dd to get degrees
+            //console.log ("deg is: " + deg);
+            var frac = dd - deg; // get fractional part
+            //console.log ("frac is: " + frac);
+            var min = LJS.pad((frac * 60) | 0); // multiply fraction by 60 and truncate
+            //console.log ("min is: " + min);
+            var sec = frac * 3600 - min * 60;
+            sec = LJS.pad(LJS.round(sec, 1)); // round to ONE decmal place
+            //console.log ("sec is: " + sec);
+            var suffix
+            if (axis == "Lati") {
+                (ddOrig >= 0) ? (suffix = 'N') : (suffix = 'S')
+            }
+            else if (axis == "Longi") {
+                (ddOrig >= 0) ? (suffix = 'E') : (suffix = 'W')
+            }
+
+            return deg + "d " + min + "m " + sec + "s " + suffix;
+        }
+
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //GUI Elements
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    //GUI: when pressAndHeld, opens gpsDialog
+    //Note if the mousearea is placed after the coordsDisplay, then the gpsSwitch does not work
+    //placing the mousearea before, allows the switch to work! Wierd or what?
+    MouseArea {id: gpsMouseArea
+        anchors.fill: parent
+        onPressAndHold: {
+            console.log("gpsMouseArea.onPressAndHold")
+            rumbleEffect.start();
+            gpsDialog.open();
+        }
+        RumbleEffect {id: rumbleEffect}
+    }
+
+    //GUI: GPS "Display" showing coords, alti, on off switche etc
     Column {id: coordsDisplay
         //font.pointSize: 24
         anchors.top: parent.top
@@ -248,8 +267,8 @@ Item {id: rectGPS
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: coordsDisplay.rowSpacing;
-                Text {id: onOffLabel; text: "GPS:" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 150}
-                Text {id: onOff; text: "" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+                Text {id: onOffLabel; text: "GPS:" ; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.labelColor; width: 150}
+                Text {id: onOff; text: "" ; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.textColor}
             }
             AUISwitch {
                 id: gpsSwitch
@@ -257,45 +276,45 @@ Item {id: rectGPS
                 checked: false
                 anchors.verticalCenter: parent.verticalCenter
                 onCheckedChanged: {
-                    rectGPS.toggleGPS();
+                    thisGPS.toggleGPS();
                     console.log("height of gpsSwitch is: " + gpsSwitch.height + " Text height is: " + onOffLabel.height)
                 }
             }
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: latiLabel; text: "Lati:" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 150}
-            Text {id: lati; text: "searching ..."; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+            Text {id: latiLabel; text: "Lati:" ; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.labelColor; width: 150}
+            Text {id: lati; text: "searching ..."; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: lngiLabel; text: "Long:" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 150}
-            Text {id: lngi; text: "searching ..."; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+            Text {id: lngiLabel; text: "Long:" ; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.labelColor; width: 150}
+            Text {id: lngi; text: "searching ..."; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: altiLabel; text: "Alti:"; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 150}
-            Text {id: alti; text: isNaN(positionSource.position.coordinate.altitude) ? "n/a" : positionSource.position.coordinate.altitude + " m" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+            Text {id: altiLabel; text: "Alti:"; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.labelColor; width: 150}
+            Text {id: alti; text: isNaN(positionSource.position.coordinate.altitude) ? "n/a" : positionSource.position.coordinate.altitude + " m" ; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: speedLabel; text: "Speed:"; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 150}
-            Text {id: speed; text: (positionSource.position.speedValid) ? Math.round(positionSource.position.speed * 3.6)  +" km/h" : "n/a" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+            Text {id: speedLabel; text: "Speed:"; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.labelColor; width: 150}
+            Text {id: speed; text: (positionSource.position.speedValid) ? Math.round(positionSource.position.speed * 3.6)  +" km/h" : "n/a" ; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: horizAccLabel; text: "Horizontal Accuracy:"; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 320}
-            Text {id: horizAcc; text: (positionSource.position.horizontalAccuracyValid) ? Math.round(positionSource.position.horizontalAccuracy*10)/10 + " m" : "n/a" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+            Text {id: horizAccLabel; text: "Horizontal Accuracy:"; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.labelColor; width: 320}
+            Text {id: horizAcc; text: (positionSource.position.horizontalAccuracyValid) ? Math.round(positionSource.position.horizontalAccuracy*10)/10 + " m" : "n/a" ; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: vertAccLabel; text: "Vertical Accuracy:" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 320}
-            Text {id: vertAcc; text: (positionSource.position.verticalAccuracyValid) ? Math.round(positionSource.position.verticalAccuracy*10)/10 + " m" : "n/a" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+            Text {id: vertAccLabel; text: "Vertical Accuracy:" ; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.labelColor; width: 320}
+            Text {id: vertAcc; text: (positionSource.position.verticalAccuracyValid) ? Math.round(positionSource.position.verticalAccuracy*10)/10 + " m" : "n/a" ; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: satsInViewUseLabel; text: "Sats in View / Use:" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.labelColor; width: 320}
-            Text {id: satsInViewUse; text: "0 / 0" ; font.family: "Arial"; font.pointSize: rectGPS.fontSize; color: rectGPS.textColor}
+            Text {id: satsInViewUseLabel; text: "Sats in View / Use:" ; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.labelColor; width: 320}
+            Text {id: satsInViewUse; text: "0 / 0" ; font.family: "Arial"; font.pointSize: thisGPS.fontSize; color: thisGPS.textColor}
         }
 
         //http://harmattan-dev.nokia.com/docs/library/html/qtmobility/qml-position.html
@@ -327,8 +346,8 @@ Item {id: rectGPS
                 hits = 0;
             }
             function averageCoords(coord) {
-                console.log("averageCoords called: " +  rectGPS.coordAveraging);
-                if (rectGPS.coordAveraging) {
+                console.log("averageCoords called: " +  thisGPS.coordAveraging);
+                if (thisGPS.coordAveraging) {
                     console.log("distance from average: "+ coord.distanceTo(averagedCoords) + " m")
                     if (coord.distanceTo(averagedCoords) > 500) {
                         //500 m
@@ -365,34 +384,41 @@ Item {id: rectGPS
             console.log("refreshCoords called")
             var newCoord = averagedCoords.averageCoords(positionSource.position.coordinate);
             if (coordFormatDMS) {
-                lati.text = rectGPS.convertDDToDMS(newCoord.latitude, "Lati");
-                lngi.text = rectGPS.convertDDToDMS(newCoord.longitude, "Longi");
+                lati.text = positionSource.convertDDToDMS(newCoord.latitude, "Lati");
+                lngi.text = positionSource.convertDDToDMS(newCoord.longitude, "Longi");
             }
             else {
                 lati.text = LJS.round(newCoord.latitude, 4);
                 lngi.text = LJS.round(newCoord.longitude, 4);
             }
         }
+
+        function setSatsText() {
+            satsInViewUse.text = thisGPS.satsInView + " / " + thisGPS.satsInUse;
+        }
     }
 
+
+
+    //GUI: Dialog opened by pressAndHolding GPS display, gives access to GPS related settings
     AUIDialog {id: gpsDialog
-        visualParent: rectGPS.parent
+        visualParent: thisGPS.parent
 
         buttons: AUIButtonColumn
         {
             //style: ButtonStyle { }
             anchors.horizontalCenter: parent.horizontalCenter
 /*
-            AUIButton {text: (rectGPS.gpsOn) ? qsTr("Turn GPS Off" ): qsTr("Turn GPS On")
+            AUIButton {text: (thisGPS.gpsOn) ? qsTr("Turn GPS Off" ): qsTr("Turn GPS On")
                 onClicked: {
-                    rectGPS.toggleGPS()
+                    thisGPS.toggleGPS()
                     gpsDialog.accept()
                 }
             }
 */
             AUIButton {text: (coordFormatDMS) ? qsTr("Coordinates: Decimal" ): qsTr("Coordinates: D M S")
                 onClicked: {
-                    rectGPS.toogleCoordFormat()
+                    thisGPS.toogleCoordFormat()
                     gpsDialog.accept()
                 }
             }

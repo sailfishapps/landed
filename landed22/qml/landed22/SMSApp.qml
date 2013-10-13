@@ -45,10 +45,6 @@ Rectangle{id: rectSMS
         }
     }
 
-    AUIDialog {id: smsDialog
-        visualParent: rectSMS.parent
-    }
-
     //This is variable height
     ChrisTextEdit { id: smsBody
         //height: 320
@@ -137,17 +133,6 @@ Rectangle{id: rectSMS
 
         function setContactName(name) {
             phoneNrField.contactName = name;
-        }
-
-        DialSheet2 {id: dialDialog2
-            visualParent: rectSMS.parent;
-            onNumberEntered: {
-                phoneNrField.text = phoneNumber;
-            }
-            onContactSelected: {
-                phoneNrField.text = phoneNumber;
-                //phoneNrField.contactName = name;
-            }
         }
 
         Rectangle{id: phoneNrField

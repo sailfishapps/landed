@@ -5,6 +5,7 @@ import QtMultimediaKit 1.1
 Rectangle { id: thisKey
 
     property alias text: label.text;
+    property int keyPointSize
 
     signal keyPressed (string key)
     color: "#fafafa"
@@ -21,7 +22,7 @@ Rectangle { id: thisKey
         id: label
         anchors.centerIn: parent;
         color: "black"
-        font.pointSize: 40
+        font.pointSize: thisKey.keyPointSize
         font.bold: true
     }
     MouseArea { id: keyMouseArea

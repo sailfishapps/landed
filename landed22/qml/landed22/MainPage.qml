@@ -4,7 +4,6 @@ import QtQuick 1.1
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
 import QtMobility.location 1.2
-//import QtMobility.sensors 1.2
 import "settingsDB.js" as DB
 import "landed.js" as LJS
 
@@ -25,23 +24,15 @@ AUIPageWithMenu {id: pageGPS
     property color textColorInactive
     property color labelColorActive
     property color labelColorInactive
-
     property int fontSize
-
     property bool groupSet: false;
 
-    function fakeGPSAquired() {
-        //temporary function, used by testing to simulate gps aquired
-        //for use when testing in building with no GPS signal
-        privateVars.gpsAcquired = true;
-    }
+    signal nextPage(string pageType, string smsType, string template_id, string msg_status)
 
     QtObject {
         id: privateVars
         property bool gpsAcquired: false
     }
-
-    signal nextPage(string pageType, string smsType, string template_id, string msg_status)
 
     onStatusChanged: {
         console.log ("onStatusChanged: " + status);
@@ -50,11 +41,11 @@ AUIPageWithMenu {id: pageGPS
             if (privateVars.gpsAcquired) {
                 if (groupSet) {
                     console.log("user has changed group, so we will use the selected group")
-                    setActiveGroup(getCurrentCoordinate());
+                    templateButtons.setActiveGroup(thisGPSApp.getCurrentCoordinate());
                 }
                 else {
                     console.log("use the nearest group")
-                    setNearestGroup(getCurrentCoordinate());
+                    templateButtons.setNearestGroup(thisGPSApp.getCurrentCoordinate());
                 }
             }
             console.log ("MainPage: turning GPS on ...");
@@ -70,6 +61,40 @@ AUIPageWithMenu {id: pageGPS
         }
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //GPS related functions
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    function fakeGPSAquired() {
+        //temporary function, used by testing to simulate gps aquired
+        //for use when testing in building with no GPS signal
+        privateVars.gpsAcquired = true;
+    }
+
+    function getLati() {
+        //called from main.qml to pass lati to SMSPage
+        return thisGPSApp.getLati()
+    }
+
+    function getLongi() {
+        //called from main.qml to pass lati to SMSPage
+        return thisGPSApp.getLongi()
+    }
+
+    function getAlti() {
+        //called from main.qml to pass lati to SMSPage
+        return thisGPSApp.getAlti();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //GUI Elements
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    //GUI: Header Bar at the top of the page
     Rectangle {
         id: landedHeader
         anchors {left: parent.left; leftMargin: 5; right: parent.right; rightMargin: 5; top: parent.top; topMargin: 5}
@@ -87,31 +112,7 @@ AUIPageWithMenu {id: pageGPS
         }
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    //GPS related components and functions
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////
-
-    function getCurrentCoordinate() {
-        return thisGPSApp.getCurrentCoordinate();
-    }
-
-    function getLati() {
-        //return "lati: 123"
-        return thisGPSApp.getLati()
-    }
-
-    function getLongi() {
-        //return "longi: 456"
-        return thisGPSApp.getLongi()
-    }
-
-    function getAlti() {
-        return thisGPSApp.getAlti();
-    }
-
-
+    //GUI: Displays GPS Data
     GPSApp{id: thisGPSApp
         //anchors.top: parent.top
         anchors.top: landedHeader.bottom
@@ -131,6 +132,7 @@ AUIPageWithMenu {id: pageGPS
         }
     }
 
+    //GUI: Displays Compass Data
     CompassApp {
         id: compassApp
         anchors.top: thisGPSApp.bottom
@@ -146,57 +148,7 @@ AUIPageWithMenu {id: pageGPS
         labelColorInactive: pageGPS.labelColorInactive
     }
 
-    RumbleEffect {id: rumbleEffect}
-
-    Coordinate {
-        id:tempLocation
-    }
-
-    Coordinate {
-        id: groupLocation
-    }
-
-
-    function setActiveGroup(currentLocation) {
-        var rs = DB.getActiveGroup();
-        console.log ("No records found: " + rs.rows.length)
-        var distance = formatDistance(getDistance(rs.rows.item(0), currentLocation));
-        templateButtons.set(rs.rows.item(0), distance);
-    }
-
-    function setNearestGroup(currentLocation) {
-        console.log ("current location latitude: " + currentLocation.latitude + " longitude: " + currentLocation.longitude)
-        var rs = DB.getTemplateGroups();
-        var distance;
-        var nearestGroup = -1;
-        var nearestGroupDistance = -1
-        for(var i = 0; i < rs.rows.length; i++) {
-            distance = getDistance(rs.rows.item(i), currentLocation);
-            console.log ("distance: " + distance + " to " + rs.rows.item(i).name);
-            if ( (distance < nearestGroupDistance) || (i == 0) ) {
-                nearestGroupDistance = distance;
-                nearestGroup = rs.rows.item(i);
-            }
-        }
-        console.log ("nearest group is: " + nearestGroup.name + " " + nearestGroup.latitude);
-        distance = formatDistance(nearestGroupDistance);
-        templateButtons.set(nearestGroup, distance);
-    }
-
-    function getDistance(item, currentLocation) {
-        tempLocation.latitude = item.latitude;
-        tempLocation.longitude = item.longitude;
-        return currentLocation.distanceTo(tempLocation);
-    }
-
-    function formatDistance(distance) {
-        return LJS.round((distance / 1000), 2) + " km";
-    }
-
-
-//TODO: should this not belong to the template buttons?
-// I suppose yes if the buttons become a separate control again.
-
+    //GUI: Text displayed in place of templateButtons when GPS not yet acquired
     Text {
         id: notAcquiredText;
         enabled: !templateButtons.enabled
@@ -213,7 +165,7 @@ AUIPageWithMenu {id: pageGPS
 // 1) templateButtons enabled bound to privateVars.gpsAcquired
 // 2) page onStatusChanged event (for when we return to the page from another)
 
-    //A set of Buttons, one per template
+    //GUI: buttons for creating SMS, displayed when GPS is acquired
     TemplateButtons {
         id: templateButtons
         enabled: privateVars.gpsAcquired
@@ -232,7 +184,7 @@ AUIPageWithMenu {id: pageGPS
         onEnabledChanged: {
             console.log ("TemplateButtons: onEnabledChanged: " + enabled);
             if (enabled) {
-                setNearestGroup(getCurrentCoordinate());
+                setNearestGroup(thisGPSApp.getCurrentCoordinate());
                 rumbleEffect.start();
             }
         }
@@ -249,6 +201,7 @@ AUIPageWithMenu {id: pageGPS
         function setHeaderText(group) {
             return group.name;
         }
+
         function setHeaderSubText(group, distance) {
             return "Lat: " + group.latitude + "; Lng: " + group.longitude + "; Dst: " + distance;
         }
@@ -258,9 +211,50 @@ AUIPageWithMenu {id: pageGPS
             templateButtons.headerSubText = setHeaderSubText(group, distance);
             templateButtons.populate(group.id);
         }
+        Coordinate {
+            //used by function getDistance
+            id: tempLocation
+        }
+
+        function getDistance(item, currentLocation) {
+            tempLocation.latitude = item.latitude;
+            tempLocation.longitude = item.longitude;
+            return currentLocation.distanceTo(tempLocation);
+        }
+
+        function setActiveGroup(currentLocation) {
+            var rs = DB.getActiveGroup();
+            console.log ("No records found: " + rs.rows.length)
+            var distance = formatDistance(getDistance(rs.rows.item(0), currentLocation));
+            templateButtons.set(rs.rows.item(0), distance);
+        }
+
+        function setNearestGroup(currentLocation) {
+            console.log ("current location latitude: " + currentLocation.latitude + " longitude: " + currentLocation.longitude)
+            var rs = DB.getTemplateGroups();
+            var distance;
+            var nearestGroup = -1;
+            var nearestGroupDistance = -1
+            for(var i = 0; i < rs.rows.length; i++) {
+                distance = getDistance(rs.rows.item(i), currentLocation);
+                console.log ("distance: " + distance + " to " + rs.rows.item(i).name);
+                if ( (distance < nearestGroupDistance) || (i == 0) ) {
+                    nearestGroupDistance = distance;
+                    nearestGroup = rs.rows.item(i);
+                }
+            }
+            console.log ("nearest group is: " + nearestGroup.name + " " + nearestGroup.latitude);
+            distance = formatDistance(nearestGroupDistance);
+            templateButtons.set(nearestGroup, distance);
+        }
+
+        function formatDistance(distance) {
+            return LJS.round((distance / 1000), 2) + " km";
+        }
+        RumbleEffect {id: rumbleEffect}
     }
 
-
+    //GUI: Menu for various settings and test functions
     menuitems: [
         AUIMenuAction {
             text: qsTr("Fake GPS Aquired");

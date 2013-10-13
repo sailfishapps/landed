@@ -3,6 +3,8 @@ import QtQuick 1.1
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
 
+//gives access to contacts stored by Landed / LandedSettings
+
 AUIPage {id: pageContactSelection
 
     property string template_id
@@ -25,73 +27,92 @@ AUIPage {id: pageContactSelection
 
     Component.onCompleted: {
         console.log("pageContactSelection.onCompleted")
+        //set the initial tab and button selected
+        tabGroup.currentTab = favouriteTab;
+        tabButtonRow.checkedButton = button1;
     }
 
     onStatusChanged: {
         if (status == AUIPageStatus.Active)  {
             console.log ("Contact Selection Page now active with template_id: " + template_id)
-            contactRadioButtons.populate(template_id);
+            favouriteTab.populate(template_id)
         }
     }
 
-    //A set of radio Buttons, one per contact for this template
-    ContactRadioButtons {
-        id: contactRadioButtons
-        fontSize: parent.fontSize
-        itemHeight: parent.itemHeight
-        headerHeight: parent.headerHeight
-        headerText: "Contacts";
-        backgroundColor: parent.backgroundColor
-        labelColorActive: parent.labelColorActive
-        arrowVisible: false
+    //container for the 3 tab-pages
+    AUITabGroup {id: tabGroup
+
+        FavouriteContactsPage { id: favouriteTab
+
+            fontSize: pageContactSelection.fontSize
+            itemHeight: pageContactSelection.itemHeight
+            headerHeight: pageContactSelection.headerHeight
+            backgroundColor: pageContactSelection.backgroundColor
+            labelColorActive: pageContactSelection.labelColorActive
+
+            onContactSelected: {
+                pageContactSelection.backPage(name, phoneNumber)
+            }
+            onCancelled: {
+                pageContactSelection.cancelled();
+            }
+        }
+
+        DialPage {id: keyPadTab
+            onNumberEntered: {
+                pageContactSelection.backPage("Custom number", phoneNumber)
+            }
+            onCancelled: {
+                pageContactSelection.cancelled();
+            }
+        }
+
+        PhoneContactsPage {id: contactsTab
+            onContactSelected: {
+                pageContactSelection.backPage(name, phoneNumber)
+            }
+        }
+    }
+    Rectangle {
+        //color: "grey"
+        color: "black"
+        visible: true
+        //height: 109;
+        height: 74;
         width: parent.width
-        onDelegateClicked: {
-            rumbleEffect.start();
-            console.log("Contact clicked: " + contact_id + ", contactName: " + contactName + ", contactPhone: " + contactPhone);
-            backPage(contactName, contactPhone);
-        }
+        anchors.bottom: parent.bottom;
 
-    }
+        AUIButtonRow {id: tabButtonRow
+            visible: true;
+            enabled: true;
+            anchors.bottom: parent.bottom;
+            height: parent.height;
+            width: parent.width;
 
-    DialSheet2 {id: dialDialog2
-        //visualParent: pageContactSelection;
-        onNumberEntered: {
-            //phoneNrField.text = phoneNumber;
-            backPage("Custom Number", phoneNumber);
-        }
-        onContactSelected: {
-            backPage(name, phoneNumber);
-        }
-    }
-
-    RumbleEffect {id: rumbleEffect}
-
-    //A button to open the dialer / Contacts
-    //While this may not be the "native" way of doing this (toolbar or similar)
-    //this app is designed to be easy and obvious.
-
-    AUIButton {id: dialerButton
-        anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; bottom: cancelButton.top; bottomMargin: 25}
-        height: 100;
-        text: qsTr("Open Dialer");
-        primaryColor: "#008000" //"green"
-        onClicked: {
-            rumbleEffect.start();
-            dialDialog2.open();
-        }
-    }
-
-    //Cancel rather than back, as selecting a contact takes the user back with the selected contact
-    AUIButton {id: cancelButton
-        anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; bottom: parent.bottom; bottomMargin: 25}
-        height: 100;
-        text: qsTr("Cancel");
-        //platformStyle: greenButton;
-        primaryColor: "#808080" //"grey"
-        onClicked: {
-            rumbleEffect.start();
-            cancelled();
+            AUITabButton { id: button1;
+                visible: true;
+                enabled: true;
+                tab: favouriteTab;
+                iconSource: (theme.inverted) ? "icon-m-toolbar-callhistory-white.png" : "icon-m-toolbar-callhistory.png";
+                onClicked: {console.log("button1.onClicked");
+                }
+            }
+            AUITabButton { id: button2;
+                visible: true;
+                enabled: true;
+                tab: keyPadTab;
+                iconSource: (theme.inverted) ? "icon-m-toolbar-dialer-white.png": "icon-m-toolbar-dialer.png";
+                onClicked: {
+                    console.log("button2.onClicked");
+                }
+            }
+            AUITabButton { id: button3
+                visible: true;
+                enabled: true;
+                tab: contactsTab;
+                iconSource: (theme.inverted) ? "icon-m-toolbar-contact-white.png" : "icon-m-toolbar-contact.png";
+                onClicked: console.log("button3.onClicked");
+            }
         }
     }
-
 }

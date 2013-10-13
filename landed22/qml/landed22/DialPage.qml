@@ -5,12 +5,18 @@ import org.flyingsheep.abstractui 1.0
 
 //AUIPage {
 Item {
+
+    id: thisDialer
+
     signal numberEntered(string phoneNumber)
     signal cancelled()
 
     width: 480
     height: 854
     //orientationLock: AUIPageOrientation.LockPortrait
+
+    property int keyPointSize: (simulator) ? 16 : 40
+    property int displayInitialFontPointSize: (simulator) ? 42.8 : 100
 
     Rectangle {
         anchors.fill: parent
@@ -23,7 +29,7 @@ Item {
             property int marginWidth: 10;
             property int displayWidth: width - backSpaceButton.width;
             property int totalPaintedWidth: label1.paintedWidth + label2.paintedWidth;
-            property int initialFontPointSize: 100;
+            property int initialFontPointSize: thisDialer.displayInitialFontPointSize;
             property int fontPointSize: initialFontPointSize;
             property string phoneNumber: label2.text + label1.text;
 
@@ -93,11 +99,12 @@ Item {
                 var len = label1.text.length + label2.text.length;
                 var displayWidth = numDisplay.displayWidth - numDisplay.marginWidth;
                 var maxFontSize = numDisplay.initialFontPointSize;
-                var magicNumber = 1.35;
+                //1.35 for normal N9, 0.54 for simulator
+                var magicNumber = (simulator) ? 0.54 : 1.35;
                 var charWidth = Math.floor(displayWidth/len);
                 var fontSize = Math.floor(charWidth * magicNumber);
+                console.log("charWidth: " + charWidth + ", " + "fontSize: " + fontSize)
                 fontSize = Math.min(fontSize, maxFontSize);
-                //numDisplay.fontPointSize = fontSize;
                 return fontSize;
             }
 
@@ -111,6 +118,7 @@ Item {
         PhoneKeyPad{id: phoneKeyPad
             anchors {left: parent.left; right: parent.right; top: numDisplay.bottom; topMargin: 40;}
             height: 440;
+            keyPointSize: thisDialer.keyPointSize
             onKeyPressed: {
                 console.log("PhoneKeyPad.onKeyPressed: " + key);
                 numDisplay.addChar(key);

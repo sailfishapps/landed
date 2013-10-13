@@ -6,6 +6,7 @@ Item { id: thisKeyPad
 
     width: 480
     property int rowHeight: 110
+    property int keyPointSize
 
     Item { id: keyRow1
         y: 0
@@ -16,6 +17,7 @@ Item { id: thisKeyPad
             width: parent.width / 3;
             x: 0
             text: "1"
+            keyPointSize: thisKeyPad.keyPointSize
             onKeyPressed: thisKeyPad.keyPressed(key);
         }
         PhoneKey{id: key2
@@ -23,6 +25,7 @@ Item { id: thisKeyPad
             width: parent.width / 3;
             x: width;
             text: "2"
+            keyPointSize: thisKeyPad.keyPointSize
             onKeyPressed: thisKeyPad.keyPressed(key);
         }
         PhoneKey{id: key3
@@ -30,6 +33,7 @@ Item { id: thisKeyPad
             width: parent.width / 3;
             x: width*2;
             text: "3"
+            keyPointSize: thisKeyPad.keyPointSize
             onKeyPressed: thisKeyPad.keyPressed(key);
         }
     }
@@ -43,6 +47,7 @@ Item { id: thisKeyPad
             width: parent.width / 3;
             x: 0
             text: "4"
+            keyPointSize: thisKeyPad.keyPointSize
             onKeyPressed: thisKeyPad.keyPressed(key);
         }
         PhoneKey{id: key5
@@ -50,6 +55,7 @@ Item { id: thisKeyPad
             width: parent.width / 3;
             x: width;
             text: "5"
+            keyPointSize: thisKeyPad.keyPointSize
             onKeyPressed: thisKeyPad.keyPressed(key);
         }
         PhoneKey{id: key6
@@ -57,6 +63,7 @@ Item { id: thisKeyPad
             width: parent.width / 3;
             x: width*2;
             text: "6"
+            keyPointSize: thisKeyPad.keyPointSize
             onKeyPressed: thisKeyPad.keyPressed(key);
         }
     }
@@ -70,6 +77,7 @@ Item { id: thisKeyPad
             width: parent.width / 3;
             x: 0
             text: "7"
+            keyPointSize: thisKeyPad.keyPointSize
             onKeyPressed: thisKeyPad.keyPressed(key);
         }
         PhoneKey{id: key8
@@ -77,6 +85,7 @@ Item { id: thisKeyPad
             width: parent.width / 3;
             x: width;
             text: "8"
+            keyPointSize: thisKeyPad.keyPointSize
             onKeyPressed: thisKeyPad.keyPressed(key);
         }
         PhoneKey{id: key9
@@ -84,6 +93,7 @@ Item { id: thisKeyPad
             width: parent.width / 3;
             x: width*2;
             text: "9"
+            keyPointSize: thisKeyPad.keyPointSize
             onKeyPressed: thisKeyPad.keyPressed(key);
         }
     }
@@ -97,6 +107,7 @@ Item { id: thisKeyPad
             width: parent.width / 3;
             x: 0
             text: "+"
+            keyPointSize: thisKeyPad.keyPointSize
             onKeyPressed: thisKeyPad.keyPressed(key);
         }
         PhoneKey{id: key0
@@ -104,6 +115,7 @@ Item { id: thisKeyPad
             width: parent.width / 3;
             x: width;
             text: "0"
+            keyPointSize: thisKeyPad.keyPointSize
             onKeyPressed: thisKeyPad.keyPressed(key);
         }
         PhoneKey{id: keyHash
@@ -111,6 +123,7 @@ Item { id: thisKeyPad
             width: parent.width / 3;
             x: width*2;
             text: "#"
+            keyPointSize: thisKeyPad.keyPointSize
             onKeyPressed: thisKeyPad.keyPressed(key);
         }
     }

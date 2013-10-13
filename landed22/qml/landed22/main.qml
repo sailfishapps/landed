@@ -68,9 +68,7 @@ AUIPageStackWindow {
         labelColorActive: appWindow.labelColorActive
         labelColorInactive: appWindow.labelColorInactive
         onNextPage: {
-            //pageStack.push(smsSelectionPage, {currentLatitude: mainPage.getCurrentCoordinate().latitude, currentLongitude: mainPage.getCurrentCoordinate().longitude });
-
-            if (pageType =="SMS") {
+             if (pageType =="SMS") {
                 console.log("smsType is: " + smsType)
                 if (smsType =="Default") pageStack.push(defaultSMSPage, {lati: mainPage.getLati(), longi: mainPage.getLongi(), alti: mainPage.getAlti(), template_id: template_id, msg_status: msg_status, lastPage: "smsSelectionPage"})
             }

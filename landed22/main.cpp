@@ -1,15 +1,44 @@
 //Future Changes
-//c) make SMS text editable
-//e) allow selection of contact from phone contacts (is currently partly implemented)
+
+//z) consider how to better separate GUI elements from "backend" logic to ease porting to other target systems
+//a) move all icons to images subdirectory.
+//b) consider saving contacts chosen from phone to Landed contacts
+//c) Sailfish does not have a Sheet, so review this
+//   How about merging the ContactSelectionPage and the tabbed DialSheet
+//   The ContactSelectionPage would have three tabs
+//   the first tab (favourites) would host the current ContactSelectionPage content
+//   the second tab (dialer) would host the phone dialer for custom numbers
+//   the third tab (contacts) would host the phone contacts
+//   The above means no Sheet Control is needed. (but we still need tabs)
+
+//d) If Phone contact has only one number, then take that without showing the selection dialog
 //f) get SMS functionality working for Sailfish version with QtTelepathy
 //g) add search box to ContactsPage to allow searching phones contacts
 //h) add alphabet scrolling to right of ContactsPage to allow fast scrolling to corect initial letter of contact name
+//i) create settingsPage with following
+//i.1) launch LandedSettings
+//i.2) GPS on / off on start
+//1.3) GPS Coords decimal / D M S
+//i.4) enable access to phone contacts
+//i.5) time for GPS auto off
+//i.6) limit time for GPS averaging / number of hits
+//1.7) error range for GPS averaging
+
 
 
 
 //Experiments
-//a) use coordianate component as page property
-//b) on GPSApp, setting of color for text by binding from parent.property (did not seem to work)
+// a) create demo project based on contacts part of this app to see how contact handling can be migrated to Sailfish
+//will need
+//ContactSelectionPage (simplified)
+//ContactRadioButtons
+//ContactButtonsDelegate
+//SimpleHeader
+//DialPage
+//DialSheet
+//PhoneContactPage
+//PhoneKey
+//PhoneKeyPad
 
 //Change History
 //Landed22
@@ -39,6 +68,8 @@
 //w) SMS text is now editable, Close Keyboard button added
 //x) Selection of contacts from phone's contact is now works!!!!
 //y) in AbastractUI, AUISelectionDialog replaces SelectionDialog. (used by ContactsPage)
+//z) renamed ContactsPage to PhoneContactsPage to distinguish from contacts stored in Landed.
+//aa) refactoring of MainPage.qml and GPSApp.qml
 
 //Landed21
 //a) Move ButtonStyle functionality to AbstractUI (as Sailfish does not have such components)
