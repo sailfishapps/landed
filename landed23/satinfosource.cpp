@@ -5,7 +5,7 @@
 
 //The constructor
 SatInfoSource::SatInfoSource(QObject *parent) :
-    QObject(parent), _satsInView(-1), _satsInUse(-1)
+    QObject(parent), _satsInView(0), _satsInUse(0)
 {
 
     myGeoSatelliteInfoSource = QGeoSatelliteInfoSource::createDefaultSource(0);

@@ -1,10 +1,10 @@
 import QtQuick 1.1
-import QtMobility.messaging 1.1
-//import QtMobility.feedback 1.1
+//import QtMobility.messaging 1.1
 import SMSHelper 1.0
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
+import "gui"
 
 
 Rectangle{id: rectSMS
@@ -170,12 +170,7 @@ Rectangle{id: rectSMS
         }
 
         RumbleEffect {id: rumbleEffect}
-/*
-        AUIButtonStyle {id: greenButton
-            background: "image://theme/color2-meegotouch-button-accent-background"+(position?"-"+position:"");
-            //textColor: (smsSent) ? "darkGrey" : "black"
-        }
-*/
+
         //Buttons have fixed height, and are anchored to the bottom of the page
         AUIButton {id: sendButton
             height: 60

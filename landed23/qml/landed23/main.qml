@@ -3,6 +3,7 @@ import QtQuick 1.1
 //import QtMobility.location 1.2
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
+//import org.flyingsheep.abstractui.qtquick 1.0
 //import com.nokia.meego 1.0
 import OperatingSystem 1.0
 import WindowingSystem 1.0

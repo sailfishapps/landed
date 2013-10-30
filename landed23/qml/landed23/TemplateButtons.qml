@@ -3,8 +3,9 @@ import QtQuick 1.1
 //import com.nokia.meego 1.0
 import "settingsDB.js" as DB
 
+//This belongs to UICommon
+
 Item {
-//Rectangle {
     id: thisModel
     signal populated(string template_id);
     signal headerClicked();
@@ -67,6 +68,25 @@ Item {
         }
     }
 
+    ListView {
+        id: templateView
+        anchors.left: parent.left
+        anchors.right:parent.right
+        anchors.leftMargin: marginWidth
+        anchors.rightMargin: marginWidth
+        model: templateModel
+        delegate: templateDelegate
+        header: templateHeader
+        //stop dragging of the listview: we will need to change this if more buttons used
+        interactive: false
+        // Set the highlight delegate. Note we must also set highlightFollowsCurrentItem
+        // to false so the highlight delegate can control how the highlight is moved.
+        function resize(items){
+            console.log("resizing");
+            templateView.height = (items * itemHeight) + headerHeight;
+        }
+    }
+
     Component{
         id: templateHeader
         TemplateButtonsHeader {
@@ -102,24 +122,4 @@ Item {
             }
         }
     }
-
-    ListView {
-        id: templateView
-        anchors.left: parent.left
-        anchors.right:parent.right
-        anchors.leftMargin: marginWidth
-        anchors.rightMargin: marginWidth
-        model: templateModel
-        delegate: templateDelegate
-        header: templateHeader
-        //stop dragging of the listview: we will need to change this if more buttons used
-        interactive: false
-        // Set the highlight delegate. Note we must also set highlightFollowsCurrentItem
-        // to false so the highlight delegate can control how the highlight is moved.
-        function resize(items){
-            console.log("resizing");
-            templateView.height = (items * itemHeight) + headerHeight;
-        }
-    }
-
 }

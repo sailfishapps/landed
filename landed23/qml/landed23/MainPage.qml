@@ -3,10 +3,12 @@ import QtQuick 1.1
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
-import QtMobility.location 1.2
+import org.flyingsheep.abstractui.backend 1.0 //for Coordinate
+//import QtMobility.location 1.2
 import "settingsDB.js" as DB
 import "landed.js" as LJS
-
+import "backend"
+import "gui"
 
 AUIPageWithMenu {id: mainPage
     //tools: commonTools
@@ -41,31 +43,29 @@ AUIPageWithMenu {id: mainPage
             if (privateVars.gpsAcquired) {
                 if (groupSet) {
                     console.log("user has changed group, so we will use the selected group")
-                    templateButtons.setActiveGroup(thisGPSApp.getCurrentCoordinate());
+                    templateButtons.setActiveGroup(gpsBackEnd.coordinate);
                 }
                 else {
                     console.log("use the nearest group")
-                    templateButtons.setNearestGroup(thisGPSApp.getCurrentCoordinate());
+                    templateButtons.setNearestGroup(gpsBackEnd.coordinate);
                 }
             }
             console.log ("MainPage: turning GPS on ...");
-            //thisGPSApp.onGPS();
-            //thisGPSApp.activateGPS();
             gpsBackEnd.onGPS();
-
-            compassApp.start();
+            gpsBackEnd.onCompass();
+            //compassApp.start();
         }
         else if (status == AUIPageStatus.Inactive) {
             //console.log ("turning GPS off ...")
-            thisGPSApp.deactivateGPS();
-            //thisGPSApp.offGPS();
-            compassApp.stop();
+            gpsBackEnd.offGPS();
+            gpsBackEnd.offCompass();
+            //compassApp.stop();
         }
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
-    //GPS related functions
+    //GPS BackEnd related functions and Components
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,17 +77,17 @@ AUIPageWithMenu {id: mainPage
 
     function getLati() {
         //called from main.qml to pass lati to SMSPage
-        return thisGPSApp.getLati()
+        return gpsBackEnd.getFormatttedLatitude(gpsBackEnd.coordinate.latitude, gpsDisplay.coordFormatDMS)
     }
 
     function getLongi() {
         //called from main.qml to pass lati to SMSPage
-        return thisGPSApp.getLongi()
+        return gpsBackEnd.getFormatttedLongitude(gpsBackEnd.coordinate.longitude, gpsDisplay.coordFormatDMS)
     }
 
     function getAlti() {
         //called from main.qml to pass lati to SMSPage
-        return thisGPSApp.getAlti();
+        return gpsBackEnd.coordinate.altitude;
     }
 
     GPSBackEnd {
@@ -97,13 +97,12 @@ AUIPageWithMenu {id: mainPage
         }
         onSatsInViewChanged: {
             console.log("MainPage: onSatsInViewChanged: " + satsInView);
-            console.log("averagedCoordinate.latitude: " + averagedCoordinate.latitude)
+            console.log("averagedCoordinate.latitude: " + coordinate.latitude)
         }
-        onPositionChanged: {
-            console.log("MainPage: PositionChanged Signal Received! outer");
-            console.log("altitude is: " + position.coordinate.altitude)
+
+        onCoordinateChanged: {
+            console.log("Averaged Coordinate Changed");
             privateVars.gpsAcquired = true;
-            gpsDisplay.displayOn();
         }
     }
 
@@ -131,6 +130,10 @@ AUIPageWithMenu {id: mainPage
         }
     }
 
+    //GPSDisplay binds many properties to GPSBackEnd equivalents.
+    //Communication from GPSDisplay to GPSBackEnd is via requestXXX signals,
+    //the handlers of which then call GPSBackEnd methods.
+
     //GUI: Displays GPS Data
     GPSDisplay{id: gpsDisplay
         //anchors.top: parent.top
@@ -146,23 +149,27 @@ AUIPageWithMenu {id: mainPage
         labelColorInactive: mainPage.labelColorInactive
 
         //bind properties to GPSBackEnd equivalents
-//THINK: would it be better if the GPSDisplay element exposed a position property?
-//then we would have much less bindings to make here!!!
-//That would mean the GPSDisplay would need to import locations, at the moment it is dumb, and does not!
-//Decide first if GPSBackEnd should be exposing position, or just coordinate element.
-        latitude: gpsBackEnd.getFormatttedLatitude(gpsBackEnd.position.coordinate.latitude, coordFormatDMS)
-        longitude: gpsBackEnd.getFormatttedLongitude(gpsBackEnd.position.coordinate.longitude, coordFormatDMS)
-        altitude: gpsBackEnd.position.coordinate.altitude;
-        speedValid: gpsBackEnd.position.speedValid;
-        speed: gpsBackEnd.position.speed;
-        horizontalAccuracyValid: gpsBackEnd.position.horizontalAccuracyValid;
-        horizontalAccuracy: gpsBackEnd.position.horizontalAccuracy;
-        verticalAccuracyValid: gpsBackEnd.position.verticalAccuracy;
-        verticalAccuracy: gpsBackEnd.position.verticalAccuracy;
+        gpsOn: gpsBackEnd.gpsOn;
+        compassOn: gpsBackEnd.compassOn;
+        coordAveraging: gpsBackEnd.coordAveraging;
+        latitude: gpsBackEnd.getFormatttedLatitude(gpsBackEnd.coordinate.latitude, coordFormatDMS)
+        longitude: gpsBackEnd.getFormatttedLongitude(gpsBackEnd.coordinate.longitude, coordFormatDMS)
+        altitude: gpsBackEnd.coordinate.altitude;
+        speedValid: gpsBackEnd.speedValid;
+        speed: gpsBackEnd.speed;
+        horizontalAccuracyValid: gpsBackEnd.horizontalAccuracyValid;
+        horizontalAccuracy: gpsBackEnd.horizontalAccuracy;
+        verticalAccuracyValid: gpsBackEnd.verticalAccuracyValid;
+        verticalAccuracy: gpsBackEnd.verticalAccuracy;
         satsInView: gpsBackEnd.satsInView;
         satsInUse: gpsBackEnd.satsInUse;
+        bearing: gpsBackEnd.bearing;
+        onRequestGPSActive: (active) ? gpsBackEnd.onGPS() : gpsBackEnd.offGPS();
+        onRequestCoordAveraging: gpsBackEnd.coordAveraging = averaging;
+        onRequestCompassActive: (active) ? gpsBackEnd.onCompass() : gpsBackEnd.offCompass();
     }
 
+/*
     //GUI: Displays Compass Data
     CompassApp {
         id: compassApp
@@ -178,13 +185,14 @@ AUIPageWithMenu {id: mainPage
         labelColorActive: mainPage.labelColorActive
         labelColorInactive: mainPage.labelColorInactive
     }
-
+*/
     //GUI: Text displayed in place of templateButtons when GPS not yet acquired
     Text {
         id: notAcquiredText;
         enabled: !templateButtons.enabled
         visible: !templateButtons.enabled
-        anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: compassApp.bottom; topMargin: 100}
+        anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: gpsDisplay.bottom; topMargin: 100}
+        //anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: compassApp.bottom; topMargin: 100}
         font.pointSize: parent.fontSize
         font.italic: true
         horizontalAlignment: Text.AlignHCenter
@@ -209,13 +217,13 @@ AUIPageWithMenu {id: mainPage
         arrowVisible: true
         textColor: parent.labelColorActive
         width: parent.width
-        //anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: compassText.bottom; topMargin: 15}
-        anchors {left: parent.left; right: parent.right; top: compassApp.bottom; topMargin: 15}
+        anchors {left: parent.left; right: parent.right; top: gpsDisplay.bottom; topMargin: 15}
+        //anchors {left: parent.left; right: parent.right; top: compassApp.bottom; topMargin: 15}
         //onPopulated:
         onEnabledChanged: {
             console.log ("TemplateButtons: onEnabledChanged: " + enabled);
             if (enabled) {
-                setNearestGroup(gpsBackEnd.position.coordinate);
+                setNearestGroup(gpsBackEnd.coordinate);
                 rumbleEffect.start();
             }
         }
@@ -242,7 +250,9 @@ AUIPageWithMenu {id: mainPage
             templateButtons.headerSubText = setHeaderSubText(group, distance);
             templateButtons.populate(group.id);
         }
-        Coordinate {
+
+//TODO: does this function really belong to TemplateButtons????
+        AUICoordinate {
             //used by function getDistance
             id: tempLocation
         }

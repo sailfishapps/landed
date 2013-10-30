@@ -2,7 +2,8 @@ import QtQuick 1.1
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
-import QtMobility.contacts 1.1
+import org.flyingsheep.abstractui.backend 1.0 //for ContactModel
+//import QtMobility.contacts 1.1
 
 //gives access to the contacts from the phone (as opposed to contacts stored by Landed / LandedSettings)
 
@@ -15,17 +16,23 @@ AUIPage {
 
     signal contactSelected(string phoneNumber, string name)
 
-    ContactModel {
+    AUIContactModel {
         id: contactModel
         sortOrders: [
-            SortOrder {
-                detail:ContactDetail.Name
-                field:Name.FirstName
+            //Note: for some reason the enums of ContactDetail (ContactDetailType) and ContactName (FieldType)
+            //get lost when wrapped, therefore we have created our own equivalents.
+            AUIContactSortOrder {
+                //detail:ContactDetail.Name
+                detail: AUIContactDetailType.Name
+                //field:Name.FirstName
+                field: AUIContactNameType.FirstName
                 direction:Qt.AscendingOrder
             },
-            SortOrder {
-               detail:ContactDetail.Name
-               field:Name.LastName
+            AUIContactSortOrder {
+               //detail:ContactDetail.Name
+               detail: AUIContactDetailType.Name
+               //field:Name.LastName
+               field: AUIContactNameType.LastName
                direction:Qt.AscendingOrder
             }
         ]

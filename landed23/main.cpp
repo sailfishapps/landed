@@ -1,9 +1,17 @@
+//TODOs
+//a) find out why beeping on PhoneKey does not work: possibly wav not found
+
 //Future Changes
 
+//a) Refactor CompassApp into GPSBackEnd / Display. this app is not important enough to be an own component
+// and is close enough to GPS to be merged.
+//b) Try moving all the QtMobility stuff into AbstractAUI
 //z) consider how to better separate GUI elements from "backend" logic to ease porting to other target systems
-//a) move all icons to images subdirectory.
-//b) consider saving contacts chosen from phone to Landed contacts
-//c) Sailfish does not have a Sheet, so review this
+//y) get coordinate averaging working again
+//x) move GUI and backend components to separate directories.
+//w) move all icons to images subdirectory.
+//v) consider saving contacts chosen from phone to Landed contacts
+//u) Sailfish does not have a Sheet, so review this
 //   How about merging the ContactSelectionPage and the tabbed DialSheet
 //   The ContactSelectionPage would have three tabs
 //   the first tab (favourites) would host the current ContactSelectionPage content
@@ -23,25 +31,14 @@
 //i.5) time for GPS auto off
 //i.6) limit time for GPS averaging / number of hits
 //1.7) error range for GPS averaging
-
-
-
-
-//Experiments
-// a) create demo project based on contacts part of this app to see how contact handling can be migrated to Sailfish
-//will need
-//ContactSelectionPage (simplified)
-//ContactRadioButtons
-//ContactButtonsDelegate
-//SimpleHeader
-//DialPage
-//DialSheet
-//PhoneContactPage
-//PhoneKey
-//PhoneKeyPad
+//1.8) beeping on keypress (PhoneKey)
 
 //Change History
 //Landed23
+//a) Major refactoring of former GPSApp components:
+//   This is now divided into GPSBackEnd and GPSDisplay components
+//   The idea is ease porting to Sailfish etc. by separating User Interface Components as much as possible from "BackEnd"
+//   functionality. This would allow for different UIs on different Qt platforms while maintaining common BackEnd.
 
 
 //Landed22

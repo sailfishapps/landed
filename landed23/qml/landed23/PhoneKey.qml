@@ -1,6 +1,6 @@
 import QtQuick 1.1
-import QtMultimediaKit 1.1
-
+import org.flyingsheep.abstractui.backend 1.0 //for SoundEffect
+//import QtMultimediaKit 1.1
 
 Rectangle { id: thisKey
 
@@ -35,7 +35,7 @@ Rectangle { id: thisKey
 
 
     }
-    SoundEffect {id:thisBeep
-        //source: beep.wav
+    AUISoundEffect {id:thisBeep
+        source: beep.wav
     }
 }

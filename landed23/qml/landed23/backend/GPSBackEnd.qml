@@ -1,15 +1,12 @@
 //import QtQuick 2.0
 import QtQuick 1.1
-import QtMobility.location 1.2
-import "landed.js" as LJS
-import SatInfoSource 1.0
+import org.flyingsheep.abstractui.backend 1.0
+//import QtMobility.location 1.2 //for GPS
+//import QtMobility.sensors 1.2 //for compass
+import SatInfoSource 1.0 //for info about satelittes (in view, in use)
+import "../landed.js" as LJS
 
-
-Item {id: thisGPS
-
-/*
-    property bool gpsOn: false
-*/
+Item {id: thisGPSBackEnd
 
 //THINK: as we want to offer an averagedCoordinate element (at Coordinate level)
 //would it make sense the positionSource.position.coordinate rahther than PositionSource.position
@@ -17,11 +14,27 @@ Item {id: thisGPS
 
 //Another option would be to offer one Coordinate element which can be swwitched from averageing to current.
 
-    property alias position: positionSource.position
+//At the moment this is not linked in any way to MainPage / GPSDisplay
+//so setting on GPSDisplay has no effect.
+    property bool coordAveraging: false
+
+    property alias gpsOn: positionSource.active
+
+    //property alias position: positionSource.position;
+    property alias speed: position.speed;
+    property alias speedValid: position.speedValid;
+    property alias horizontalAccuracy: position.horizontalAccuracy;
+    property alias horizontalAccuracyValid: position.horizontalAccuracyValid;
+    property alias verticalAccuracy: position.verticalAccuracy;
+    property alias verticalAccuracyValid: position.verticalAccuracyValid;
+    property alias coordinate: averagedCoords;
     property alias satsInUse: satInfoSource.satsInUse;
     property alias satsInView: satInfoSource.satsInView;
 
-    property alias averagedCoordinate: averagedCoords
+    //property alias compass: thisCompass
+
+    property alias compassOn: thisCompass.active
+    property alias bearing: thisCompass.bearing
 
     //readonly not yet supported in 4.7.4
     //readonly property Position position: positionSource.position;
@@ -41,42 +54,24 @@ Item {id: thisGPS
         console.log("turning GPS off")
         positionSource.stop();
         satInfoSource.stopUpdates();
+        timer.stop();
     }
-
+    function onCompass () {
+        thisCompass.start();
+    }
+    function offCompass () {
+        thisCompass.stop();
+    }
 
     //It could be argued that the timer belongs to the GUI, and the BackEnd should simply respond to on / off
     //but we want to restrict the Display element to visual stuff only, so for the moment we keep the
     //timer here in the BackEnd
     Timer{ id: timer;
-        //interval: 60*1000;
-        interval: 60*1000 * 10;
-        //onTriggered: {state = "stateGpsOff"}
-        onTriggered: {gpsSwitch.checked = false;}
+        interval: 60*1000;
+        onTriggered: {offGPS()}
     }
 
 
-
-/*
-//as we now expose position to MainPage, these functions are probably no longer required
-
-    //called from MainPage.qml, then main.qml, used to transmit to SMSPage
-    function getLati() {
-        console.log("getLati Called");
-        return "Lati: "   + positionSource.convertDDToDMS(positionSource.position.coordinate.latitude, "Lati");
-    }
-
-    //called from MainPage.qml, then main.qml, used to transmit to SMSPage
-    function getLongi() {
-        console.log("getLongi Called");
-        return "Long: "   + positionSource.convertDDToDMS(positionSource.position.coordinate.longitude, "Longi");
-    }
-
-    //called from MainPage.qml, then main.qml, used to transmit to SMSPage
-    function getAlti() {
-        console.log("getAlti Called");
-        return "Alt: "+ Math.round(positionSource.position.coordinate.altitude) + " m";
-    }
-*/
     function getFormatttedLatitude(latitude, dms) {
         return (dms) ? convertDDToDMS(latitude, 'Lati') : LJS.round(latitude, 4);
     }
@@ -146,15 +141,30 @@ Item {id: thisGPS
         id: satInfoSource
 
         onSatellitesInUseChanged: {
-            console.log("GPSBackEnd: SatellitesInUseChanged! " + satsInUse + "; " + thisGPS.satsInUse);
+            console.log("GPSBackEnd: SatellitesInUseChanged! " + satsInUse + "; " + thisGPSBackEnd.satsInUse);
         }
         onSatellitesInViewChanged: {
-            console.log("GPSBackEnd: SatellitesInViewChanged! " + satsInView + "; " + thisGPS.satsInView);
+            console.log("GPSBackEnd: SatellitesInViewChanged! " + satsInView + "; " + thisGPSBackEnd.satsInView);
         }
     }
 
+    //Bit of a nasty hack here
+    //As a property alias can only be to a property, or element.property
+    //e.g. not element.element.property
+    //we can't directly alias positionSource.position.horizontalAccuracy;
+    //But by creating an Item with properties deep bound, I can then alias the properties of the item!
+    //Of course this is only readonly, but in this case that is all we want
+    Item { id: position
+        property real speed: positionSource.position.speed;
+        property bool speedValid: positionSource.position.speedValid;
+        property real horizontalAccuracy: positionSource.position.horizontalAccuracy;
+        property bool horizontalAccuracyValid: positionSource.position.horizontalAccuracyValid;
+        property real verticalAccuracy: positionSource.position.verticalAccuracy;
+        property bool verticalAccuracyValid: positionSource.position.verticalAccuracyValid;
+    }
+
     //gives access to GPS info
-    PositionSource {id: positionSource
+    AUIPositionSource {id: positionSource
         updateInterval: 1000
         active: false
         // nmeaSource: "nmealog.txt"
@@ -162,7 +172,6 @@ Item {id: thisGPS
             console.log("PositionChanged Signal Received! inner");
             //If the timer is running, subsequent calls to start() have no effect
             timer.start();
-            thisGPS.positionChanged();
         }
         function convertDDToDMS(dd, axis){
 
@@ -221,17 +230,54 @@ Item {id: thisGPS
 
     }
 
-    function resetAverages() {
-        averagedCoords.resetAverages();
+    Connections {
+         target: positionSource.position.coordinate
+         onLatitudeChanged: {
+             console.log ("signal from positionSource.position.coordinate snatched out of the ether ...");
+             if (coordAveraging) {
+                averagedCoords.averageCoords(positionSource.position.coordinate);
+             }
+             else {
+                averagedCoords.latitude = positionSource.position.coordinate.latitude;
+             }
+         }
+         onLongitudeChanged: {
+             console.log ("signal from positionSource.position.coordinate snatched out of the ether ...");
+             if (coordAveraging) {
+                averagedCoords.averageCoords(positionSource.position.coordinate);
+             }
+             else {
+                averagedCoords.longitude = positionSource.position.coordinate.longitude;
+             }
+         }
     }
 
-    Coordinate {
+    onCoordAveragingChanged: {
+        if (!coordAveraging) {
+            resetAverages();
+            averagedCoords.latitude = positionSource.position.coordinate.latitude;
+            averagedCoords.longitude = positionSource.position.coordinate.longitude;
+        }
+    }
+
+    AUICoordinate {
         id: averagedCoords
-        latitude: -1
-        longitude: -1
+        latitude: NaN
+        longitude: NaN
+        altitude: positionSource.position.coordinate.altitude;
         property real summedLatitude: 0;
         property real summedLongitude: 0;
         property int hits: 0;
+
+        onLatitudeChanged:  if (validCoord()) coordinateChanged();
+        onLongitudeChanged: if (validCoord()) coordinateChanged();
+        onAltitudeChanged:  if (validCoord()) coordinateChanged();
+
+        function validCoord() {
+            //check that latitude and longitude are valid numbers
+            //i.e we have acquired a plausible position
+            return (!isNaN(latitude) && !isNaN(longitude))
+        }
 
         function resetAverages() {
             latitude = 0;
@@ -241,38 +287,35 @@ Item {id: thisGPS
             hits = 0;
         }
 
-        //TODO: refactoring: should not this averaging stuff all be in an abstraction of PositionSource
-        //this would offer both original and averaged coords + relevant changedSignals
-        //the display should only care about displaying the provided coords
         function averageCoords(coord) {
-            console.log("averageCoords called: " +  thisGPS.coordAveraging);
-            if (thisGPS.coordAveraging) {
-                console.log("distance from average: "+ coord.distanceTo(averagedCoords) + " m")
-                if (coord.distanceTo(averagedCoords) > 500) {
-                    //500 m
-                    //difference to average is too great, we are probably moving: reset our averages and start again.
-                    console.log("difference too great, resetting");
-                    resetAverages();
-                }
-                hits++;
-                console.log("coords averaged over hits: " + hits);
-                console.log("1) averagedCoords.summedLatitude: " + summedLatitude + ", averagedCoords.latitude: " + latitude);
-                summedLatitude = summedLatitude + coord.latitude;
-                console.log("2) averagedCoords.summedLatitude: " + summedLatitude);
-                summedLongitude = summedLongitude + coord.longitude;
-                latitude = summedLatitude / hits;
-                longitude = summedLongitude / hits;
-                console.log("orig lati: " + coord.latitude + ", averaged lati: " + latitude);
-                console.log("orig longi: " + coord.longitude + ", averaged longi: " + longitude);
-                return averagedCoords;
+            console.log("averageCoords called: " +  thisGPSBackEnd.coordAveraging);
+            console.log("distance from average: "+ coord.distanceTo(averagedCoords) + " m")
+            if (coord.distanceTo(averagedCoords) > 500) {
+                //500 m
+                //difference to average is too great, we are probably moving: reset our averages and start again.
+                console.log("difference too great, resetting");
+                resetAverages();
             }
-            else  {
-                return coord;
-            }
+            hits++;
+            console.log("coords averaged over hits: " + hits);
+            console.log("1) averagedCoords.summedLatitude: " + summedLatitude + ", averagedCoords.latitude: " + latitude);
+            summedLatitude = summedLatitude + coord.latitude;
+            console.log("2) averagedCoords.summedLatitude: " + summedLatitude);
+            summedLongitude = summedLongitude + coord.longitude;
+            latitude = summedLatitude / hits;
+            longitude = summedLongitude / hits;
+            console.log("orig lati: " + coord.latitude + ", averaged lati: " + latitude);
+            console.log("orig longi: " + coord.longitude + ", averaged longi: " + longitude);
         }
     }
 
+    AUICompass {
+        id: thisCompass
+        property int bearing: -1
 
-
+        onReadingChanged: {
+            bearing = reading.azimuth;
+        }
+    }
 }
 

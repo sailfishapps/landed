@@ -2,6 +2,7 @@ import QtQuick 1.1
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
+import "gui"
 
 //gives access to contacts stored by Landed / LandedSettings
 

@@ -1,11 +1,9 @@
 //import QtQuick 2.0
 import QtQuick 1.1
+//import org.flyingsheep.abstractui.qtquick 1.0
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 import com.nokia.meego 1.0
-//import QtMobility.location 1.2
-//import "landed.js" as LJS
-
 
 //By design this is component is a "thin" GUI layer.
 //This means it should be as simple / stupid as possible.
@@ -13,11 +11,29 @@ import com.nokia.meego 1.0
 //This includes "formatting" logic that is GUI-centric.
 //This is aid porting to other platforms.
 
+
+//The main external interface is via the properties below
+//on instance of this component on MainPage these properties are bound to their GPSDisplay equivalents
+//In other direction, the display can request changes from the GPSBackEnd via requestXXX signals.
+
 Item {id: thisGPSDisplay
 
+    signal requestGPSActive(bool active);
+    signal requestCoordAveraging(bool averaging);
+    signal requestCompassActive(bool active);
+
+    //gpsOn is bound in the instantiation (MainPage) to GPSBackEnd
+    //Turning the GPSBackEnd on / off is via the signal requestGPSActive
     property bool gpsOn: false
-    property bool coordFormatDMS: true;
+    property bool compassOn: false
+
+    //coordAveraging is bound in the instantiation (MainPage) to GPSBackEnd
+    //It is changed by calling the signal requestCoordAveraging:
     property bool coordAveraging
+
+    // GPSBackEnd has no equivalent to coordFormatDMS, it is passed as parameter when coords are formatted
+    // in the bindings of latitude and longitude
+    property bool coordFormatDMS: true;
 
 //TODO: should this set not be property aliases
 //apparently property aliases are read only?
@@ -36,7 +52,7 @@ Item {id: thisGPSDisplay
     property real verticalAccuracy;
     property int satsInView: 0
     property int satsInUse: 0
-
+    property int bearing: 0
 
     //state is used to switch textColor from textColorActive to textColorInactive
     property color textColor
@@ -56,59 +72,10 @@ Item {id: thisGPSDisplay
 //TODO: to avoid nasty state loops, everything that turns the GPS on or off should use the switch
 //as unique entry point
 
-    function displayOn() {
-        console.log ("displayOn Display called. gpsSwitch.checked is: " + gpsSwitch.checked)
-        gpsSwitch.checked = true
-    }
-
-    function displayOff() {
-        console.log ("displayOff display called. gpsSwitch.checked is: " + gpsSwitch.checked)
-        gpsSwitch.checked = false
-    }
-//TODO: toggleGPS, onGPS and offGPS should be private functions,
-//not externally available: the external gateway is displayOn
-
-    function toggleGPS() {
-        console.log ("thisGPSDisplay.toggleGPS")
-        if(state == "stateGpsOn") {
-            offGPS();
-        }
-        else {
-            onGPS();
-        };
-    }
-
-    function onGPS () {
-        console.log("turning GPSDisplay on")
-        state = "stateGpsOn";
-    }
-
-    function offGPS () {
-        console.log("turning GPSDisplay off")
-        state = "stateGpsOff"
-    }
-
-    function refreshCoords() {
-        coordsDisplay.refreshCoords();
-    }
-
-    state: "stateGpsOff";
-    states: [
-        State {
-            name: "stateGpsOn";
-            PropertyChanges{ target: thisGPSDisplay; gpsOn: true } // change on variable
-            PropertyChanges{ target: thisGPSDisplay; textColor: thisGPSDisplay.textColorActive }
-            PropertyChanges{ target: thisGPSDisplay; labelColor: thisGPSDisplay.labelColorActive }
-            PropertyChanges{ target: onOff; text: "On;" }
-        },
-        State {
-            name: "stateGpsOff";
-            PropertyChanges{ target: thisGPSDisplay; gpsOn: false } // change on variable
-            PropertyChanges{ target: thisGPSDisplay; textColor: thisGPSDisplay.textColorInactive }
-            PropertyChanges{ target: thisGPSDisplay; labelColor: thisGPSDisplay.labelColorInactive }
-            PropertyChanges{ target: onOff; text: "Off;" }
-        }
-    ]
+   onGpsOnChanged: {
+       console.log("onGpsOnChanged to: " + gpsOn)
+       gpsSwitch.checked = gpsOn
+   }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,6 +108,24 @@ Item {id: thisGPSDisplay
         property int rowSpacing: 10
         spacing: 4
 
+        state: "stateGpsOff";
+        states: [
+            State {
+                name: "stateGpsOn";
+                //PropertyChanges{ target: thisGPSDisplay; gpsOn: true }
+                PropertyChanges{ target: thisGPSDisplay; textColor: thisGPSDisplay.textColorActive }
+                PropertyChanges{ target: thisGPSDisplay; labelColor: thisGPSDisplay.labelColorActive }
+                PropertyChanges{ target: onOff; text: "On;" }
+            },
+            State {
+                name: "stateGpsOff";
+                //PropertyChanges{ target: thisGPSDisplay; gpsOn: false }
+                PropertyChanges{ target: thisGPSDisplay; textColor: thisGPSDisplay.textColorInactive }
+                PropertyChanges{ target: thisGPSDisplay; labelColor: thisGPSDisplay.labelColorInactive }
+                PropertyChanges{ target: onOff; text: "Off;" }
+            }
+        ]
+
         Item {
             //height: childrenRect.height // causes binding-loop
             height: onOff.height
@@ -158,8 +143,7 @@ Item {id: thisGPSDisplay
                 checked: false
                 anchors.verticalCenter: parent.verticalCenter
                 onCheckedChanged: {
-                    thisGPSDisplay.toggleGPS();
-                    console.log("height of gpsSwitch is: " + gpsSwitch.height + " Text height is: " + onOffLabel.height)
+                    coordsDisplay.toggleGPS();
                 }
             }
         }
@@ -196,10 +180,46 @@ Item {id: thisGPSDisplay
         Row {
             spacing: coordsDisplay.rowSpacing;
             Text {id: satsInViewUseLabel; text: "Sats in View / Use:" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.labelColor; width: 320}
-            Text {id: satsInViewUse; text: thisGPSDisplay.satsInView + " / " + thisGPSDisplay.satsInUse ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}
+            Text {id: satsInViewUse; text: thisGPSDisplay.satsInView + " / " + thisGPSDisplay.satsInUse ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}   
+        }
+        Item {
+            height: compassSwitch.height
+            width: parent.width
+            Row {
+                id: compassGUI
+                height: 50
+                spacing: 10
+                anchors.verticalCenter: parent.verticalCenter
+                Text {id: compassTextLabel; font.pointSize: thisGPSDisplay.fontSize; color: compassOn ? thisGPSDisplay.labelColorActive : thisGPSDisplay.labelColorInactive; text: "Bearing:"; width: 150}
+                Text {id: compassText; text: thisGPSDisplay.bearing; font.pointSize: thisGPSDisplay.fontSize; color: compassOn ? thisGPSDisplay.textColorActive : thisGPSDisplay.textColorInactive; }
+            //text: "No compass reading yet ..."
+            }
+
+            AUISwitch {
+                id: compassSwitch
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                checked: true
+                onCheckedChanged: {
+                    requestCompassActive(!compassOn)
+                }
+            }
         }
 
-        //http://harmattan-dev.nokia.com/docs/library/html/qtmobility/qml-position.html
+
+        function toggleGPS() {
+            console.log ("thisGPSDisplay.toggleGPS")
+            if(state == "stateGpsOn") {
+                console.log("turning GPSDisplay off");
+                if (gpsOn) requestGPSActive(false);
+                state = "stateGpsOff"
+            }
+            else {
+                console.log("turning GPSDisplay on")
+                if (!gpsOn) requestGPSActive(true);
+                state = "stateGpsOn";
+            };
+        }
     }
 
 
@@ -211,14 +231,7 @@ Item {id: thisGPSDisplay
         {
             //style: ButtonStyle { }
             anchors.horizontalCenter: parent.horizontalCenter
-/*
-            AUIButton {text: (thisGPSDisplay.gpsOn) ? qsTr("Turn GPS Off" ): qsTr("Turn GPS On")
-                onClicked: {
-                    thisGPSDisplay.toggleGPS()
-                    gpsDialog.accept()
-                }
-            }
-*/
+
             AUIButton {text: (thisGPSDisplay.coordFormatDMS) ? qsTr("Coordinates: Decimal" ): qsTr("Coordinates: D M S")
                 onClicked: {
                     thisGPSDisplay.coordFormatDMS = !thisGPSDisplay.coordFormatDMS;
@@ -227,7 +240,7 @@ Item {id: thisGPSDisplay
             }
             AUIButton {text: (thisGPSDisplay.coordAveraging) ? qsTr("Coordinate Averaging off" ): qsTr("Coordinate Averaging on")
                 onClicked: {
-                    thisGPSDisplay.coordAveraging = !thisGPSDisplay.coordAveraging;
+                    thisGPSDisplay.requestCoordAveraging(!thisGPSDisplay.coordAveraging)
                     gpsDialog.accept();
                 }
             }
