@@ -2,7 +2,8 @@ import QtQuick 1.1
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
-import "../javascript/settingsDB.js" as DB
+import "../backend"
+import "../javascript/landed.js" as LJS
 
 //This should be split between gui (most of it) and a backend equivalent, or javascript)
 
@@ -27,7 +28,6 @@ AUIPage {id: smsPage
     property string contactName
     property string contactPhone
 
-
     signal nextPage(string pageType, string template_id)
     signal cancelled()
 
@@ -35,13 +35,8 @@ AUIPage {id: smsPage
         console.log("smsPage.onCompleted");
     }
 
-    function trim (str){
-        //http://blog.stevenlevithan.com/archives/faster-trim-javascript
-        return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-    }
-
     function contactSelected (contactName, contactPhone) {
-        return ((trim(contactPhone).length > 0) && (trim(contactPhone).length > 0)) ? true : false
+        return ((LJS.trim(contactName).length > 0) && (LJS.trim(contactPhone).length > 0)) ? true : false
     }
 
     onStatusChanged: {
@@ -49,18 +44,18 @@ AUIPage {id: smsPage
             console.log("smsPage is active; contactName: " + contactName + " , contactPhone: " + contactPhone + ", msg_status: " + msg_status + ", lastPage: " + lastPage)
             state = (msg_status == "Ok") ? "stateOk" : "stateNotOk";
 
-            thisSMSApp.smsSent = false;
-            thisSMSApp.setText(buildDefaultMsg(template_id));
+            smsDisplay.smsSent = false;
+            smsDisplay.setText(smsBackEnd.buildDefaultMsg(template_id));
             if ((lastPage =="contactSelectionPage") && (contactSelected (contactName, contactPhone))) {
                 console.log("Take the contact from the ContactSelectionPage");
-                thisSMSApp.setContact(contactName, contactPhone);
+                smsDisplay.setContact(contactName, contactPhone);
             }
-            else if (lastPage == "smsSelectionPage") {
+            else if (lastPage == "mainPage") {
                 console.log("Page has been pushed, take contact from Template")
-                var rs = getContact(template_id);
+                var rs = smsBackEnd.getContact(template_id);
                 contactName = rs.rows.item(0).name;
                 contactPhone = rs.rows.item(0).phone;
-                thisSMSApp.setContact(contactName, contactPhone);
+                smsDisplay.setContact(contactName, contactPhone);
             }
         }
         else if (status == AUIPageStatus.Inactive) {
@@ -76,8 +71,8 @@ AUIPage {id: smsPage
     states: [
         State {
             name: "stateOk";
-            PropertyChanges{ target: thisSMSApp; parent: smsPage }
-            PropertyChanges{ target: thisSMSApp; anchors.top: parent.top }
+            PropertyChanges{ target: smsDisplay; parent: smsPage }
+            PropertyChanges{ target: smsDisplay; anchors.top: parent.top }
             PropertyChanges{ target: torchApp; visible: false }
             PropertyChanges{ target: frame; color: "black" }
             PropertyChanges{ target: smsPage; height: 828 }
@@ -85,8 +80,8 @@ AUIPage {id: smsPage
         },
         State {
             name: "stateNotOk";
-            PropertyChanges{ target: thisSMSApp; parent: frame }
-            PropertyChanges{ target: thisSMSApp; anchors.top: torchApp.bottom }
+            PropertyChanges{ target: smsDisplay; parent: frame }
+            PropertyChanges{ target: smsDisplay; anchors.top: torchApp.bottom }
             PropertyChanges{ target: torchApp; visible: true }
             PropertyChanges{ target: frame; color: "red" }
             PropertyChanges{ target: smsPage; height: 818 }
@@ -115,7 +110,7 @@ AUIPage {id: smsPage
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
-    SMSApp{id: thisSMSApp
+    SMSDisplay{id: smsDisplay
         //property int defaultBottomMargin: 0
         anchors.top: parent.top
         anchors.bottom: parent.bottom
@@ -129,7 +124,6 @@ AUIPage {id: smsPage
         color: "black"
         fontSize: smsPage.fontSize
         opacity: 1
-
         onCancelled: {
             console.log("cancelled Signal received by smsPage");
             smsPage.cancelled();
@@ -139,69 +133,14 @@ AUIPage {id: smsPage
         onPhoneNrClicked: {
             nextPage("Contact", template_id);
         }
-
+        onSendSMS: {
+            smsBackEnd.sendSMS(phoneNumber, text);
+        }
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    //Message related components and functions
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////
-
-    function buildDefaultMsg(template_id) {
-        var text = "";
-        var tag = "";
-        var rs = DB.getTags(template_id);
-        for(var i = 0; i < rs.rows.length; i++) {
-            tag = rs.rows.item(i).default_value;
-            tag = swapPlaceHolders(tag) + "\n";
-            text = text + tag;
-        }
-        return text;
-
-    }
-
-    function swapPlaceHolders (tag) {
-        var headerTag = "@header@";
-        var latiTag = "@lati@";
-        var longiTag = "@longi@";
-        var altiTag = "@alti@";
-        var datetime = "@datetime@"
-
-        if (tag == headerTag) {
-            return "*Landed*";
-        }if (tag == latiTag) {
-            return lati;
-        }
-        else if (tag == longiTag) {
-            return longi;
-        }
-        else if (tag == altiTag) {
-            return alti;
-        }
-        else if (tag == datetime) {
-            var today = new Date();
-            return Qt.formatDateTime(today, "dd.MM.yyyy hh:mm:ss")
-            //today;
-        }
-        else return tag;
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    //Phone Number / Contact functions
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    function getContact(template_id) {
-        var rs = DB.getActiveContact(template_id, 1);
-        return rs;
-    }
-
-    function getPhoneNr(template_id) {
-        var rs = DB.getContacts(template_id);
-        return rs;
+    SMSBackEnd {
+        id: smsBackEnd
+        onMessageState: smsDisplay.setState(msgState);
     }
 
 }

@@ -1,33 +1,24 @@
 import QtQuick 1.1
-//import QtMobility.messaging 1.1
-import SMSHelper 1.0
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
 
-//move to gui. Very little backend stuff to be factored out (if at all)
-
 Rectangle{id: rectSMS
 
-    property bool  smsSent: false
+    property bool smsSent: false
     property int defaultBottomMargin: 160
     property int fontSize: 16
 
     signal cancelled()
-    signal phoneNrClicked()    
+    signal phoneNrClicked()
+    signal sendSMS(string phoneNumber, string text)
 
-    SMSHelper{id: smshelper
-        onStateMsg: {
-            var today = new Date();
-            console.log("state msg received:" + statemsg + " " + today);
-            //statemsg == ActiveState : is sending
-            //statemsg == FinishedState : finished sending
-            if (statemsg == "ActiveState") {
-                phoneNrGroup.state = "stateSending";
-            }
-            else if (statemsg == "FinishedState") {
-                phoneNrGroup.state = "stateSent";
-            }
+    function setState(msgState) {
+        if (msgState == "ActiveState") {
+            phoneNrGroup.state = "stateSending";
+        }
+        else if (msgState == "FinishedState") {
+            phoneNrGroup.state = "stateSent";
         }
     }
 
@@ -103,7 +94,7 @@ Rectangle{id: rectSMS
                 PropertyChanges{ target: sendButton; enabled: false }
                 PropertyChanges{ target: sendButton; text: "" }
                 PropertyChanges{ target: cancelButton; text: "Back" }
-                PropertyChanges{ target: cancelButton; platformStyle: greenButton }
+                PropertyChanges{ target: cancelButton; primaryColor: "#008000" }
                 PropertyChanges{ target: phoneNrField; textColor: "grey" }
                 PropertyChanges{ target: phoneNrField; horizontalAlignment: Text.AlignLeft }
                 PropertyChanges{ target: phoneNrField; text: "Sent to: " + phoneNrField.displayText() }
@@ -184,7 +175,8 @@ Rectangle{id: rectSMS
                 console.log("sendButton.onCicked");
                 console.log("Sending text: " + smsBody.getText());
                 console.log("to: " + phoneNrField.phoneNumber)
-                smshelper.sendsms(phoneNrField.phoneNumber, smsBody.getText())
+                //smshelper.sendsms(phoneNrField.phoneNumber, smsBody.getText())
+                rectSMS.sendSMS(phoneNrField.phoneNumber, smsBody.getText());
                 smsSent = true;
             }
         }
@@ -207,4 +199,5 @@ Rectangle{id: rectSMS
     }
 
 }
+
 

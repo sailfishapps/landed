@@ -78,7 +78,7 @@ AUIPageStackWindow {
         onNextPage: {
              if (pageType =="SMS") {
                 console.log("smsType is: " + smsType)
-                if (smsType =="Default") pageStack.push(smsPage, {lati: mainPage.getLati(), longi: mainPage.getLongi(), alti: mainPage.getAlti(), template_id: template_id, msg_status: msg_status, lastPage: "smsSelectionPage"})
+                if (smsType =="Default") pageStack.push(smsPage, {lati: mainPage.getLati(), longi: mainPage.getLongi(), alti: mainPage.getAlti(), template_id: template_id, msg_status: msg_status, lastPage: "mainPage"})
             }
             else {
                 pageStack.push(groupSelectionPage)
