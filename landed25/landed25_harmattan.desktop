@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Name=landed25
+# Exec=/usr/bin/invoker --type=d -s /opt/landed25/bin/landed25
+Exec=/usr/bin/invoker --type=d --splash=/opt/landed25/qml/landed25/splash/landed_splash_p.jpg --splash-landscape=/opt/landed25/qml/landed25/splash/landed_splash_l.jpg -s /opt/landed25/bin/landed25
+Icon=/usr/share/icons/hicolor/80x80/apps/landed2580.png
+X-Window-Icon=
+X-HildonDesk-ShowInToolbar=true
+X-Osso-Type=application/x-executable
