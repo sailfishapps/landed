@@ -44,22 +44,22 @@ int SatInfoSource::satsInUse() const
 }
 
 
-void SatInfoSource::onSatsInUseUpdated(const QList<QGeoSatelliteInfo> &list) {
+void SatInfoSource::onSatsInViewUpdated(const QList<QGeoSatelliteInfo> &list) {
     int newInView = list.count();
-    if (newInView != _satsInUse) {
-        qDebug() << "satInfoSource.cpp: onSatsinUseUpdated: " << QString::number(newInView, 'g', 2);
-        _satsInUse = newInView;
-        emit satellitesInUseChanged(newInView);
+    if (newInView != _satsInView) {
+        qDebug() << "satInfoSource.cpp: onSatsinViewUpdated: " << QString::number(newInView, 'g', 2);
+        _satsInView = newInView;
+        emit satellitesInViewChanged(newInView);
     }
 
 }
 
-void SatInfoSource::onSatsInViewUpdated(const QList<QGeoSatelliteInfo> &list) {
+void SatInfoSource::onSatsInUseUpdated(const QList<QGeoSatelliteInfo> &list) {
     int newInUse = list.count();
-    if (newInUse != _satsInView) {
-        qDebug() << "satInfoSource.cpp: onSatsinViewUpdated: " << QString::number(newInUse, 'g', 2);
-        _satsInView = newInUse;
-        emit satellitesInViewChanged(newInUse);
+    if (newInUse != _satsInUse) {
+        qDebug() << "satInfoSource.cpp: onSatsinUseUpdated: " << QString::number(newInUse, 'g', 2);
+        _satsInUse = newInUse;
+        emit satellitesInUseChanged(newInUse);
     }
 }
 

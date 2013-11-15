@@ -2,8 +2,6 @@ import QtQuick 1.1
 import org.flyingsheep.abstractui.backend 1.0 //for SoundEffect
 //import QtMultimediaKit 1.1
 
-// move to gui
-
 Rectangle { id: thisKey
 
     property alias text: label.text;
@@ -34,7 +32,6 @@ Rectangle { id: thisKey
             thisBeep.play();
             parent.keyPressed(thisKey.text);
         }
-
 
     }
     AUISoundEffect {id:thisBeep

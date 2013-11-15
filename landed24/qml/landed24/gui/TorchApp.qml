@@ -1,3 +1,4 @@
+//import QtQuick 2.0
 import QtQuick 1.1
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
@@ -6,6 +7,7 @@ import LandedTorch 1.0
 
 // move to gui, most of the backend is in C++ LandedTorch,
 //consider moving the onClicked into C++
+//should not flashing and torhOn be properties offered by LandedTorch?
 
 Item {
     id: thisTorch
@@ -15,7 +17,6 @@ Item {
 
     onFlashingChanged: {
         console.log ("flash mode changed");
-        //modeButton.platformStyle = (flashing) ? yellowButtonStyle : whiteButtonStyle;
         modeButton.primaryColor = (flashing) ? "yellow" : "white"
     }
 
@@ -35,30 +36,27 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         text: (parent.torchOn) ? "Turn Torch OFF" : "Turn Torch ON"
-            //"Toggle Torch ON / OFF"
         //text: (landedTorch.status == true) ? "Torch OFF" : "Torch ON";
-        //platformStyle: whiteButtonStyle;
         property color colorA: "#808080" // "white"
         property color colorB: "#ffffff" // "grey"
         primaryColor: colorA;
 
-        // "#808080" // "grey"
-        // "#ffff00" // "yellow"
-        // "#ffffff" // "white"
+        // "#808080" // "grey" // "#ffff00" // "yellow" // "#ffffff" // "white"
 
         //lets try dark button when off, white when on
 
         function styleToggle() {
-            //platformStyle = (platformStyle == whiteButtonStyle) ? yellowButtonStyle : whiteButtonStyle;
             console.log ("styleToggle: primaryColor is: " + primaryColor)
             primaryColor = (primaryColor == colorA) ? colorB : colorA;
         }
 
         onClicked: {
             console.log("Torch Button Clicked; torchOn: " + parent.torchOn + ", flashing: " + parent.flashing);
+            console.log ("LandedTorch.flashing: " + landedTorch.flashing)
+            console.log ("LandedTorch.torchOn: " + landedTorch.torchOn)
             console.log("primaryColor: " + primaryColor);
             if ((parent.torchOn == false)  && (parent.flashing == false)) {
-                landedTorch.torchOn();
+                landedTorch.turnOn();
                 parent.torchOn = true;
             }
             else if ((parent.torchOn == false)  && (parent.flashing == true)) {
@@ -68,13 +66,12 @@ Item {
             }
             else {
                 console.log("stopping everything");
-                landedTorch.torchOff();
+                landedTorch.turnOff();
                 flashTimer.stop();
                 parent.torchOn = false;
             }
             styleToggle();
         }
-
     }
 
     AUIButton { id: modeButton
@@ -88,9 +85,6 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         text: (parent.flashing) ? "Flash" : "Beam"
-        //due to a bug, we can't change platformStyle: by bindings
-        //platformStyle: (parent.flashing) ? yellowButtonStyle : whiteButtonStyle;
-        //platformStyle:  whiteButtonStyle;
         primaryColor: "white";
         enabled: (parent.torchOn) ? false : true
         onClicked: {
@@ -101,14 +95,11 @@ Item {
             //perhaps via a qml coloranimation element.
             //http://qt-project.org/doc/qt-4.8/qml-coloranimation.html
         }
-
     }
-
-    //WhiteButtonStyle {id: whiteButtonStyle}
-    //YellowButtonStyle {id: yellowButtonStyle}
 
     Timer{ id: flashTimer;
         interval: 0.75*1000;
+        //interval: landedTorch.flashInterval
         repeat: true;
         triggeredOnStart: true;
 
@@ -117,7 +108,6 @@ Item {
         onTriggered: {
             console.log("Timer triggering: flashOn: " + flashOn);
             landedTorch.torchToggle();
-            //torchButton.styleToggle();
             flashOn = !flashOn;
         }
     }

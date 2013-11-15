@@ -2,12 +2,10 @@ import QtQuick 1.1
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
-import org.flyingsheep.abstractui.backend 1.0 //for ContactModel
-//import QtMobility.contacts 1.1
+import "../backend"
 
 //gives access to the contacts from the phone (as opposed to contacts stored by Landed / LandedSettings)
 
-//move to gui, as is a page. The ony non visual items are the Listmodels, so we could try factoring the models out.
 
 AUIPage {
     id: contactsPage
@@ -18,34 +16,19 @@ AUIPage {
 
     signal contactSelected(string phoneNumber, string name)
 
-    AUIContactModel {
-        id: contactModel
-        sortOrders: [
-            //Note: for some reason the enums of ContactDetail (ContactDetailType) and ContactName (FieldType)
-            //get lost when wrapped, therefore we have created our own equivalents.
-            AUIContactSortOrder {
-                //detail:ContactDetail.Name
-                detail: AUIContactDetailType.Name
-                //field:Name.FirstName
-                field: AUIContactNameType.FirstName
-                direction:Qt.AscendingOrder
-            },
-            AUIContactSortOrder {
-               //detail:ContactDetail.Name
-               detail: AUIContactDetailType.Name
-               //field:Name.LastName
-               field: AUIContactNameType.LastName
-               direction:Qt.AscendingOrder
-            }
-        ]
+    //this component hosts the 3 models used by this page
+    PhoneContactsBackEnd {
+        id: phoneContactBackEnd
     }
 
     ListView {
         id:  contactList
         anchors.fill: parent
         anchors.rightMargin: 50
-        model: contactModel
+        //model: contactModel
+        model: phoneContactBackEnd.phoneContactsModel
         delegate:contactDelegate
+        onCountChanged: console.log("PhoneContactsPage: contactList.count: " + count);
     }
 
     Component {
@@ -93,8 +76,8 @@ AUIPage {
                 }
                 onClicked: {
                     console.log(model.contact.name.firstName + " " + model.contact.name.lastName + " clicked")
-                    phoneNumbersModel.loadNumbers(model.contact.phoneNumbers, model.contact.name.firstName + " " + model.contact.name.lastName)
-                    contactDialog.model = phoneNumbersModel;
+                    phoneContactBackEnd.contactNumbersModel.loadNumbers(model.contact.phoneNumbers, model.contact.name.firstName + " " + model.contact.name.lastName)
+                    contactDialog.model = phoneContactBackEnd.contactNumbersModel;
                     contactDialog.open();
                 }
                 onReleased: {
@@ -103,26 +86,6 @@ AUIPage {
                 }
             }
         }
-    }
-
-    ListModel {
-        id: phoneNumbersModel
-        function loadNumbers(phoneNumbers, name) {
-            console.log ("numbers to load: " + phoneNumbers.length);
-            phoneNumbersModel.clear();
-            for(var i = 0; i < phoneNumbers.length; i++) {
-                console.log("appending number" + phoneNumbers[i] + " " + phoneNumbers[i].number + " " + phoneNumbers[i].subTypes[0] )
-                //phoneNumbersModel.append(phoneNumbers[i]);
-                var subType = (phoneNumbers[i].subTypes[0] === undefined) ? "" : phoneNumbers[i].subTypes[0]
-                phoneNumbersModel.append({num: phoneNumbers[i].number, type: subType, name: name});
-            }
-        }
-        function flushNumbers() {
-            phoneNumbersModel.clear();
-        }
-    }
-    ListModel {
-        id: nullModel
     }
 
     Component {
@@ -143,10 +106,11 @@ AUIPage {
                     contactsPage.contactSelected(model.num, model.name);
                     contactDialog.accept();
                     //workaround, otherwise the next time this item is visited, no rows are displayed
-                    contactDialog.model = nullModel;
+                    contactDialog.model = phoneContactBackEnd.nullModel;
                 }
             }
         }
     }
+
 }
 

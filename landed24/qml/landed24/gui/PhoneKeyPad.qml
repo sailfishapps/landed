@@ -1,7 +1,5 @@
 import QtQuick 1.1
 
-// move to gui
-
 Item { id: thisKeyPad
 
     signal keyPressed (string key)

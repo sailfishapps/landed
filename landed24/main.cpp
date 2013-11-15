@@ -1,6 +1,6 @@
 //TODOs
 //a) find out why beeping on PhoneKey does not work: possibly wav not found
-//b) refactor SMSPage / SMSApp following the precedent of MainPage / GPSDisplay / GPSBackEnd
+//b) migrate flashing functionality from QML to C++ plugin
 
 //Future Changes
 //z) (ongoing) consider how to better separate GUI elements from "backend" logic to ease porting to other target systems
@@ -21,10 +21,12 @@
 
 //Change History
 //Landed24
-//a) move GUI and backend components to separate directories, continue refactoring of BackEnd and GUI components
+//a) move GUI and backend components to separate directories, further refactoring of BackEnd and GUI components
 //b) move all icons to icons subdirectory.
 //c) basic splashscreen added
-//d) coordinate averaging fixed
+//d) Bugfix: coordinate averaging fixed
+//e) Bugfix: close button for visual keyboard visible on Help me SMS.
+//f) flashing functionality (inc Timer) migrated from QML to C++ plugin LandedTorch
 
 //Landed23
 //a) Major refactoring of former GPSApp components:
@@ -80,6 +82,7 @@
 #include "SatInfoSource.h"
 #include "operatingsystem.h"
 #include "windowingsystem.h"
+
 
 #  define Q_MESSAGING
 

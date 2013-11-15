@@ -3,11 +3,8 @@ import QtQuick 1.1
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
 
-
-//This should be split between gui (most of it) and a backend equivalent, or javascript)
 //Should also be renamed, as is not a page
 
-//AUIPage {
 Item {
 
     id: thisDialer

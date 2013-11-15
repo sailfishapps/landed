@@ -1,9 +1,8 @@
+//import QtQuick 2.0
 import QtQuick 1.1
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
-
-//move to gui
 
 Item {
     signal clicked();

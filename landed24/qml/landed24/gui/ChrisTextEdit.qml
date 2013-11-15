@@ -56,7 +56,9 @@ Rectangle {
             primaryColor: "#008000" //"green"
             anchors.right: editableText.right
             z: editableText.z + 1;
-            y: 420
+            //y: 420
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 115
             width: 240
             onClicked: {
                 editableText.panelOpen = false;

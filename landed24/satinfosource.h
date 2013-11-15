@@ -17,6 +17,7 @@ class SatInfoSource : public QObject
     Q_PROPERTY(int satsInView READ satsInView NOTIFY satellitesInViewChanged)
     Q_PROPERTY(int satsInUse READ satsInUse NOTIFY satellitesInUseChanged)
 
+
 public:
     explicit SatInfoSource(QObject *parent = 0);
     ~SatInfoSource();
@@ -31,6 +32,7 @@ signals:
     void satellitesInViewChanged(const int &satsInView);
     void satellitesInUseChanged(const int &satsInUse);
 
+
 private slots:
     void onSatsInViewUpdated(const QList<QGeoSatelliteInfo> &list);
     void onSatsInUseUpdated(const QList<QGeoSatelliteInfo> &list);
@@ -40,6 +42,7 @@ private:
      QGeoSatelliteInfoSource *myGeoSatelliteInfoSource;
      int _satsInUse;
      int _satsInView;
+
 };
 
 #endif // SATINFOSOURCE_H

@@ -58,7 +58,7 @@ AUIPage {id: pageContactSelection
             }
         }
 
-        DialPage {id: keyPadTab
+        Dialer {id: keyPadTab
             onNumberEntered: {
                 pageContactSelection.backPage("Custom number", phoneNumber)
             }
