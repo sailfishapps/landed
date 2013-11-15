@@ -29,48 +29,19 @@ Item {
     AUIButton { id: torchButton
         anchors.left: parent.left
         anchors.leftMargin: 10
-        //anchors.right: parent.right
-        //anchors.rightMargin: 10
         anchors.top: parent.top
         anchors.topMargin: 10
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-        text: (parent.torchOn) ? "Turn Torch OFF" : "Turn Torch ON"
-        //text: (landedTorch.status == true) ? "Torch OFF" : "Torch ON";
+        text: (landedTorch.active) ? "Turn Torch OFF" : "Turn Torch ON"
         property color colorA: "#808080" // "white"
         property color colorB: "#ffffff" // "grey"
-        primaryColor: colorA;
-
+        primaryColor: landedTorch.active ? colorB : colorA
         // "#808080" // "grey" // "#ffff00" // "yellow" // "#ffffff" // "white"
-
         //lets try dark button when off, white when on
 
-        function styleToggle() {
-            console.log ("styleToggle: primaryColor is: " + primaryColor)
-            primaryColor = (primaryColor == colorA) ? colorB : colorA;
-        }
-
         onClicked: {
-            console.log("Torch Button Clicked; torchOn: " + parent.torchOn + ", flashing: " + parent.flashing);
-            console.log ("LandedTorch.flashing: " + landedTorch.flashing)
-            console.log ("LandedTorch.torchOn: " + landedTorch.torchOn)
-            console.log("primaryColor: " + primaryColor);
-            if ((parent.torchOn == false)  && (parent.flashing == false)) {
-                landedTorch.turnOn();
-                parent.torchOn = true;
-            }
-            else if ((parent.torchOn == false)  && (parent.flashing == true)) {
-                //timer will start / toggle torch
-                flashTimer.start();
-                parent.torchOn = true;
-            }
-            else {
-                console.log("stopping everything");
-                landedTorch.turnOff();
-                flashTimer.stop();
-                parent.torchOn = false;
-            }
-            styleToggle();
+            landedTorch.active = !landedTorch.active
         }
     }
 
@@ -84,36 +55,26 @@ Item {
         anchors.topMargin: 10
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-        text: (parent.flashing) ? "Flash" : "Beam"
+        text: (landedTorch.isFlash) ? "Flash" : "Beam"
         primaryColor: "white";
-        enabled: (parent.torchOn) ? false : true
         onClicked: {
-            parent.flashing = !parent.flashing;
-            //the onFlashingChanged Event handler then changes the button colour.
-            //ideally we would like to set the text color to flash (when flashing,
-            //and keep the button color constant)
-            //perhaps via a qml coloranimation element.
-            //http://qt-project.org/doc/qt-4.8/qml-coloranimation.html
-        }
-    }
-
-    Timer{ id: flashTimer;
-        interval: 0.75*1000;
-        //interval: landedTorch.flashInterval
-        repeat: true;
-        triggeredOnStart: true;
-
-        property bool flashOn: false
-
-        onTriggered: {
-            console.log("Timer triggering: flashOn: " + flashOn);
-            landedTorch.torchToggle();
-            flashOn = !flashOn;
+            console.log("mode is: " + landedTorch.mode )
+            console.log("landedTorch.isBeam: " + landedTorch.isBeam);
+            console.log("landedTorch.isFlash: " + landedTorch.isFlash);
+            landedTorch.toggleMode();
+            console.log("mode is: " + landedTorch.mode )
+            console.log("landedTorch.isBeam: " + landedTorch.isBeam);
+            console.log("landedTorch.isFlash: " + landedTorch.isFlash);
         }
     }
 
     LandedTorch {
         id: landedTorch
+        onActiveChanged: {console.log ("somebody has changed active! " + landedTorch.active)}
+        onTorchOnChanged: {console.log("somebody has changed torchOn! " + landedTorch.torchOn + " " + Qt.formatDateTime(new Date(), "yyyy:MM:dd hh.mm.sss.zzz"))}
+        onIsFlashChanged: {console.log("somebody changed isFlash! " + landedTorch.isFlash)}
+        onIsBeamChanged: {console.log("somebody changed isBeam! " + landedTorch.isBeam)}
+        onFlashTimeChanged: {console.log("flashTimeChanged: " + landedTorch.flashTime) }
     }
 }
 
