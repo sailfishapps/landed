@@ -121,6 +121,8 @@ AUIPageStackWindow {
         onCancelled: pageStack.pop(smsPage);
      }
 
+
+
 /*
 Pre AbstractUI / Port to Sailfish the Toolbar and menu would have been here
 and were available to all pages.

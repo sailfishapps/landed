@@ -5,6 +5,7 @@ import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
 import "../backend"
 import "../javascript/landed.js" as LJS
+import "../javascript/message.js" as MSG
 
 //This should be split between gui (most of it) and a backend equivalent, or javascript)
 
@@ -46,14 +47,14 @@ AUIPage {id: smsPage
             state = (msg_status == "Ok") ? "stateOk" : "stateNotOk";
 
             smsDisplay.smsSent = false;
-            smsDisplay.setText(smsBackEnd.buildDefaultMsg(template_id));
+            smsDisplay.setText(MSG.buildDefaultMsg(template_id, lati, longi, alti));
             if ((lastPage =="contactSelectionPage") && (contactSelected (contactName, contactPhone))) {
                 console.log("Take the contact from the ContactSelectionPage");
                 smsDisplay.setContact(contactName, contactPhone);
             }
             else if (lastPage == "mainPage") {
                 console.log("Page has been pushed, take contact from Template")
-                var rs = smsBackEnd.getContact(template_id);
+                var rs = favouritesBackend.getContact(template_id);
                 contactName = rs.rows.item(0).name;
                 contactPhone = rs.rows.item(0).phone;
                 smsDisplay.setContact(contactName, contactPhone);
@@ -142,6 +143,10 @@ AUIPage {id: smsPage
     SMSBackEnd {
         id: smsBackEnd
         onMessageState: smsDisplay.setState(msgState);
+    }
+
+    FavouriteContactsBackEnd {
+        id: favouritesBackend
     }
 
 }

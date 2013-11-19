@@ -1,12 +1,9 @@
 //TODOs
 //a) find out why beeping on PhoneKey does not work: possibly wav not found
-//b) migrate flashing functionality from QML to C++ plugin
 
 //Future Changes
-//z) (ongoing) consider how to better separate GUI elements from "backend" logic to ease porting to other target systems
 //v) consider saving contacts chosen from phone to Landed contacts
 //d) If Phone contact has only one number, then take that without showing the selection dialog
-//f) get SMS functionality working for Sailfish version with QtTelepathy
 //g) add search box to ContactsPage to allow searching phones contacts
 //h) add alphabet scrolling to right of ContactsPage to allow fast scrolling to corect initial letter of contact name
 //i) create settingsPage with following
@@ -24,6 +21,12 @@
 //a) phone contacts are now loaded when PhoneContactsPage is visible, not on app start.
 //  This is a workaround for the error: libqtcontacts-tracker: queue.cpp:104: The taskqueue's background thread stalled
 //  which sometimes prevented the app GUI from being displayed (while leaving the app running in the background)
+//b) SMSes now sent direct via TelepathyQt, rather than via Qt Mobility Messaging
+//   This is because
+//   1) App now starts in a third of the time
+//   2) We only used a fraction of Qt Mobility functionality
+//   3) Qt Mobility also depends on libqtcontacts-tracker, and can give the same error as above
+//   4) Qt Mobility cannot be directly migrated to Sailfish - so we needed to find something else.
 
 //Landed24
 //a) move GUI and backend components to separate directories, further refactoring of BackEnd and GUI components
@@ -87,17 +90,9 @@
 #include "SatInfoSource.h"
 #include "operatingsystem.h"
 #include "windowingsystem.h"
-
-
-#  define Q_MESSAGING
-
-#ifdef Q_MESSAGING
-    #include "smshelper.h"
-#endif
+#include "telepathyhelper.h"
 
 //HELPER Functions getting system information which will be exported to QML
-    //DEFS from /Users/christopherlamb/QtSDK/Madde/sysroots/harmattan_sysroot_10.2011.34-1_slim/usr/include/qt4/Qt/qglobal.h
-    //or //Users/christopherlamb/SailfishOS/mersdk/targets/SailfishOS-i486-x86/usr/include/qt4/Qt/qglobal.h
 
 bool isSimulator()
 {
@@ -204,13 +199,10 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     */
 
     QScopedPointer<QApplication> app(createApplication(argc, argv));
-    #ifdef Q_MESSAGING
-        qmlRegisterType<SMSHelper>("SMSHelper",1,0,"SMSHelper");
-    #endif
+
+    qmlRegisterType<TelepathyHelper>("TelepathyHelper",1,0,"TelepathyHelper");
     qmlRegisterType<LandedTorch>("LandedTorch",1,0,"LandedTorch");
     qmlRegisterType<SatInfoSource>("SatInfoSource",1,0,"SatInfoSource");
-
-    //qmlRegisterUncreatableType<SysInf>("SysInf", 1, 0, "SysInf", "Expose System Info to QML");
 
     QmlApplicationViewer viewer;
     viewer.rootContext()->setContextProperty("OperatingSystemId",  OperatingSystemId);

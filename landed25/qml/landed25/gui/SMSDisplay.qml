@@ -4,7 +4,7 @@ import QtQuick 1.1
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
 
-Rectangle{id: rectSMS
+Rectangle{id: smsDisplay
 
     property bool smsSent: false
     property int defaultBottomMargin: 160
@@ -52,7 +52,7 @@ Rectangle{id: rectSMS
         //color: "white"
         color: "white"
         fontFamily: "Arial"
-        fontSize: rectSMS.fontSize
+        fontSize: smsDisplay.fontSize
     }
 
     Rectangle { id: phoneNrGroup
@@ -139,7 +139,7 @@ Rectangle{id: rectSMS
             anchors {top: parent.top; topMargin: 5}
             color:  "lightyellow"
             Text { id: label
-                font.pointSize: rectSMS.fontSize;
+                font.pointSize: smsDisplay.fontSize;
                 font.family: "Arial";
                 anchors.fill: parent;
                 anchors.leftMargin: 10;
@@ -168,16 +168,13 @@ Rectangle{id: rectSMS
             height: 60
             width: (parent.width - (3 * 10)) / 2
             anchors{right: parent.right; bottom: parent.bottom; topMargin: 5;}
-            //enabled: (smsSent)  ? false : true;
-            //text: (smsSent) ? "Sent" : "Send";
             primaryColor: "#008000" //"green"
             onClicked: {
                 rumbleEffect.start();
                 console.log("sendButton.onCicked");
                 console.log("Sending text: " + smsBody.getText());
                 console.log("to: " + phoneNrField.phoneNumber)
-                //smshelper.sendsms(phoneNrField.phoneNumber, smsBody.getText())
-                rectSMS.sendSMS(phoneNrField.phoneNumber, smsBody.getText());
+                smsDisplay.sendSMS(phoneNrField.phoneNumber, smsBody.getText());
                 smsSent = true;
             }
         }

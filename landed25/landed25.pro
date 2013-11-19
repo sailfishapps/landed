@@ -14,17 +14,21 @@ MOBILITY += location messaging multimedia
 # Speed up launching on MeeGo/Harmattan when using applauncherd daemon
 CONFIG += qdeclarative-boostable
 
-HEADERS += smshelper.h \
+QT += dbus
+PKGCONFIG += TelepathyQt4
+
+HEADERS += \
     landedtorch.h \
     satinfosource.h \
     operatingsystem.h \
-    windowingsystem.h
+    windowingsystem.h \
+    telepathyhelper.h
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
-    smshelper.cpp \
     landedtorch.cpp \
-    satinfosource.cpp
+    satinfosource.cpp \
+    telepathyhelper.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)

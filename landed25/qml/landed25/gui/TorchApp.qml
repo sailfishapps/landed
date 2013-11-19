@@ -12,14 +12,6 @@ import LandedTorch 1.0
 Item {
     id: thisTorch
 
-    property bool flashing: false
-    property bool torchOn: false
-
-    onFlashingChanged: {
-        console.log ("flash mode changed");
-        modeButton.primaryColor = (flashing) ? "yellow" : "white"
-    }
-
     Rectangle {
         width: parent.width
         height: 120
@@ -56,27 +48,14 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         text: (landedTorch.isFlash) ? "Flash" : "Beam"
-        primaryColor: "white";
+        primaryColor: landedTorch.isFlash ? "yellow" : "white";
         onClicked: {
-            console.log("mode is: " + landedTorch.mode )
-            console.log("landedTorch.isBeam: " + landedTorch.isBeam);
-            console.log("landedTorch.isFlash: " + landedTorch.isFlash);
             landedTorch.toggleMode();
-            console.log("mode is: " + landedTorch.mode )
-            console.log("landedTorch.isBeam: " + landedTorch.isBeam);
-            console.log("landedTorch.isFlash: " + landedTorch.isFlash);
         }
     }
 
     LandedTorch {
         id: landedTorch
-        /*
-        onActiveChanged: {console.log ("somebody has changed active! " + landedTorch.active)}
-        onTorchOnChanged: {console.log("somebody has changed torchOn! " + landedTorch.torchOn + " " + Qt.formatDateTime(new Date(), "yyyy:MM:dd hh.mm.sss.zzz"))}
-        onIsFlashChanged: {console.log("somebody changed isFlash! " + landedTorch.isFlash)}
-        onIsBeamChanged: {console.log("somebody changed isBeam! " + landedTorch.isBeam)}
-        onFlashTimeChanged: {console.log("flashTimeChanged: " + landedTorch.flashTime) }
-        */
     }
 }
 
