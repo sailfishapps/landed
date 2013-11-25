@@ -45,5 +45,7 @@ OTHER_FILES += \
     qml/landed24/backend/ContactListModel.qml \
     qml/landed24/gui/SMSPage.qml \
     qml/landed24/gui/Dialer.qml \
-    qml/landed24/backend/PhoneContactsBackEnd.qml
+    qml/landed24/backend/PhoneContactsBackEnd.qml \
+    qml/landed25/gui/PhoneDialer.qml \
+    qml/landed25/gui/SMSTextEdit.qml
 

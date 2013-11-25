@@ -7,6 +7,9 @@ Item {
     property alias phoneContactsModel: phoneContactsModelInternal
     property alias contactNumbersModel: contactNumbersModelInternal
     property alias nullModel: nullModelInternal
+    property alias alphabetModel: leadingCharModelInternal
+
+
 
     //offers the phone's contacts
     AUIContactModel {
@@ -15,21 +18,48 @@ Item {
             //Note: for some reason the enums of ContactDetail (ContactDetailType) and ContactName (FieldType)
             //get lost when wrapped, therefore we have created our own equivalents.
             AUIContactSortOrder {
-                //detail:ContactDetail.Name
-                detail: AUIContactDetailType.Name
-                //field:Name.FirstName
-                field: AUIContactNameType.FirstName
+                detail: AUIContactDetailType.DisplayLabel
+                field: label
                 direction:Qt.AscendingOrder
-            },
-            AUIContactSortOrder {
-               //detail:ContactDetail.Name
-               detail: AUIContactDetailType.Name
-               //field:Name.LastName
-               field: AUIContactNameType.LastName
-               direction:Qt.AscendingOrder
+                blankPolicy: SortOrder.BlanksFirst
             }
         ]
     }
+
+
+
+    LeadingCharacterModel {
+        id: leadingCharModelInternal;
+
+        function populateAlphabet() {
+            var initials = getInitials();
+            console.log("populating model: " + initials.length);
+            leadingCharModelInternal.clear();
+            for (var i = 0; i < initials.length; i++) {
+                leadingCharModelInternal.append(initials[i])
+            }
+        }
+
+        function getInitials() {
+            var oldInitial = "";
+            var initialString = "";
+            var initials = new Array();
+            for (var i = 0; i < phoneContactsModelInternal.contacts.length; i ++) {
+                //console.log("label: " + contactList.model[i].displayLabel)
+                console.log(i + " label: " + phoneContactsModelInternal.contacts[i].displayLabel)
+                var currentInitial = phoneContactsModelInternal.contacts[i].displayLabel.substring(0, 1).toUpperCase()
+                console.log(i + " initial: " + currentInitial)
+                if ((currentInitial != oldInitial) && (currentInitial.length > 0)) {
+                    initialString = initialString + ";" + currentInitial;
+                    initials.push({"character": currentInitial, "index": i});
+                    oldInitial = currentInitial;
+                }
+            }
+            console.log(initialString);
+            return initials;
+        }
+    }
+
 
     //Stores the phone numbers and types of one contact
     ListModel {

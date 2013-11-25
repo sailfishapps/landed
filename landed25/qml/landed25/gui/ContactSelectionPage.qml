@@ -58,7 +58,7 @@ AUIPage {id: pageContactSelection
             }
         }
 
-        Dialer {id: keyPadTab
+        PhoneDialer {id: keyPadTab
             onNumberEntered: {
                 pageContactSelection.backPage("Custom number", phoneNumber)
             }
@@ -93,7 +93,7 @@ AUIPage {id: pageContactSelection
                 visible: true;
                 enabled: true;
                 tab: favouriteTab;
-                iconSource: (theme.inverted) ? "icons/icon-m-toolbar-callhistory-white.png" : "icons/icon-m-toolbar-callhistory.png";
+                iconSource: (theme.inverted) ? "icons/icon-m-toolbar-favorite-mark-white.png" : "icons/icon-m-toolbar-favorite-mark.png";
                 onClicked: {console.log("button1.onClicked");
                 }
             }

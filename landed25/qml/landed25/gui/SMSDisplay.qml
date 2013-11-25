@@ -38,7 +38,7 @@ Rectangle{id: smsDisplay
     }
 
     //This is variable height
-    ChrisTextEdit { id: smsBody
+    SMSTextEdit { id: smsBody
         //height: 320
         anchors.top: parent.top
         anchors.topMargin: 10

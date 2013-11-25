@@ -16,12 +16,11 @@ AUIPage {
     id: contactsPage
     orientationLock: AUIPageOrientation.LockPortrait
 
-    property int listPointSize: (simulator) ? 9 : 20
-    property int phoneNumberDelegatePointSize: (simulator) ? 13 : 30
-
     signal contactSelected(string phoneNumber, string name)
 
     property Item containerObject;
+
+    height: 740
 
     onVisibleChanged: {
         if (visible) {
@@ -41,6 +40,7 @@ AUIPage {
         id: componentDynamic
         PhoneContactsPageContent {
             id: content
+            onContactSelected: contactsPage.contactSelected(number, name);
         }
     }
 

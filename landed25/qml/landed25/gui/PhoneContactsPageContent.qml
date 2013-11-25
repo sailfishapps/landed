@@ -4,9 +4,14 @@ import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
 import "../backend"
 
-Item {
-    id: content
+Rectangle {
+    id: pageContent
     anchors.fill:  parent
+    color: "white"
+
+    property int listPointSize: (simulator) ? 9 : 20
+
+    signal contactSelected(string number, string name)
 
     Text {
         text: "Contacts loading ..."
@@ -19,97 +24,99 @@ Item {
         id: phoneContactBackEnd
     }
 
+    SearchBox {
+        id: searchBox
+        font.pointSize: 24
+    }
+
+    AlphabetSlider {
+        id: alphabetSlider
+        anchors.top: searchBox.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        z: contactList.z + 1;
+        alphabetModel: phoneContactBackEnd.alphabetModel
+        onInitialChanged: {
+            console.log("initialChanged: " + initial + ", " + index);
+            contactList.positionViewAtIndex(index, ListView.Beginning);
+        }
+    }
+
+    //our main list view + associate items, lists contacts on the phone
+
     ListView {
         id:  contactList
-        anchors.fill: parent
-        anchors.rightMargin: 50
+        anchors.top: searchBox.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.rightMargin: alphabetSlider.barWidth
+        anchors.bottom: parent.bottom
         model: phoneContactBackEnd.phoneContactsModel
         delegate:contactDelegate
+        highlight: highlightBar
+        highlightFollowsCurrentItem: true
+        section.property: model.contact.displayLabel
+        section.criteria: ViewSection.FirstCharacter
+        section.delegate: sectionDelegate
+        clip: true
+        cacheBuffer: 1000
         onCountChanged: {
+            contactList.currentIndex = -1;
             console.log("LazyPhoneContactsPage: contactList.count: " + count);
-            console.log("contactList.height: " + height);
-            console.log("content.height: " + content.height);
+            if (count > 0) {
+                phoneContactBackEnd.alphabetModel.populateAlphabet();
+                console.log("cacheBuffer: " + cacheBuffer)
+            }
+        }
+        onMovementStarted: {
+            //causes highlight to disapear - we don't want it to scroll with the
+            //previously selected item
+            contactList.currentIndex = -1;
+        }
+    }
+
+    Component {
+        id: sectionDelegate
+        Rectangle {
+            width: contactList.width
+            height: 20
+            color: "blue"
+        }
+    }
+
+    Component {
+        id: highlightBar
+        Rectangle {
+            color: "#cccccc";
+            width: contactList.width;
+            height: 80
         }
     }
 
     Component {
         id: contactDelegate
-        Rectangle {
-            width: parent.width
-            height: 80
-            color: "white"
-            property string firstName: model.contact.name.firstName;
-            Text {
-                id: nameText
-                anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: parent.top}
-                font.pointSize: contactsPage.listPointSize;
-                font.weight: Font.DemiBold
-                text: model.contact.name.firstName + " " + model.contact.name.lastName;
-            }
-            Text {
-                id: numberText
-                anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: nameText.bottom}
-                font.pointSize: contactsPage.listPointSize * (4/5);
-                font.weight: Font.Light
-                text: model.contact.phoneNumber.number + ", " + model.contact.contactId
-            }
-
-            AUISelectionDialog {id: contactDialog
-                visualParent: contactsPage
-                titleText: nameText.text
-                selectedIndex: 1
-                //only set the model when it is fully populated. i.e. on openening the dialog
-                //otherwise if there is more than one record, nothing will be shown.
-                //model: phoneNumbersModel
-                delegate: phoneNumberDelegate
-                onAccepted: {
-                    console.log ("accepted")
-                }
-                onRejected: {
-                    console.log ("rejected")
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent;
-                onPressed: {
-                    contactDelegate.color = "#CCCCCC";
-                }
-                onClicked: {
-                    console.log(model.contact.name.firstName + " " + model.contact.name.lastName + " clicked")
-                    phoneContactBackEnd.contactNumbersModel.loadNumbers(model.contact.phoneNumbers, model.contact.name.firstName + " " + model.contact.name.lastName)
-                    contactDialog.model = phoneContactBackEnd.contactNumbersModel;
-                    contactDialog.open();
-                }
-                onReleased: {
-                    contactDelegate.color = "white";
-                    console.log("released")
-                }
+        PhoneContactsDelegate {
+            onClicked: {
+                alphabetSlider.opacity = 0
+                phoneContactBackEnd.contactNumbersModel.loadNumbers(model.contact.phoneNumbers, model.contact.name.firstName + " " + model.contact.name.lastName)
+                contactDialog.model = phoneContactBackEnd.nullModel;
+                contactDialog.model = phoneContactBackEnd.contactNumbersModel;
+                contactDialog.open();
             }
         }
     }
 
-    Component {
-        id: phoneNumberDelegate
-        Text {
-            height: 64
-            font.pointSize: contactsPage.phoneNumberDelegatePointSize;
-            font.weight: Font.Light
-            //
-            text: model.num + " " + model.type
-            //text: model.name
-            color: "white"
-            MouseArea {
-                anchors.fill: parent
-                onPressed: {
-                    console.log ("delegate pressed")
-                    contactsPage.contactSelected(model.num, model.name);
-                    contactDialog.accept();
-                    //workaround, otherwise the next time this item is visited, no rows are displayed
-                    contactDialog.model = phoneContactBackEnd.nullModel;
-                }
-            }
-        }
+    PhoneContactDialog {
+        id: contactDialog
+        visualParent: pageContent
+        titleText: nameText.text
+        selectedIndex: 1
+        //only set the model when it is fully populated. i.e. on openening the dialog
+        //otherwise if there is more than one record, nothing will be shown.
+        //model: phoneNumbersModel
+        onContactSelected: pageContent.contactSelected(number, name);
+        onRejected: alphabetSlider.resetOpacity();
     }
 
 }

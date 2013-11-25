@@ -1,5 +1,6 @@
 //TODOs
 //a) find out why beeping on PhoneKey does not work: possibly wav not found
+//b) move all javascript files to javascript directory!
 
 //Future Changes
 //v) consider saving contacts chosen from phone to Landed contacts
@@ -18,7 +19,7 @@
 
 //Change History
 //Landed25
-//a) phone contacts are now loaded when PhoneContactsPage is visible, not on app start.
+//a) phone contacts are now dynamically loaded when PhoneContactsPage is visible, not on app start.
 //  This is a workaround for the error: libqtcontacts-tracker: queue.cpp:104: The taskqueue's background thread stalled
 //  which sometimes prevented the app GUI from being displayed (while leaving the app running in the background)
 //b) SMSes now sent direct via TelepathyQt, rather than via Qt Mobility Messaging
@@ -27,6 +28,9 @@
 //   2) We only used a fraction of Qt Mobility functionality
 //   3) Qt Mobility also depends on libqtcontacts-tracker, and can give the same error as above
 //   4) Qt Mobility cannot be directly migrated to Sailfish - so we needed to find something else.
+//c) PhoneContactsPage now has a Slider Scroll control to allow fast selection of initial letter.
+//d) The PhoneContactDialog is now a child of PhoneContactsPageContent, and not of PhoneContactsDelegate.
+//   this is to speed scrolling of the ContactsListView
 
 //Landed24
 //a) move GUI and backend components to separate directories, further refactoring of BackEnd and GUI components

@@ -34,23 +34,12 @@ Item {
             property int fontPointSize: initialFontPointSize;
             property string phoneNumber: label2.text + label1.text;
 
-            AUIButtonStyle {id: backSpaceButtonStyle
-                //no backgrounds: we just want to see the icons(S) only.
-                background: ""
-                pressedBackground: ""
-            }
-
             AUIButton{id: backSpaceButton
                 width: 64;
                 height: 32;
                 //y: 50
                 anchors {right: parent.right; verticalCenter: parent.verticalCenter}
-                //iconSource: "assets/icon_" + (pressed ? "pressed" : "normal") + ".png"
-                //platformStyle: backSpaceButtonStyle;
                 transparent: true
-                //primaryColor: "#000000"
-                //primaryColor: "#00000000"; // "transparent"
-                //primaryColor: "#ffff00"
                 iconSource: "icons/icon-m-common-backspace_" + (pressed ? "pressed" : "normal") + ".png"
                 onClicked: {
                     console.log("backSpaceButton.onClicked");
