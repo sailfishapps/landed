@@ -9,7 +9,7 @@ Rectangle {
     height: 80
     width: parent.width
 
-    signal requestSearch(string serachforme)
+    signal requestSearch(string searchKey)
 
     property alias font: textEdit.font
 
@@ -27,35 +27,39 @@ Rectangle {
         TextField {
             id: textEdit
             anchors.fill: parent
+            //imH are important, otherwise changes to a word are NOT committed after each char entered
+            inputMethodHints: Qt.ImhNoPredictiveText
             platformSipAttributes: sipAttributes
             onAccepted:  {
                 console.log ("Action key pressed");
                 platformCloseSoftwareInputPanel();
             }
+            onTextChanged: {
+                console.log ("Text Changed")
+                searchBox.requestSearch(textEdit.text);
+            }
+
             AUIButton{id: searchButton
                 width: 64;
                 height: 32;
-                //y: 50
                 anchors {right: parent.right; verticalCenter: parent.verticalCenter}
                 transparent: true
-                iconSource: "icons/icon-m-toolbar-search.png"
+                iconSource: (textEdit.text.length == 0) ? "icons/icon-m-toolbar-search.png" : "icons/icon-m-input-clear.png"
                 onClicked: {
-                    console.log("searchButton.onClicked");
-                    searchBox.requestSearch(textEdit.text);
-                    parent.platformCloseSoftwareInputPanel();
+                    console.log("searchButton.onClicked: " + textEdit.text);
+                    textEdit.text = "";
+                    textEdit.platformCloseSoftwareInputPanel();
                 }
             }
         }
 
         SipAttributes {
             id: sipAttributes
-            actionKeyLabel: "Done"
+            actionKeyLabel: "Close"
             //actionKeyIcon: "/path/to/icon.svg"
             actionKeyHighlighted: true
             actionKeyEnabled: true
-
         }
-
     }
 }
 

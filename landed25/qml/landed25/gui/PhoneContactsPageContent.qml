@@ -27,6 +27,10 @@ Rectangle {
     SearchBox {
         id: searchBox
         font.pointSize: 24
+        onRequestSearch: {
+            console.log("searchRequested: " + searchKey);
+            phoneContactBackEnd.searchKey = searchKey;
+        }
     }
 
     AlphabetSlider {
@@ -56,7 +60,9 @@ Rectangle {
         delegate:contactDelegate
         highlight: highlightBar
         highlightFollowsCurrentItem: true
-        section.property: model.contact.displayLabel
+        //section.property: model.contact.displayLabel
+        //section.property: model.contacts.displayLabel.label
+        section.property: name.firstName
         section.criteria: ViewSection.FirstCharacter
         section.delegate: sectionDelegate
         clip: true
@@ -65,7 +71,7 @@ Rectangle {
             contactList.currentIndex = -1;
             console.log("LazyPhoneContactsPage: contactList.count: " + count);
             if (count > 0) {
-                phoneContactBackEnd.alphabetModel.populateAlphabet();
+                //phoneContactBackEnd.alphabetModel.populateAlphabet();
                 console.log("cacheBuffer: " + cacheBuffer)
             }
         }
@@ -102,6 +108,7 @@ Rectangle {
                 phoneContactBackEnd.contactNumbersModel.loadNumbers(model.contact.phoneNumbers, model.contact.name.firstName + " " + model.contact.name.lastName)
                 contactDialog.model = phoneContactBackEnd.nullModel;
                 contactDialog.model = phoneContactBackEnd.contactNumbersModel;
+                contactDialog.titleText = model.contact.displayLabel
                 contactDialog.open();
             }
         }
@@ -110,7 +117,6 @@ Rectangle {
     PhoneContactDialog {
         id: contactDialog
         visualParent: pageContent
-        titleText: nameText.text
         selectedIndex: 1
         //only set the model when it is fully populated. i.e. on openening the dialog
         //otherwise if there is more than one record, nothing will be shown.
