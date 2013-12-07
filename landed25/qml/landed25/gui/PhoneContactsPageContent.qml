@@ -14,7 +14,7 @@ Rectangle {
     signal contactSelected(string number, string name)
 
     Text {
-        text: "Contacts loading ..."
+        text: phoneContactBackEnd.searchKey.length == 0 ? "Contacts loading ..." : "No match found!!!"
         visible: contactList.count <= 0
         font.pointSize: 30
         anchors.centerIn : parent
@@ -47,8 +47,6 @@ Rectangle {
         }
     }
 
-    //our main list view + associate items, lists contacts on the phone
-
     ListView {
         id:  contactList
         anchors.top: searchBox.bottom
@@ -56,13 +54,11 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: alphabetSlider.barWidth
         anchors.bottom: parent.bottom
-        model: phoneContactBackEnd.phoneContactsModel
+        model: phoneContactBackEnd.localContactModel
         delegate:contactDelegate
         highlight: highlightBar
         highlightFollowsCurrentItem: true
-        //section.property: model.contact.displayLabel
-        //section.property: model.contacts.displayLabel.label
-        section.property: name.firstName
+        section.property: model.displayLabel
         section.criteria: ViewSection.FirstCharacter
         section.delegate: sectionDelegate
         clip: true
@@ -70,15 +66,13 @@ Rectangle {
         onCountChanged: {
             contactList.currentIndex = -1;
             console.log("LazyPhoneContactsPage: contactList.count: " + count);
-            if (count > 0) {
-                //phoneContactBackEnd.alphabetModel.populateAlphabet();
-                console.log("cacheBuffer: " + cacheBuffer)
-            }
         }
         onMovementStarted: {
             //causes highlight to disapear - we don't want it to scroll with the
             //previously selected item
-            contactList.currentIndex = -1;
+            if (alphabetSlider.sliderVisible) {
+                contactList.currentIndex = -1;
+            }
         }
     }
 
@@ -105,10 +99,10 @@ Rectangle {
         PhoneContactsDelegate {
             onClicked: {
                 alphabetSlider.opacity = 0
-                phoneContactBackEnd.contactNumbersModel.loadNumbers(model.contact.phoneNumbers, model.contact.name.firstName + " " + model.contact.name.lastName)
+                phoneContactBackEnd.contactNumbersModel.loadNumbers(model.phoneNumbers, model.displayLabel)
                 contactDialog.model = phoneContactBackEnd.nullModel;
                 contactDialog.model = phoneContactBackEnd.contactNumbersModel;
-                contactDialog.titleText = model.contact.displayLabel
+                contactDialog.titleText = model.displayLabel
                 contactDialog.open();
             }
         }

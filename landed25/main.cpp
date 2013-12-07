@@ -31,7 +31,8 @@
 //c) PhoneContactsPage now has a Slider Scroll control to allow fast selection of initial letter.
 //d) The PhoneContactDialog is now a child of PhoneContactsPageContent, and not of PhoneContactsDelegate.
 //   this is to speed scrolling of the ContactsListView
-//3) SearchBox and search functionality added to PhoneContacts
+//e) SearchBox and search functionality added to PhoneContacts
+//f) PhoneContacts now loaded to an adapter model, and manipulated through the adapter
 
 //Landed24
 //a) move GUI and backend components to separate directories, further refactoring of BackEnd and GUI components

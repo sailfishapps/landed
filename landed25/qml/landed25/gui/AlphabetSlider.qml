@@ -8,6 +8,7 @@ Item {
     signal initialChanged(string initial, int index);
 
     property alias barWidth: verticalbar.width;
+    property alias sliderVisible: slider.visible
     property LeadingCharacterModel alphabetModel
 
     function resetOpacity() {
@@ -42,7 +43,7 @@ Item {
                 var tempScreenHeight = screenHeight - slider.fingerOffset();
                 var tempMouseY = Math.min(tempScreenHeight, Math.max(0, mouseY - slider.fingerOffset()));
                 var ret = Math.ceil((tempMouseY / (tempScreenHeight)) * steps);
-                console.log("mouseY: " + tempMouseY + ", height: " + tempScreenHeight + ", steps: " + steps +", step: " + ret);
+                //console.log("mouseY: " + tempMouseY + ", height: " + tempScreenHeight + ", steps: " + steps +", step: " + ret);
                 return ret;
             }
             else {

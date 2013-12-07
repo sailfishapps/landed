@@ -4,7 +4,6 @@ Item {
     id: backGroundRect
     width: parent.width
     height: 80
-    property string firstName: model.contact.name.firstName;
 
     signal clicked()
     signal contactSelected(string number, string name)
@@ -15,22 +14,22 @@ Item {
         anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: parent.top}
         font.pointSize: pageContent.listPointSize;
         font.weight: Font.DemiBold
-        text: model.contact.displayLabel.trim();
-    }  
+        text: model.displayLabel.trim();
+    }
     Text {
         id: numberText
         anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: nameText.bottom}
         font.pointSize: pageContent.listPointSize * (4/5);
         font.weight: Font.Light
-        text: model.contact.phoneNumber.number + ", " + model.contact.contactId
+        text: model.phoneNumber.number + ", " + model.contactId
     }
     MouseArea {
         anchors.fill: parent;
         onPressed: {
             contactList.currentIndex = index;
         }
-        onClicked: {         
-            console.log(model.contact.name.firstName + " " + model.contact.name.lastName + " clicked")
+        onClicked: {
+            console.log(model.displayLabel + " clicked")
             parent.clicked()
         }
         onReleased: {
