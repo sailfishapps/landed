@@ -52,13 +52,13 @@ Rectangle {
         anchors.top: searchBox.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.rightMargin: alphabetSlider.barWidth
+        //anchors.rightMargin: alphabetSlider.barWidth
         anchors.bottom: parent.bottom
         model: phoneContactBackEnd.localContactModel
         delegate:contactDelegate
         highlight: highlightBar
         highlightFollowsCurrentItem: true
-        section.property: model.displayLabel
+        section.property: "displayLabel"
         section.criteria: ViewSection.FirstCharacter
         section.delegate: sectionDelegate
         clip: true
@@ -79,9 +79,24 @@ Rectangle {
     Component {
         id: sectionDelegate
         Rectangle {
-            width: contactList.width
+            //width: contactList.width
+            width: pageContent.width
             height: 20
-            color: "blue"
+            Rectangle {
+                id: bar
+                width: parent.width - alphabetSlider.barWidth
+                height: 2
+                y: 0
+                color: "lightgrey"
+            }
+            Text {
+                anchors.verticalCenter: bar.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 30
+                text: section
+                font.pointSize: 18
+                horizontalAlignment: Text.AlignRight
+            }
         }
     }
 
