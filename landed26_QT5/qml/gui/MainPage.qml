@@ -39,7 +39,9 @@ AUIPageWithMenu {id: mainPage
 
     QtObject {
         id: privateVars
-        property bool gpsAcquired: false
+        property bool gpsAcquiredFaked: false
+        property bool reliableLocationAcquired: false
+        property bool gpsAcquired: (reliableLocationAcquired || gpsAcquiredFaked)
     }
 
     onStatusChanged: {
@@ -73,10 +75,10 @@ AUIPageWithMenu {id: mainPage
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
-    function fakeGPSAquired() {
+    function fakeGPSAcquired() {
         //temporary function, used by testing to simulate gps aquired
         //for use when testing in building with no GPS signal
-        privateVars.gpsAcquired = true;
+        privateVars.gpsAcquiredFaked = true;
     }
 
     function getLati() {
@@ -103,10 +105,9 @@ AUIPageWithMenu {id: mainPage
             console.log("MainPage: onSatsInViewChanged: " + satsInView);
             console.log("averagedCoordinate.latitude: " + location.coordinate.latitude)
         }
-
-        onLocationChanged: {
-            console.log("Averaged Location Changed");
-            privateVars.gpsAcquired = true;
+        onReliableLocationAcquiredChanged :{
+            console.log("We have a reliable location, we can activate GUI controls");
+            privateVars.reliableLocationAcquired = true;
         }
     }
 
@@ -156,6 +157,7 @@ AUIPageWithMenu {id: mainPage
 
         //bind properties to GPSBackEnd equivalents
         gpsOn: gpsBackEnd.gpsOn;
+        reliableLocationAcquired:gpsBackEnd.location.reliableLocationAcquired;
         compassOn: gpsBackEnd.compassOn;
         coordAveraging: gpsBackEnd.locationAveraging;
         latitude: gpsBackEnd.getFormatttedLatitude(gpsBackEnd.location.coordinate.latitude, coordFormatDMS)
@@ -291,7 +293,7 @@ AUIPageWithMenu {id: mainPage
         AUIMenuAction {
             text: qsTr("Fake GPS Aquired");
             onClicked: {
-                mainPage.fakeGPSAquired();
+                mainPage.fakeGPSAcquired();
             }
         },
         AUIMenuAction {

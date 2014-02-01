@@ -1,3 +1,11 @@
+//Installation requirements
+//1) latest version of AbstractUI for Sailfish must be installed
+//2) To access the phone's contacts, the app must be added ot mapplauncherd privileges file
+//  as user root:
+//  cd /usr/share/mapplauncherd
+//  echo /usr/bin/landed26_QT5,p >> privileges
+
+
 //TODOs
 //a) find out why beeping on PhoneKey does not work: possibly wav not found
 //b) move all javascript files to javascript directory!

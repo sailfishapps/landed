@@ -35,12 +35,7 @@ Item {id: thisGPSDisplay
     // in the bindings of latitude and longitude
     property bool coordFormatDMS: true;
 
-//TODO: should this set not be property aliases
-//apparently property aliases are read only?
-    //property alias latitude: lati;
-    //property alias longitude: lngi;
-    //property alias altitude: alti
-
+    property bool reliableLocationAcquired: false
     property string latitude: "searching ...";
     property string longitude: "searching ...";
     property string altitude: "searching ...";
@@ -151,12 +146,12 @@ Item {id: thisGPSDisplay
         Row {
             spacing: coordsDisplay.rowSpacing;
             Text {id: latiLabel; text: "Lati:" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.labelColor; width: 150}
-            Text {id: lati; text: thisGPSDisplay.latitude; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}
+            Text {id: lati; text: (thisGPSDisplay.reliableLocationAcquired) ? thisGPSDisplay.latitude: "!!! " + thisGPSDisplay.latitude + " !!!"; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
             Text {id: lngiLabel; text: "Long:" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.labelColor; width: 150}
-            Text {id: lngi; text: thisGPSDisplay.longitude; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}
+            Text {id: lngi; text: (thisGPSDisplay.reliableLocationAcquired) ? thisGPSDisplay.longitude: "!!! " + thisGPSDisplay.longitude + " !!!"; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;

@@ -9,8 +9,8 @@ import "../javascript/landed.js" as LJS
 Item {id: thisGPSBackEnd
 
     property bool locationAveraging: true
-
     property alias gpsOn: positionSource.active
+    property alias  reliableLocationAcquired: averagedLocation.reliableLocationAcquired
     property alias speed: position.speed;
     property alias speedValid: position.speedValid;
     property alias horizontalAccuracy: position.horizontalAccuracy;
@@ -35,7 +35,7 @@ Item {id: thisGPSBackEnd
     function onGPS () {
         console.log("turning GPS on")
         positionSource.start();
-        //satInfoSource.startUpdates();
+        satInfoSource.startUpdates();
     }
 
     function offGPS () {
@@ -127,7 +127,7 @@ Item {id: thisGPSBackEnd
     //gives access to info on number of Sats in view / use
     SatInfoSource {
         id: satInfoSource
-
+        property bool minSats: (satsInUse >= 3);
         onSatellitesInUseChanged: {
             console.log("GPSBackEnd: SatellitesInUseChanged! " + satsInUse + "; " + thisGPSBackEnd.satsInUse);
         }
@@ -157,10 +157,12 @@ Item {id: thisGPSBackEnd
         updateInterval: 1000
         active: false
         // nmeaSource: "nmealog.txt"
+        onActiveChanged: {
+            console.log("PositionSource onActiveChanged: " + position.timsestamp);
+        }
         onPositionChanged: {
-            console.log("PositionChanged Signal Received! inner");
-            //If the timer is running, subsequent calls to start() have no effect
-            timer.start();
+            console.log("PositionChanged Signal Received! inner: " + position.timsestamp);
+
         }
         function convertDDToDMS(dd, axis){
 
@@ -220,6 +222,7 @@ Item {id: thisGPSBackEnd
     }
 
     Connections {
+        //connect //averagedLocation below to positionSource above
         target: positionSource.position
         onCoordinateChanged: {
             console.log ("signal from positionSource.position snatched out of the ether: Coordinate changed");
@@ -251,15 +254,24 @@ Item {id: thisGPSBackEnd
         property real summedLatitude: 0;
         property real summedLongitude: 0;
         property int hits: 0;
+        property bool reliableLocationAcquired: (validCoord() && satInfoSource.minSats)
 
-        onCoordinateChanged: if (validCoord()) thisGPSBackEnd.locationChanged();
-
+        onCoordinateChanged:  {
+            console.log("averagedLocation.onCoordinateChanged: validCoord: "  + validCoord() + ", minSats: " + satInfoSource.minSats)
+            if (reliableLocationAcquired) {
+                //only signal to the gui etc if coords are coords, and if we have enough sats in view to give
+                //a reasonable postion.
+                //Note in future we might use the postion timestamp (currently undefined)
+                //If the timer is running, subsequent calls to start() have no effect
+                timer.start();
+                thisGPSBackEnd.locationChanged();
+            }
+        }
         function validCoord() {
             //check that latitude and longitude are valid numbers
             //i.e we have acquired a plausible position
             return (!isNaN(coordinate.latitude) && !isNaN(coordinate.longitude))
         }
-
         function resetAverages() {
             coordinate.latitude = 0;
             coordinate.longitude = 0;
