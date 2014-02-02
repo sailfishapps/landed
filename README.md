@@ -3,21 +3,19 @@ landed
 
 An app for paraglider pilots to send GPS coords via SMS to a recovery team using a few button pushes only.
 
-Development Status:
+Development / Migration Status:
 
-Landed, LandedSettings, and AbstractUI are all very much work-in-progress and not finished! This is why I have not published the code of Landed until now: but realising very likely they never will be finished as I find new things to add, improve, and play around with, has triggered me to "publish and be dammed".
+landed26_QT5 is the latest version for Sailfish Qt5, and is the lead version. It is 95% ported. All the important things are functional, and it even looks Sailfishy. Small things need polishing
 
-2013 Oct 05: Lots of small but important changes to Landed22 (Harmattan / Sailfish Alpha 1). See main.cpp for a detailed change history.
+landed25 is the fully functional version for Harmattan. It will be the last major verison on that platform. I may release a Landed26 to backport refactorings from future Sailfish versions
 
-Landed22 is the latest version of landed, and incorporates changes that I made in the last few days, immediately after using Landed21 under a SAR SuperPuma helicopter in Greece (this time to help recover an injured colleague). These changes make Landed even easier to use (and more are coming soon ...)
+Development on landedSettings is currently suspended. In the short to medium term I intend to develop a Qt Desktop application to provide the same functionality.
 
-Landed21 included functionality that I added shortly after using it in anger for the first time under a REGA helicopter on a dark snow covered mountain. In "Helm Me!" mode, Landed now has a flashing torch to signal to a searching helicopter.
+LandedCreateDB is a temporary app that installs a demo LocalStorageDB used by Landed. The script used is initiateDB.js, so this file can be altered to configure the Database.
+
 
 Follow progress on my blog: http://flyingsheeponsailfish.blogspot.ch/
 
-Migration Status:
-
-Landed and LandedSettings as published here work with both Harmattan (Qt 4.7.4) and Sailfish Alpha 1 (Qt 4.8.3). I have versions that work (more or less) with the Sailfish Alpha 2 (Qt 5.x), but work on this migration have taken a backseat to improving the Harmattan versions (because that is what runs on my real life phone, and what I can actually use when up shit creak). I need to back-port the new functionality to the migrated versions, and will then publish the Alphas 2 versions.
 
 Purpose:
 
@@ -32,28 +30,29 @@ So there is no cutting and pasting or copying of GPS co-ordinates with all the p
 The templates and associated contacts are setup in the sidekick app LandedSettings, more of which below.
 
 
-LandedSettings:
+Data Model.
 
-In a future version this may be fully integrated into Landed. For now it is a separate app.
+The top level entity is "Group" (will probably be renamed to Area or Zone). A Group equates to an area where I frequently fly (e.g. Switzerland, Greece, South Africa).
 
-The templates setup in LandedSettings can be grouped into "Groups". By my way of thinking a Group equates to a location where I frequently fly - with the idea that I want to have different templates (maybe with different languages) and different contacts attached to these based on the locations. So in my example I have a "Group" for Switzerland, South Africa and Greece respectively.
+Each Group is the parent of two SMS Templates, one normal Recovery SMS Template, and one emergency "Help me!" SMS Template. A Template is the text body that will be sent.
 
-For each of these I have a "Status Ok" and and a "Status NOT Ok" template:: While these are functionally identical, the status OK is intended for use after a normal landing, and indicates to recovery to "come and get me some time", while the "Status NOT Ok" is intended for use when you are hanging from the proverbial tree or worse, and indicates that help is required!
+Each Template is the the parent of several "Tags": these are placeholders that will be replaced by values from the GPS Location (e.g. Latittude, Longitude).
 
-Landed:
+Each Template is the parent of several "Contacts", one of which is the default
 
-When Landed starts, it automatically fires up the GPS. When the location is found, the Button "Create SMS" is activated.
-Pressing the Create SMS button pops the "SMS Selection" Page, showing the SMS templates for the current Group / Location. The Group / Location can be changed by clicking on the header.
-Pressing one of the SMS buttons opens the SMS page, with the SMS text built from the selected template with the GPS coords added. Then all you have to do is press send!
 
-If the SMS Page is opened for a NOT Ok SMS, then in addition to the SMS functionality, a torch is available at the top of the page. This allows you to shine and flash the camera flash LEDs to help that big red helicopter find you at night. This function was added based on real world experience …
+Using Landed:
 
-Status:
+When Landed starts, it automatically fires up the GPS. When the location is found, the nearest "Group" is selected, and the SMS Buttons are activated, allowing the sending of either a normal REcovery SMS, or an emergency "Help Me!" SMS.
 
-Both Apps are work in progress, and probably always will be as I find new things to add, or better ways of doing things.
-The core functionality of Landed is up and running: here I just have to make things slicker and even easier (e.g. integrate the phone's contacts).
-LandedSettings still needs a little more work so that all the add / new / edit functionality works.
-Both Apps are in the midst of a Harmattan to Sailfish migration using the AbstractUI abstraction library, which has been my main focus for the past few weeks.
+The user can:
+1) change the "Group" by clicking on the "Group" header between the GPS Display and the SMS buttons.
+2) edit the SMS text to add more information to the default text.
+3) change the preselected contact, by pressing on the displayed contact. This opens a Contact Selection page with three tabs:
+3.1) Favourite Contacts: from the LocalStorageDb
+3.2) A Dialer, allowing a number to be dialed.
+3.3.) PhoneContactPage: allowing the phones contacts pages to be selected (this bit is not fully ported on Sailfish, coming soon).
+4) On the Emergency SMS a torch is available to signal with beam or flash (e.g. to a helicopter).
 
 
 Safety / Legal:
@@ -62,41 +61,22 @@ We give no warranty or guarantee that this app will actually work. If you are in
 
 For the app to work you will need both GPS reception, and Cell-phone signal
 
+
 Requirements:
 
 Both Landed and LandedSettings require:
 
-1) AbstractAUI abstraction Library.
+1) AbstractUI abstraction Library.
 The Harmattan version can be found here: https://github.com/harmattan/AbstractUI-for-Harmattan
 
 The Sailfish version can be found here: https://github.com/sailfishapps/AbstractUI-for-Sailfish-Silica
 
 Make sure you install the correct version for your platform! This is where the magic takes place handling differences between Harmattan and Sailfish, so the wrong version won't get you anywhere!
 
-2) Qt-Components (com.nokia.meego)
-These are installed as standard on Harmattan.
-On Sailfish you will need to install these as instructed here: 
-http://flyingsheeponsailfish.blogspot.ch/2013/05/adding-additional-qt-packages-to.html
-
-When the AbstractUI is more mature we may be able to completely remove Sailfish dependancies on this package, but for the moment we need it.
-
-3) SQlite
-Is available "out-of-the-box" on Harmattan (at least on my N9)
-Can be installed to Sailfish as instructed here:
-http://flyingsheeponsailfish.blogspot.ch/2013/05/adding-additional-qt-packages-to.html
-
-First Time Use:
-
-Fire up LandedSettings first, to setup the templates.
-You may have to Initiate and refresh the DB first (via PullUPMenu), soon I will automate this.
-As the new / edit / delete functionality is not yet fully working you may have to cheat and resort to editing the initiateDB.js in LandedSettings.
-Once you have your templates and contacts setup, then these should be available when you start Landed.
-Please test the GPS coords shown make sense, before you send your recovery team off to the South Pole!
-
-
-Strange Behaviours:
-
-1) Harmattan Device in SDK mode vs from the Device itself.
-If you setup and configure the settings DB in SDK mode on Harmttan (as I do when developing), these settings will not be available when firing up the app from the device itself (non sdk mode). I guess this is down to differences in users between SDK and non SDK mode.
-
-
+2) The Sailfish yaml file for Landed should help install all the bits Landed requires, but it is hard to keep track of what is installed as default, in the course of development, added by playing-around, or instaling 3rd Party apps.
+Some of the dependencies are:
+Telepathy
+Gstreamer,
+QtPositioning
+QtSensors
+LocalStorage
