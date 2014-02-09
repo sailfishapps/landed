@@ -47,7 +47,6 @@ OTHER_FILES += qml/landed26_QT5.qml \
     qml/gui/TemplateButtonsDelegate.qml \
     qml/backend/GPSBackEnd.qml \
     qml/backend/SMSTemplateListModel.qml \
-    qml/javascript/settingsDB.js \
     qml/javascript/landed.js \
     qml/gui/SMSPage.qml \
     qml/gui/TorchApp.qml \
@@ -56,11 +55,7 @@ OTHER_FILES += qml/landed26_QT5.qml \
     qml/backend/FavouriteContactsBackEnd.qml \
     qml/gui/SMSTextEdit.qml\
     qml/javascript/message.js \
-    qml/gui/GroupSelectionPage.qml \
-    qml/gui/GroupRadioButtons.qml \
-    qml/backend/GroupListModel.qml \
     qml/gui/SimpleHeader.qml \
-    qml/gui/GroupButtonsDelegate.qml \
     qml/gui/GreenCheckButtonStyle.qml \
     qml/gui/ContactSelectionPage.qml \
     qml/gui/FavouriteContactsPage.qml \
@@ -77,4 +72,10 @@ OTHER_FILES += qml/landed26_QT5.qml \
     qml/gui/AlphabetSlider.qml \
     qml/gui/PhoneContactsDelegate.qml \
     qml/gui/PhoneContactDialog.qml \
-    qml/backend/LeadingCharacterModel.qml
+    qml/backend/LeadingCharacterModel.qml \
+    qml/gui/AreaSelectionPage.qml \
+    qml/gui/AreaButtonsDelegate.qml \
+    qml/gui/AreaRadioButtons.qml \
+    qml/backend/AreaListModel.qml \
+    qml/javascript/readDataModel.js \
+    qml/javascript/writeDataModel.js

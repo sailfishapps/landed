@@ -5,9 +5,10 @@ import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
 import org.flyingsheep.abstractui.backend 1.0 //for Coordinate
 //import QtMobility.location 1.2
-import "../javascript/settingsDB.js" as DB
+import "../javascript/readDataModel.js" as DB
 import "../javascript/landed.js" as LJS
 import "../backend"
+import LandedTheme 1.0
 
 
 // we should move this to gui, but still has quite a lot of functionality,
@@ -19,8 +20,6 @@ import "../backend"
 AUIPageWithMenu {id: mainPage
     //tools: commonTools
     width: parent.width
-    //width: 480
-//    height: 828 -toolbarHeight
     orientationLock: AUIPageOrientation.LockPortrait
 
     //property int toolbarHeight: 0
@@ -33,9 +32,10 @@ AUIPageWithMenu {id: mainPage
     property color labelColorActive
     property color labelColorInactive
     property int fontSize
-    property bool groupSet: false;
+    property bool areaSet: false;
+    property string area_id;
 
-    signal nextPage(string pageType, string smsType, string template_id, string msg_status)
+    signal nextPage(string pageType, string smsType, string area_id, string template_id, string msg_status)
 
     QtObject {
         id: privateVars
@@ -49,13 +49,13 @@ AUIPageWithMenu {id: mainPage
         console.log ("privateVars.gpsAcquired: " + privateVars.gpsAcquired);
         if (status == AUIPageStatus.Active) {
             if (privateVars.gpsAcquired) {
-                if (groupSet) {
-                    console.log("user has changed group, so we will use the selected group")
-                    templateButtons.setActiveGroup(gpsBackEnd.location);
+                if (areaSet) {
+                    console.log("user has changed area, so we will use the selected area")
+                    templateButtons.setSelectedArea(gpsBackEnd.location, area_id);
                 }
                 else {
-                    console.log("use the nearest group")
-                    templateButtons.setNearestGroup(gpsBackEnd.location);
+                    console.log("use the nearest area")
+                    templateButtons.setNearestArea(gpsBackEnd.location);
                 }
             }
             console.log ("MainPage: turning GPS on ...");
@@ -123,7 +123,8 @@ AUIPageWithMenu {id: mainPage
         anchors {left: parent.left; leftMargin: 5; right: parent.right; rightMargin: 5; top: parent.top; topMargin: 5}
         height: 50
         //color: (theme.inverted) ? "#333333" : "#006600" //harmattan
-        color: "#006600"
+        //color: "#006600"
+        color: LandedTheme.BackgroundColorE
         radius: 10
         Text {
             text: "Landed!!! v26"
@@ -215,32 +216,32 @@ AUIPageWithMenu {id: mainPage
         onEnabledChanged: {
             console.log ("TemplateButtons: onEnabledChanged: " + enabled);
             if (enabled) {
-                setNearestGroup(gpsBackEnd.location);
+                setNearestArea(gpsBackEnd.location);
                 rumbleEffect.start();
             }
         }
         onDelegateClicked: {
             rumbleEffect.start();
             console.log("Default button chosen, for template_id: " + template_id);
-            mainPage.nextPage("SMS", "Default", template_id, msg_status);
+            mainPage.nextPage("SMS", "Default", area_id, template_id, msg_status);
         }
         onHeaderClicked: {
             clear();
-            mainPage.nextPage("Group", null, null, null);
+            mainPage.nextPage("Area", null, null, null, null);
         }
 
-        function setHeaderText(group) {
-            return group.name;
+        function setHeaderText(area) {
+            return area.name;
         }
 
-        function setHeaderSubText(group, distance) {
-            return "Lat: " + group.latitude + "; Lng: " + group.longitude + "; Dst: " + distance;
+        function setHeaderSubText(area, distance) {
+            return "Lat: " + area.latitude + "; Lng: " + area.longitude + "; Dst: " + distance;
         }
 
-        function set (group, distance) {
-            templateButtons.headerText = setHeaderText(group);
-            templateButtons.headerSubText = setHeaderSubText(group, distance);
-            templateButtons.populate(group.id);
+        function set (area, distance) {
+            templateButtons.headerText = setHeaderText(area);
+            templateButtons.headerSubText = setHeaderSubText(area, distance);
+            templateButtons.populate(area.id);
         }
 
         AUILocation {
@@ -254,30 +255,31 @@ AUIPageWithMenu {id: mainPage
             return currentLocation.coordinate.distanceTo(tempLocation.coordinate);
         }
 
-        function setActiveGroup(currentLocation) {
-            var rs = DB.getActiveGroup();
+        function setSelectedArea(currentLocation, area_id) {
+            var rs = DB.getArea(area_id);
             console.log ("Records found: " + rs.rows.length)
+//TODO: if we are in fake GPSAcquiredMode we will not have a currentLocation yet
             var distance = formatDistance(getDistance(rs.rows.item(0), currentLocation));
             templateButtons.set(rs.rows.item(0), distance);
         }
 
-        function setNearestGroup(currentLocation) {
+        function setNearestArea(currentLocation) {
             console.log ("current location latitude: " + currentLocation.coordinate.latitude + " longitude: " + currentLocation.coordinate.longitude)
-            var rs = DB.getTemplateGroups();
+            var rs = DB.getAreas();
             var distance;
-            var nearestGroup = -1;
-            var nearestGroupDistance = -1
+            var nearestArea = -1;
+            var nearestAreaDistance = -1
             for(var i = 0; i < rs.rows.length; i++) {
                 distance = getDistance(rs.rows.item(i), currentLocation);
                 console.log ("distance: " + distance + " to " + rs.rows.item(i).name);
-                if ( (distance < nearestGroupDistance) || (i == 0) ) {
-                    nearestGroupDistance = distance;
-                    nearestGroup = rs.rows.item(i);
+                if ( (distance < nearestAreaDistance) || (i == 0) ) {
+                    nearestAreaDistance = distance;
+                    nearestArea = rs.rows.item(i);
                 }
             }
-            console.log ("nearest group is: " + nearestGroup.name + " " + nearestGroup.latitude);
-            distance = formatDistance(nearestGroupDistance);
-            templateButtons.set(nearestGroup, distance);
+            console.log ("nearest area is: " + nearestArea.name + " " + nearestArea.latitude);
+            distance = formatDistance(nearestAreaDistance);
+            templateButtons.set(nearestArea, distance);
         }
 
         function formatDistance(distance) {

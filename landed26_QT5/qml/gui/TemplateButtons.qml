@@ -1,12 +1,13 @@
 import QtQuick 2.0
 //import QtQuick 1.1
 import "../backend"
+import LandedTheme 1.0
 
 Item {
     id: thisModel
     signal populated(string template_id);
     signal headerClicked();
-    signal delegateClicked(string template_id, string msg_status);
+    signal delegateClicked(string area_id, string template_id, string msg_status);
 
     //"outward" looking properties, should be bound by parent
     property int itemHeight: 60;
@@ -28,8 +29,8 @@ Item {
 
     property alias currentIndex: templateView.currentIndex;
 
-    function populate(group_id) {
-        templateModel.populate(group_id);
+    function populate(area_id) {
+        templateModel.populate(area_id);
     }
 
     function clear() {
@@ -86,11 +87,11 @@ Item {
             height: thisModel.itemHeight
             text: button_label
             fontSize: thisModel.fontSize
-            buttonColor: (msg_status == "Ok") ? "green" : "red";
+            buttonColor: (msg_status == "Ok") ? LandedTheme.ButtonColorGreen : LandedTheme.ButtonColorRed;
             onClicked:{
-                console.log("Template Delegate Clicked: template_id is: " + template_id);
+                console.log("Template Delegate Clicked: area_id is: " + area_id + ",template_id is: " + template_id);
                 templateView.currentIndex = index;
-                thisModel.delegateClicked(template_id, msg_status);
+                thisModel.delegateClicked(area_id, template_id, msg_status);
             }
         }
     }

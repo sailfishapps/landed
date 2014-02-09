@@ -3,15 +3,14 @@ import QtQuick 2.0
 import "../javascript/readDataModel.js" as DB
 
 ListModel {
-    id: contactModel
-    function populate(area_id, template_id){
+    id: areaModel
+    function populate(){
         clear();
-        var rs = DB.getContacts(area_id, template_id);
-        console.log("Contact model populating for area_id:" + area_id + ", template: " + template_id + ", No Rows: " + rs.rows.length);
-        contactView.resize(rs.rows.length);
+        var rs = DB.getAreas();
+        console.log("area model populating: No Rows: " + rs.rows.length);
+        areaView.resize(rs.rows.length);
         for(var i = 0; i < rs.rows.length; i++) {
-            console.log(rs.rows.item(i).name);
-            contactModel.append({"name": rs.rows.item(i).name, "phone": rs.rows.item(i).phone, "primary_contact":  rs.rows.item(i).primary_contact, "contact_id":  rs.rows.item(i).id});
+            areaModel.append({"name": rs.rows.item(i).name, "primary_area":  rs.rows.item(i).primary_area, "area_id":  rs.rows.item(i).id});
         }
     }
     function setExclusiveActiveItem(activeItem) {

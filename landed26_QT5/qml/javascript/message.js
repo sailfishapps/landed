@@ -1,11 +1,11 @@
 .pragma library
-.import "settingsDB.js" as SDB
-//Qt.include ("settingsDB.js") //Old Qt4 Style Import
+.import "readDataModel.js" as SDB
+//Qt.include ("readDataModel.js") //Old Qt4 Style Import
 
-function buildDefaultMsg(template_id, lati, longi, alti) {
+function buildDefaultMsg(area_id, template_id, lati, longi, alti) {
     var text = "";
     var tag = "";
-    var rs = SDB.getTags(template_id);
+    var rs = SDB.getTags(area_id, template_id);
     for(var i = 0; i < rs.rows.length; i++) {
         tag = rs.rows.item(i).default_value;
         tag = swapPlaceHolders(tag, lati, longi, alti) + "\n";

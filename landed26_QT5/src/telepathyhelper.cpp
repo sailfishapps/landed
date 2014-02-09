@@ -49,8 +49,24 @@ void TelepathyHelper::sendSMS(const QString &contactIdentifier, const QString &m
 
 }
 
+
+/*
+    connect(messenger.data()
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onSendMessageFinished(Tp::PendingOperation*)));
+
+    messenger->sendMessage(message);
+
+    gives
+
+[D] Tp::Debug::invokeDebugCallback:146 - tp-qt 0.9.3 DEBUG: Contact id requires normalization. Queueing events until it is normalized
+QObject::connect: No such signal Tp::ContactMessenger::finished(Tp::PendingOperation*) in ../landed26_QT5/src/telepathyhelper.cpp:48
+
+*/
+
 void TelepathyHelper::onSendMessageFinished(Tp::PendingOperation *op)
 {
+    qDebug() << "TelepathyHelper::onSendMessageFinished";
     if (op->isError()) {
         qDebug() << "Error sending message:" << op->errorName() << "-" << op->errorMessage();
         emit errorMsg("Error sending message");

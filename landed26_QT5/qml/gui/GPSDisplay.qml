@@ -77,7 +77,8 @@ Item {id: thisGPSDisplay
     //GUI Elements
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
-
+/*
+See gpsDialog for info why commented out
     //GUI: when pressAndHeld, opens gpsDialog
     //Note if the mousearea is placed after the coordsDisplay, then the gpsSwitch does not work
     //placing the mousearea before, allows the switch to work! Wierd or what?
@@ -90,7 +91,7 @@ Item {id: thisGPSDisplay
         }
         RumbleEffect {id: rumbleEffect}
     }
-
+*/
     //GUI: GPS "Display" showing coords, alti, on off switche etc
     Column {id: coordsDisplay
         //font.pointSize: 24
@@ -219,6 +220,12 @@ Item {id: thisGPSDisplay
         }
     }
 
+/*
+TODO:
+Disabled ad interim pending introduction of a settings page!
+As sailfish does not offer the same kind of dialog as harmattan, and these options are not essential
+rather than trying to force a harmattan dialog onto sailfish, move these options onto a settings page
+together with other settings
 
     //GUI: Dialog opened by pressAndHolding GPS display, gives access to GPS related settings
     AUIDialog {id: gpsDialog
@@ -243,5 +250,6 @@ Item {id: thisGPSDisplay
             }
         }
     }
+*/
 }
 

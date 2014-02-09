@@ -51,14 +51,12 @@ AUIPageStackWindow {
     property color labelColorActive: (theme.inverted) ? "darkgrey" : "black"
     property color labelColorInactive: (theme.inverted) ?  "grey" : "darkgrey"
     */
-    property color textColorActive: "lightgreen"
-    property color textColorInactive: "grey"
-    property color labelColorActive: "darkgrey"
-    property color labelColorInactive: "grey"
+    property color textColorActive: LandedTheme.TextColorActive
+    property color textColorInactive: LandedTheme.TextColorInactive
+    property color labelColorActive: LandedTheme.LabelColorActive
+    property color labelColorInactive: LandedTheme.LabelColorInactive
 
-    //font { family: platformStyle.fontFamilyRegular; pixelSize: platformStyle.fontSizeLarge }
-
-    //hack from http://forum.meego.com/showthread.php?t=3924 // to force black theme
+    //hack from http://forum.meego.com/showthread.php?t=3924 // to force black theme on harmattan
     Component.onCompleted: {
         console.log("appWindow.onCompleted");
 //        theme.inverted = true;
@@ -82,21 +80,22 @@ AUIPageStackWindow {
         onNextPage: {
              if (pageType =="SMS") {
                 console.log("smsType is: " + smsType)
-                if (smsType =="Default") pageStack.push(smsPage, {lati: mainPage.getLati(), longi: mainPage.getLongi(), alti: mainPage.getAlti(), template_id: template_id, msg_status: msg_status, lastPage: "mainPage"})
+                if (smsType =="Default") pageStack.push(smsPage, {lati: mainPage.getLati(), longi: mainPage.getLongi(), alti: mainPage.getAlti(), area_id: area_id, template_id: template_id, msg_status: msg_status, lastPage: "mainPage"})
             }
             else {
-                pageStack.push(groupSelectionPage)
+                pageStack.push(areaSelectionPage)
             }
         }
     }
 
-    GroupSelectionPage {
-        id: groupSelectionPage
+    AreaSelectionPage {
+        id: areaSelectionPage
         fontSize: appWindow.fontSize
         backgroundColor: appWindow.backgroundColor
         labelColorActive: appWindow.labelColorActive
         onBackPageWithInfo: {
-            mainPage.groupSet = true;
+            mainPage.areaSet = true;
+            mainPage.area_id = area_id;
             pageStack.pop(mainPage);
         }
         onCancelled: pageStack.pop(mainPage);
@@ -107,7 +106,7 @@ AUIPageStackWindow {
         fontSize: appWindow.fontSize
         onCancelled: pageStack.pop(mainPage);
         onNextPage: {
-            pageStack.push(contactSelectionPage, {template_id: template_id})
+            pageStack.push(contactSelectionPage, {area_id: area_id, template_id: template_id})
         }
      }
 

@@ -20,6 +20,7 @@ AUIPage {id: smsPage
     property string lati
     property string longi
     property string alti
+    property string area_id
     property string template_id
     property string msg_status
     property int fontSize: 16
@@ -44,18 +45,18 @@ AUIPage {id: smsPage
             state = (msg_status == "Ok") ? "stateOk" : "stateNotOk";
 
             smsDisplay.smsSent = false;
-            smsDisplay.setText(MSG.buildDefaultMsg(template_id, lati, longi, alti));
+            smsDisplay.setText(MSG.buildDefaultMsg(area_id, template_id, lati, longi, alti));
             if ((lastPage =="contactSelectionPage") && (contactSelected (contactName, contactPhone))) {
                 console.log("Take the contact from the ContactSelectionPage");
                 smsDisplay.setContact(contactName, contactPhone);
             }
             else if (lastPage == "mainPage") {
                 console.log("Page has been pushed, take contact from Template")
-                var rs = favouritesBackend.getContact(template_id);
+                var rs = favouritesBackend.getPrimaryContact(area_id, template_id);
                 contactName = rs.rows.item(0).name;
                 contactPhone = rs.rows.item(0).phone;
                 smsDisplay.setContact(contactName, contactPhone);
-                smsDisplay.setState("Ready");
+                smsDisplay.setState(null, "Ready");
             }
         }
         else if (status == AUIPageStatus.Inactive) {
@@ -67,23 +68,30 @@ AUIPage {id: smsPage
         }
     }
 
+
     state: "stateOk";
     states: [
         State {
             name: "stateOk";
+            PropertyChanges{ target: smsPage; showNavigationIndicator: true }
             PropertyChanges{ target: smsDisplay; parent: smsPage }
             PropertyChanges{ target: smsDisplay; anchors.top: parent.top }
-            PropertyChanges{ target: smsDisplay; color: LandedTheme.BackgroundColorA}
+            PropertyChanges{ target: smsDisplay; anchors.topMargin: 30 }
+            PropertyChanges{ target: smsDisplay; color: LandedTheme.BackgroundColorA }
             PropertyChanges{ target: torchApp; visible: false }
-            PropertyChanges{ target: frame; color: LandedTheme.BackgroundColorA}
+            PropertyChanges{ target: frame; color: LandedTheme.BackgroundColorA }
+            PropertyChanges{ target: smsDisplay; textColor: LandedTheme.TextColorActive }
         },
         State {
             name: "stateNotOk";
+            PropertyChanges{ target: smsPage; showNavigationIndicator: false }
             PropertyChanges{ target: smsDisplay; parent: frame }
             PropertyChanges{ target: smsDisplay; anchors.top: torchApp.bottom }
+            PropertyChanges{ target: smsDisplay; anchors.topMargin: 0 }
             PropertyChanges{ target: smsDisplay; color: LandedTheme.BackgroundColorA }
             PropertyChanges{ target: torchApp; visible: true }
             PropertyChanges{ target: frame; color: LandedTheme.BackgroundColorD }
+            PropertyChanges{ target: smsDisplay; textColor: LandedTheme.TextColorEmergency }
         }
     ]
 
@@ -109,7 +117,7 @@ AUIPage {id: smsPage
 
     SMSDisplay{id: smsDisplay
         //property int defaultBottomMargin: 0
-        anchors.top: parent.top
+        //anchors.top //set by state
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 5
         //anchors.bottomMargin: defaultBottomMargin
@@ -130,12 +138,15 @@ AUIPage {id: smsPage
         }
         onSendSMS: {
             smsBackEnd.sendSMS(phoneNumber, text);
+            //The old SMSHelper used to emit this state, as a temporary workaround, do it here
+            //later we can add this to the TelepathyHelper
+            setState("ActiveState", null)
         }
     }
 
     SMSBackEnd {
         id: smsBackEnd
-        onMessageState: smsDisplay.setState(msgState);
+        onMessageState: smsDisplay.setState(msgState, null);
     }
 
     FavouriteContactsBackEnd {

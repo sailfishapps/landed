@@ -8,6 +8,7 @@ import org.flyingsheep.abstractui 1.0
 
 AUIPage {id: pageContactSelection
 
+    property string area_id
     property string template_id
 
     //width: 480
@@ -35,8 +36,8 @@ AUIPage {id: pageContactSelection
 
     onStatusChanged: {
         if (status == AUIPageStatus.Active)  {
-            console.log ("Contact Selection Page now active with template_id: " + template_id)
-            favouriteTab.populate(template_id)
+            console.log ("Contact Selection Page now active with area_id: " + area_id + ", template_id: " + template_id)
+            favouriteTab.populate(area_id, template_id)
         }
     }
 
@@ -47,8 +48,7 @@ AUIPage {id: pageContactSelection
         width: parent.width
 
         FavouriteContactsPage { id: favouriteTab
-            anchors.top: tabGroup.top
-            anchors.bottom: tabGroup.bottom
+            //anchors //have no effect on Sailfish, as this is a page, and the parent will not be tabgroup
             fontSize: pageContactSelection.fontSize
             itemHeight: pageContactSelection.itemHeight
             headerHeight: pageContactSelection.headerHeight
@@ -64,9 +64,7 @@ AUIPage {id: pageContactSelection
         }
 
         PhoneDialer {id: keyPadTab
-            anchors.topMargin: 60
-            anchors.top: tabGroup.top
-            anchors.bottom: tabGroup.bottom
+            //anchors //have no effect on Sailfish, as this is a page, and the parent will not be tabgroup
             width: tabGroup.width
             //width: pageContactSelection.width
             onNumberEntered: {

@@ -6,8 +6,8 @@ import org.flyingsheep.abstractui 1.0
 
 Item {
     signal clicked();
-    property int fontSize: 24
-    property string buttonColor
+    property int fontSize: 26
+    property color buttonColor
     property string text
 //    color: "black";
 

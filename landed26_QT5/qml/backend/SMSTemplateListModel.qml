@@ -1,16 +1,16 @@
 import QtQuick 2.0
 //import QtQuick 1.1
-import "../javascript/settingsDB.js" as DB
+import "../javascript/readDataModel.js" as DB
 
 ListModel {
     id: templateModel
-    function populate(group_id){
+    function populate(area_id){
         templateModel.clear();
-        var rs = DB.getMessageTemplates(group_id);
-        console.log("Template model populating using group_id: " + group_id + ", No Rows: " + rs.rows.length);
+        var rs = DB.getTemplates(area_id);
+        console.log("Template model populating using area_id: " + area_id + ", No Rows: " + rs.rows.length);
         templateView.resize(rs.rows.length+1); //add 1 for the custom button
         for(var i = 0; i < rs.rows.length; i++) {
-            templateModel.append({"button_label": rs.rows.item(i).button_label, "msg_status": rs.rows.item(i).msg_status, "template_id": rs.rows.item(i).id});
+            templateModel.append({"button_label": rs.rows.item(i).button_label, "msg_status": rs.rows.item(i).msg_status, "template_id": rs.rows.item(i).id, "area_id": rs.rows.item(i).area_id});
             console.log("button_label is: " + rs.rows.item(i).button_label + ", msg_status is: " + rs.rows.item(i).msg_status);
         }
         //templateModel.append({"button_label":  "Create Custom SMS", "msg_status": "Ok", "template_id": "-999"});
