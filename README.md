@@ -66,7 +66,7 @@ Requirements:
 
 Both Landed and LandedSettings require:
 
-1) AbstractUI abstraction Library.
+1) AbstractUI Abstraction Library.
 The Harmattan version can be found here: https://github.com/harmattan/AbstractUI-for-Harmattan
 
 The Sailfish version can be found here: https://github.com/sailfishapps/AbstractUI-for-Sailfish-Silica
