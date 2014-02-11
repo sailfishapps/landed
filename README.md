@@ -38,7 +38,9 @@ Each Group is the parent of two SMS Templates, one normal Recovery SMS Template,
 
 Each Template is the the parent of several "Tags": these are placeholders that will be replaced by values from the GPS Location (e.g. Latittude, Longitude).
 
-Each Template is the parent of several "Contacts", one of which is the default
+Each Template is the parent of several "Contacts", one of which is the default.
+
+Hot-of-the-press (2014-02-11), data can be stored in both a LocalStorageDB, and (new) in a json file queried by jsonpath.
 
 
 Using Landed:
