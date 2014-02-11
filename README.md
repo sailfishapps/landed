@@ -43,7 +43,7 @@ Each Template is the parent of several "Contacts", one of which is the default
 
 Using Landed:
 
-When Landed starts, it automatically fires up the GPS. When the location is found, the nearest "Group" is selected, and the SMS Buttons are activated, allowing the sending of either a normal REcovery SMS, or an emergency "Help Me!" SMS.
+When Landed starts, it automatically fires up the GPS. When the location is found, the nearest "Group" is selected, and the SMS Buttons are activated, allowing the sending of either a normal Recovery SMS, or an emergency "Help Me!" SMS.
 
 The user can:
 1) change the "Group" by clicking on the "Group" header between the GPS Display and the SMS buttons.
