@@ -6,7 +6,8 @@ ListModel {
     id: areaModel
     function populate(){
         clear();
-        var rs = DB.getAreas();
+        var db = DB.DataModel();
+        var rs = db.getAreas();
         console.log("area model populating: No Rows: " + rs.rows.length);
         areaView.resize(rs.rows.length);
         for(var i = 0; i < rs.rows.length; i++) {

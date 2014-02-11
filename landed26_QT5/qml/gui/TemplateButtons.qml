@@ -89,7 +89,7 @@ Item {
             fontSize: thisModel.fontSize
             buttonColor: (msg_status == "Ok") ? LandedTheme.ButtonColorGreen : LandedTheme.ButtonColorRed;
             onClicked:{
-                console.log("Template Delegate Clicked: area_id is: " + area_id + ",template_id is: " + template_id);
+                console.log("Template Delegate Clicked: area_id is: " + area_id + ", template_id is: " + template_id);
                 templateView.currentIndex = index;
                 thisModel.delegateClicked(area_id, template_id, msg_status);
             }

@@ -41,7 +41,7 @@ AUIPage {id: smsPage
 
     onStatusChanged: {
         if (status == AUIPageStatus.Active) {
-            console.log("smsPage is active; contactName: " + contactName + " , contactPhone: " + contactPhone + ", msg_status: " + msg_status + ", lastPage: " + lastPage)
+            console.log("smsPage is active; area_id: " + area_id + ", contactName: " + contactName + " , contactPhone: " + contactPhone + ", msg_status: " + msg_status + ", lastPage: " + lastPage)
             state = (msg_status == "Ok") ? "stateOk" : "stateNotOk";
 
             smsDisplay.smsSent = false;

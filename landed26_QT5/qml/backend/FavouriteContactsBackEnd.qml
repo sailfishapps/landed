@@ -4,7 +4,8 @@ import "../javascript/readDataModel.js" as DB
 
 Item {
     function getPrimaryContact(area_id, template_id) {
-        var rs = DB.getPrimaryContact(area_id, template_id, 1);
+        var db = DB.DataModel();
+        var rs = db.getPrimaryContact(area_id, template_id, 1);
         return rs;
     }
 }

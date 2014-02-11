@@ -31,7 +31,8 @@ AUIPage {id: areaSelectionPage
     }
 
     function getCurrentArea() {
-        var rs = DB.getPrimaryArea();
+        var db = DB.DataModel();
+        var rs = db.getPrimaryArea();
         console.log ("Num records found: " + rs.rows.length)
      return rs;
     }

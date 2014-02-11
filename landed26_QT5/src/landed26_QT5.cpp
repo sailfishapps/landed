@@ -8,7 +8,6 @@
 
 //TODOs
 //a) find out why beeping on PhoneKey does not work: possibly wav not found
-//b) move all javascript files to javascript directory!
 
 //Future Changes
 //v) consider saving contacts chosen from phone to Landed contacts
@@ -26,10 +25,13 @@
 
 //Change History
 //Landed26
-//This is the first version with Sailfish in primary focus. The aim is porting, not adding new functionality
+//This is the first version with Sailfish in primary focus. The aim is porting, not adding new functionality (though some may creep in ...)
 //In terms of functionality it should give equivalent functionality to Landed25 on Harmattan.
 //The Harmattan version backports some refactorings / bug-fixes made while porting to Harmattan
 //and some changes made to maintain (in as far as is possible) a common code base.
+//a) jsonpath added: originally the idea was that a json file could be used to load the LocalStorageDB in a human-readable format.
+//   However as the datamodel is simple enough, we now use json as an alternative to the LocalStorageDB!
+//   The qml code does not care if the datasource is json or LocalStorage. This is handled black-box in readDataModel.js
 
 //Landed25
 //This (and all previous) versions were for the Harmattan platform, although this version already
@@ -124,6 +126,7 @@
 #include "windowingsystem.h"
 #include "telepathyhelper.h"
 #include "landedtheme.h"
+#include  "jsonstorage.h"
 
 //HELPER Functions getting system information which will be exported to QML
 
@@ -209,6 +212,15 @@ static QObject *theme_singletontype_provider(QQmlEngine *engine, QJSEngine *scri
     return landedTheme;
 }
 
+static QObject *jsonStorage_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    JSONStorage *jsonStorage = new JSONStorage();
+    return jsonStorage;
+}
+
 int main(int argc, char *argv[])
 {
     bool simulator = isSimulator();
@@ -245,6 +257,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<TelepathyHelper>("TelepathyHelper",1,0,"TelepathyHelper");
     qmlRegisterType<SatInfoSource>("SatInfoSource",1,0,"SatInfoSource");
     qmlRegisterSingletonType<LandedTheme>("LandedTheme", 1, 0, "LandedTheme", theme_singletontype_provider);
+    qmlRegisterSingletonType<JSONStorage>("JSONStorage",1,0,"JSONStorage", jsonStorage_singletontype_provider);
 
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());

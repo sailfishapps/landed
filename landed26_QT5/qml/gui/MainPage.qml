@@ -222,7 +222,7 @@ AUIPageWithMenu {id: mainPage
         }
         onDelegateClicked: {
             rumbleEffect.start();
-            console.log("Default button chosen, for template_id: " + template_id);
+            console.log("Default button chosen, for area_id: " + area_id + ", template_id: " + template_id);
             mainPage.nextPage("SMS", "Default", area_id, template_id, msg_status);
         }
         onHeaderClicked: {
@@ -256,7 +256,8 @@ AUIPageWithMenu {id: mainPage
         }
 
         function setSelectedArea(currentLocation, area_id) {
-            var rs = DB.getArea(area_id);
+            var db = DB.DataModel();
+            var rs = db.getArea(area_id);
             console.log ("Records found: " + rs.rows.length)
 //TODO: if we are in fake GPSAcquiredMode we will not have a currentLocation yet
             var distance = formatDistance(getDistance(rs.rows.item(0), currentLocation));
@@ -265,7 +266,8 @@ AUIPageWithMenu {id: mainPage
 
         function setNearestArea(currentLocation) {
             console.log ("current location latitude: " + currentLocation.coordinate.latitude + " longitude: " + currentLocation.coordinate.longitude)
-            var rs = DB.getAreas();
+            var db = DB.DataModel();
+            var rs = db.getAreas();
             var distance;
             var nearestArea = -1;
             var nearestAreaDistance = -1

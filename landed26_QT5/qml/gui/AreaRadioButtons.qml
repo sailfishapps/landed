@@ -22,6 +22,7 @@ Rectangle {
     color: backgroundColor
     property alias currentIndex: areaView.currentIndex;
 
+//TODO: why do we provide an area_id as param? we want to populate the model with all areas!
     function populate(area_id) {
         areaModel.populate(area_id);
     }
