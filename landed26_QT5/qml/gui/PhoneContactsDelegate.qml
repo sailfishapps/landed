@@ -4,20 +4,25 @@ import QtQuick 2.0
 Item {
     id: backGroundRect
     width: parent.width
-    height: nameText.height + numberText.height
+    height: childrenRect.height
 
+    signal pressed()
     signal clicked()
+    signal released()
     signal contactSelected(string number, string name)
     signal contactRejected()
 
     Text {
         id: nameText
-        anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: parent.top}
+        anchors {left: parent.left; leftMargin: 20; right: parent.right; rightMargin: 20; top: parent.top}
         font.pointSize: pageContent.listPointSize;
         font.weight: Font.DemiBold
         text: model.displayLabel;
-        color: "lightgreen"
+        color: "lightblue"
+        height: 70
+        verticalAlignment: Text.AlignVCenter
     }
+    /*
     Text {
         id: numberText
         anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: nameText.bottom}
@@ -26,17 +31,18 @@ Item {
         text: model.phoneNumber.number //+ ", " + model.contactId
         color: "lightgreen"
     }
+    */
     MouseArea {
         anchors.fill: parent;
         onPressed: {
-            contactList.currentIndex = index;
+            parent.pressed()
         }
         onClicked: {
             console.log(model.displayLabel + " clicked")
             parent.clicked()
         }
         onReleased: {
-            contactList.currentIndex = -1;
+            parent.released();
             console.log("released")
         }
     }

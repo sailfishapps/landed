@@ -7,16 +7,11 @@ import QtContacts 5.0
 Item {
     id: backEnd
 
+    signal modelsPopulated
+
     property alias localContactModel: localContactModelInternal
     property alias contactNumbersModel: contactNumbersModelInternal
     property alias nullModel: nullModelInternal
-    property alias alphabetModel: leadingCharModelInternal
-    property string searchKey
-
-    onSearchKeyChanged: {
-        console.log("repopulating the localContactModel and alphabetModel models");
-        populateModels();
-    }
 
     //offers the phone's contacts
     //we no longer directly expose phoneContactsModel to the GUI
@@ -41,34 +36,26 @@ Item {
         ]
 
         onContactsChanged: {
-            console.log("ContactModel: onContactsChanged: " + phoneContactsModelInternal.contacts.length);
+            console.log(Qt.formatDateTime(new Date(), "yyyyMMdd hh:mm:ss") + " ContactModel: onContactsChanged: " + phoneContactsModelInternal.contacts.length);
             populateModels();
         }
     }
 
     function populateModels() {
-        localContactModelInternal.populate(backEnd.searchKey);
-        leadingCharModelInternal.populate();
+        localContactModelInternal.populate();
+        backEnd.modelsPopulated();
     }
 
     ListModel {
         id: localContactModelInternal
 
-        function populate(searchKey) {
+        function populate() {
             clear();
             for (var i = 0; i < phoneContactsModelInternal.contacts.length; i ++) {
-                if (searchKey.length == 0) { //console.log ("no filter set, append all elements");
-                    appendContact(phoneContactsModelInternal.contacts[i]);
-                }
-                else { //filter elements
-                    if (isSearchHit(phoneContactsModelInternal.contacts[i].displayLabel, searchKey)) {
-                        appendContact(phoneContactsModelInternal.contacts[i]);
-                    }
-                }
+                appendContact(phoneContactsModelInternal.contacts[i]);
+                //console.log("appended: " + localContactModel.get(i).displayLabel);
+                //console.log("checking number of phoneNumbers: " + localContactModel.get(i).phoneNumbers.length);
             }
-        }
-        function isSearchHit(textToSearch, searchKey) {
-            return (textToSearch.toUpperCase().search(searchKey.toUpperCase()) >=0) ? true : false;
         }
         function appendContact(contact) {
             localContactModel.append({"contactId": contact.contactId,
@@ -76,41 +63,17 @@ Item {
                                   "firstName": contact.name.firstName,
                                   "lastName": contact.name.lastName,
                                   "phoneNumber": contact.phoneNumber,
-                                  "phoneNumbers": contact.phoneNumbers});
+                                  "phoneNumbers": contact.phoneNumbers,
+                                  "phoneNumbersCount": contact.phoneNumbers.length});
+//TODO: phoneNumber.length is available here, but later when our localContactModel is used, it is no longer available
+//How does this get lost?
+            //console.log("appending: " + contact.displayLabel.label + ", numbers: " + contact.phoneNumbers.length)
             //phoneNumbers is a dynamic property of ContactModel, and is only partially documented
             //harmattan uses contact.displayLabel, sailfish contact.displayLabel.label
         }
-    }
-
-    LeadingCharacterModel {
-        id: leadingCharModelInternal;
-
-        function populate() {
-            clear();
-            var initials = getInitials();
-            console.log("populating model: " + initials.length);
-            leadingCharModelInternal.clear();
-            for (var i = 0; i < initials.length; i++) {
-                leadingCharModelInternal.append(initials[i])
-            }
-        }
-
-        function getInitials() {
-            var oldInitial = "";
-            var initialString = "";
-            var initials = new Array();
-            for (var i = 0; i < localContactModelInternal.count; i ++) {
-                var displayLabel = localContactModelInternal.get(i).displayLabel;
-                var currentInitial = displayLabel.substring(0, 1).toUpperCase()
-                console.log(i + " displayLabel: " +  displayLabel + " initial: " + currentInitial)
-                if ((currentInitial != oldInitial) && (currentInitial.length > 0)) {
-                    initialString = initialString + ";" + currentInitial;
-                    initials.push({"character": currentInitial, "index": i});
-                    oldInitial = currentInitial;
-                }
-            }
-            console.log(initialString);
-            return initials;
+        //This function is required for InitialCharacterPicker, which is the consumer of this model
+        function value2FilterOn(index){
+            return get(index).displayLabel;
         }
     }
 
@@ -118,8 +81,22 @@ Item {
     ListModel {
         id: contactNumbersModelInternal
 
-        function loadNumbers(phoneNumbers, name) {
-            console.log ("numbers to load: " + phoneNumbers.length);
+        function loadNumbers(contact) {
+            console.log("loadNumbers: name to load: " + contact.displayLabel)
+            console.log("loadNumbers: numbers to load: " + contact.phoneNumbersCount);
+            console.log("loadNumbers: numbers to load2: " + contact.phoneNumbers.length);
+            contactNumbersModelInternal.clear();
+            for(var i = 0; i < contact.phoneNumbersCount; i++) {
+                console.log("appending number" + contact.phoneNumbers[i] + " " + contact.phoneNumbers[i].number + " " + contact.phoneNumbers[i].subTypes[0] )
+                var subType = (contact.phoneNumbers[i].subTypes[0] === undefined) ? "" : contact.phoneNumbers[i].subTypes[0]
+                contactNumbersModelInternal.append({num: contact.phoneNumbers[i].number, type: subType, name: contact.name});
+            }
+        }
+
+        /*
+        function loadNumbers(name, phoneNumbers, count) {
+            console.log("loadNumbers: name to load: " + name)
+            console.log("loadNumbers: numbers to load: " + count);
             contactNumbersModelInternal.clear();
             for(var i = 0; i < phoneNumbers.length; i++) {
                 console.log("appending number" + phoneNumbers[i] + " " + phoneNumbers[i].number + " " + phoneNumbers[i].subTypes[0] )
@@ -127,9 +104,24 @@ Item {
                 contactNumbersModelInternal.append({num: phoneNumbers[i].number, type: subType, name: name});
             }
         }
+        */
+
+        /*
+        function loadNumbers(phoneNumbers, name) {
+            console.log("loadNumbers: name to load: " + name)
+            console.log("loadNumbers: numbers to load: " + phoneNumbers.length);
+            contactNumbersModelInternal.clear();
+            for(var i = 0; i < phoneNumbers.length; i++) {
+                console.log("appending number" + phoneNumbers[i] + " " + phoneNumbers[i].number + " " + phoneNumbers[i].subTypes[0] )
+                var subType = (phoneNumbers[i].subTypes[0] === undefined) ? "" : phoneNumbers[i].subTypes[0]
+                contactNumbersModelInternal.append({num: phoneNumbers[i].number, type: subType, name: name});
+            }
+        }
+        */
         function flushNumbers() {
             contactNumbersModelInternal.clear();
         }
+
     }
     ListModel {
         id: nullModelInternal

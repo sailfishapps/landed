@@ -26,7 +26,7 @@ QString JSONStorage::openDatabase() {
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     cargo = file.readAll();
     file.close();
-    qWarning() << cargo;
+    //qWarning() << cargo;
 
     return cargo;
 }

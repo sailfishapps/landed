@@ -15,6 +15,7 @@ AUIPage {id: pageContactSelection
     //height: 828
     //height: 740
     orientationLock: AUIPageOrientation.LockPortrait
+    showNavigationIndicator: false
 
     property int toolbarHeight: 0
     //property int toolbarHeight: 110
@@ -75,8 +76,8 @@ AUIPage {id: pageContactSelection
             }
         }
 
-        PhoneContactsPage {id: contactsTab
-            anchors.topMargin: 60
+        PhoneContactsTab {id: contactsTab
+            anchors.topMargin: 0
             onContactSelected: {
                 pageContactSelection.backPageWithInfo(name, phoneNumber)
             }
