@@ -17,6 +17,7 @@ PkgConfigBR:
 - Qt5Core
 - sailfishapp >= 0.0.10
 Requires:
+- nemo-qml-plugin-policy-qt5
 - qt5-qtdeclarative-import-positioning
 - qt5-qtdeclarative-import-sensors
 - qt5-qtdeclarative-pim-contacts
@@ -30,5 +31,5 @@ Files:
 - /usr/share/landed26_QT5
 - /usr/share/applications
 - /usr/share/icons/hicolor/86x86/apps
-PkgBR: [telepathy-qt5-devel, qt5-qtdeclarative-import-positioning, qt5-qtdeclarative-import-sensors,
-  qt5-qtdeclarative-pim-contacts]
+PkgBR: [gstreamer-devel, nemo-qml-plugin-policy-qt5, telepathy-qt5-devel, qt5-qtdeclarative-import-positioning,
+  qt5-qtdeclarative-import-sensors, qt5-qtdeclarative-pim-contacts]
