@@ -9,7 +9,7 @@ Rectangle{id: smsDisplay
 
     property bool smsSent: false
     property int defaultBottomMargin: 160
-    property int fontSize: 16
+    property int fontPixelSize: 16
     property color textColor
 
     signal cancelled()
@@ -79,7 +79,7 @@ Rectangle{id: smsDisplay
             name: "stateSent";
 //            PropertyChanges{ target: sendButton; enabled: false }
             PropertyChanges{ target: sendButton; text: "" }
-PropertyChanges{ target: sendButton; enabled: true }       //temp for test
+            PropertyChanges{ target: sendButton; enabled: true }       //temp for test
             PropertyChanges{ target: cancelButton; enabled: true }
             PropertyChanges{ target: cancelButton; text: "Back" }
             PropertyChanges{ target: cancelButton; primaryColor: "#008000" }
@@ -138,7 +138,6 @@ PropertyChanges{ target: sendButton; enabled: true }       //temp for test
         color: LandedTheme.BackgroundColorB
         //textColor set by state of phoneNrGroup below. I am not sure if I like this!!!¨
         fontFamily: "Arial"
-        fontSize: smsDisplay.fontSize
         onKeysOpened: {
             //when the textArea visual keyboard is opened, hide the phoneNrGroup to increase
             //the screen area left for the text
@@ -194,7 +193,7 @@ PropertyChanges{ target: sendButton; enabled: true }       //temp for test
             //color:  "lightyellow" harmattan
             color: LandedTheme.BackgroundColorC
             Text { id: label
-                font.pointSize: smsDisplay.fontSize;
+                font.pixelSize: LandedTheme.FontSizeLarge;
                 font.family: "Arial";
                 anchors.fill: parent;
                 anchors.leftMargin: 10;

@@ -20,7 +20,7 @@ Item {
     //a) fetchContacts returns a QList, QML cannot handle QLists
     //b) filtering on displayLabel does not work
     //c) sections don't work
-    //Also, by adpoting the model adapter view pattern, we issolate the GUI (View)
+    //Also, by adopting the model adapter view pattern, we isolate the GUI (View)
     //from any future changes to QtContacts
     AUIContactModel {
         id: phoneContactsModelInternal
@@ -87,9 +87,9 @@ Item {
             console.log("loadNumbers: numbers to load2: " + contact.phoneNumbers.length);
             contactNumbersModelInternal.clear();
             for(var i = 0; i < contact.phoneNumbersCount; i++) {
-                console.log("appending number" + contact.phoneNumbers[i] + " " + contact.phoneNumbers[i].number + " " + contact.phoneNumbers[i].subTypes[0] )
+                console.log("appending number" + contact.phoneNumbers[i] + ", " + contact.phoneNumbers[i].number + ", " + contact.phoneNumbers[i].subTypes[0] + ", " + contact.displayLabel )
                 var subType = (contact.phoneNumbers[i].subTypes[0] === undefined) ? "" : contact.phoneNumbers[i].subTypes[0]
-                contactNumbersModelInternal.append({num: contact.phoneNumbers[i].number, type: subType, name: contact.name});
+                contactNumbersModelInternal.append({num: contact.phoneNumbers[i].number, type: subType, name: contact.displayLabel});
             }
         }
 

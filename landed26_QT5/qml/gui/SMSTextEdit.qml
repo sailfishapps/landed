@@ -8,7 +8,6 @@ Rectangle {
     id: smsTextEdit
 
     radius: 7
-    property int fontSize: 16
     property string fontFamily
     property color textColor
     property bool panelOpen: false
@@ -54,7 +53,7 @@ Rectangle {
         anchors.rightMargin: LandedTheme.MarginText
         textMargin: 5
         background: null // override the stupid default Separator component
-        font.pointSize: smsTextEdit.fontSize
+        font.pixelSize: LandedTheme.FontSizeLarge
         font.family: smsTextEdit.fontFamily
         horizontalAlignment: TextEdit.AlignRight
         color: smsTextEdit.textColor

@@ -4,10 +4,26 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 
+
+//How does the IntialCharcterPickr work?
+// It's a list view, with clever header and footer components.
+// The rows of character buttons are hosted by the listView's header and footers (both the header and footer host the full alphabet)
+// Each row decides for itself if it should be visible on the header or footer.
+// The model displayed is a copy of that provided by parameter to InitialPicker.qml, filtered as necessary.
+// A javascript array count the number of hits per character. This is used to provide visual indication if a button is worth pressing.
+// Both rows and the buttons they host are dynmically created QML elements. which is a neat trick cutting down repetative code.
+
+//The header and footer automagically decide which (if any) rows of buttons should be visible based on the selected initial
+//Each initial should only be displayed once, either in the header, or in the footer, never in both.
+//Initial is in the selected row      --> visible in Header, Not visible in Footer
+//Initial is above the selected row   --> visible in Header, Not visible in Footer
+//Initial is below the selected row   --> visible in Footer, Not visible in Header
+
 Item {
     id: picker
 
     Component.onCompleted: {
+        console.log("InitialCharacterPicker: onCompleted " + picker.count);
         if ((picker.count) && (picker.count > 0)) {
             PrivateObject.populateModels();
         }
@@ -132,6 +148,9 @@ Item {
                 charsModel.push({"char": character, "hits": hits});
             }
             console.log("populateModels: length: " + charsModel.length)
+
+            //when charactersModel changes, the header and footer dynamically create their rows
+            //any previously created rows are destroyed (see CharacterGrid.aml)
             privateObject.charactersModel = charsModel;
 
             //Now populate the filter model

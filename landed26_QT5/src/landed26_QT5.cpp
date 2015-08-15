@@ -1,13 +1,22 @@
 //Installation requirements
 //1) latest version of AbstractUI for Sailfish must be installed
-//2) To access the phone's contacts, the app must be added ot mapplauncherd privileges file
-//  as user root:
+//2) To access the phone's contacts, the app must be added to mapplauncherd privileges file
+//  as user root (via devel-su):
 //  cd /usr/share/mapplauncherd
 //  echo /usr/bin/landed26_QT5,p >> privileges
 
 
 //TODOs
 //a) find out why beeping on PhoneKey does not work: possibly wav not found
+//b) AUIRadioButton do not (yet) allow config of text size
+//c) the SMS edit solution is horrible / broken. Find a new solution here
+//   Keyboard currently slides up, pushing up phone number widget, covers most screen
+//   Close Keyboard button is nasty, and often out of sync!
+//   Why are we limited in the vertical axis to screen size? can't we scroll "off-screen"?
+//   Maybe the number should be at the top
+//   Or similar to the way we change the number "on the next screen", maybe the text
+//   could also be edited on another screen - giving more space.
+//   Think this through a number of times!
 
 //Future Changes
 //v) consider saving contacts chosen from phone to Landed contacts
@@ -23,6 +32,10 @@
 //1.8) beeping on keypress (PhoneKey)
 
 
+//Work in Progress
+//Use of settings DB
+
+
 //Change History
 //Landed26
 //This is the first version with Sailfish in primary focus. The aim is porting, not adding new functionality (though some may creep in ...)
@@ -32,6 +45,20 @@
 //a) jsonpath added: originally the idea was that a json file could be used to load the LocalStorageDB in a human-readable format.
 //   However as the datamodel is simple enough, we now use json as an alternative to the LocalStorageDB!
 //   The qml code does not care if the datasource is json or LocalStorage. This is handled black-box in readDataModel.js
+//b) Integration of settingsDb for settings
+//c) the json storageDb can be switched between Prod (for real contacts), and Test (for testing with dummy contacts)
+//d) Integration of InitialCharacterPicker for selecting / searching contacts from the phones contacts
+//e) The contactsChanged signal can be received multiple times while the contacts load (in steps of 50)
+//   InitialPicker had to be made more resiliant becuase of this: Before dyamically creating a set of button rows, destroy any existing rows
+//f) Back Navigation Button (aka PageStackIndicator) removed when InitialPicker displayed (stopped use of % wildcard button)
+//g) Provisional Icon added in place of the standard fishy icon
+//h) Font Sizes now set using LandedTheme by each component requring fonts, rather than by owner component
+//   This reduces chains of components setting font size, and reduces the number of properties.
+//i) The coordinates conversion had suddenly started returning 0 for the minutes element
+//   Breaking up the minutes conversion into multiple steps fixed this. + new Algorithm
+//j) The SMS send function stopped working! (Now fixed). This was due to an update to Telepathy,
+//   causing an interface inconsitency between TelepathyQT5 and telepathy-mission-control.
+//   Now fixed by calling a different telepathy function to send SMS. (see conversationchannel and telepathyhelper code).
 
 //Landed25
 //This (and all previous) versions were for the Harmattan platform, although this version already

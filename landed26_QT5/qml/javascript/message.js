@@ -12,6 +12,7 @@ function buildDefaultMsg(area_id, template_id, lati, longi, alti) {
         tag = swapPlaceHolders(tag, lati, longi, alti) + "\n";
         text = text + tag;
     }
+    console.log("text: " + text);
     return text;
 }
 

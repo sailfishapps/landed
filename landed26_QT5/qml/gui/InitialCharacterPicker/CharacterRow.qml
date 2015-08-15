@@ -77,7 +77,7 @@ Row {
     }
 
     function setVisibility() {
-        //console.log("setting row visibility")
+        //console.log("setting row visibility; selectedRow:" + selectedRow)
         if (isHeader) {
             selectedRow == "none"  || inHeader(objectName, selectedRow) ? visible = true : visible = false
         }

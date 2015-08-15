@@ -20,6 +20,7 @@ License:    LICENSE
 URL:        http://example.org/
 Source0:    %{name}-%{version}.tar.bz2
 Source100:  landed26_QT5.yaml
+Requires:   nemo-qml-plugin-policy-qt5
 Requires:   qt5-qtdeclarative-import-positioning
 Requires:   qt5-qtdeclarative-import-sensors
 Requires:   qt5-qtdeclarative-pim-contacts
@@ -28,6 +29,8 @@ BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(sailfishapp) >= 0.0.10
+BuildRequires:  gstreamer-devel
+BuildRequires:  nemo-qml-plugin-policy-qt5
 BuildRequires:  telepathy-qt5-devel
 BuildRequires:  qt5-qtdeclarative-import-positioning
 BuildRequires:  qt5-qtdeclarative-import-sensors

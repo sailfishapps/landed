@@ -1,5 +1,6 @@
 import QtQuick 2.0
 //import QtQuick 1.1
+import LandedTheme 1.0
 
 Item {
     id: backGroundRect
@@ -15,7 +16,8 @@ Item {
     Text {
         id: nameText
         anchors {left: parent.left; leftMargin: 20; right: parent.right; rightMargin: 20; top: parent.top}
-        font.pointSize: pageContent.listPointSize;
+        //font.pixelSize: pageContent.listpixelSize;
+        font.pixelSize: LandedTheme.FontSizeMedium
         font.weight: Font.DemiBold
         text: model.displayLabel;
         color: "lightblue"
@@ -26,7 +28,7 @@ Item {
     Text {
         id: numberText
         anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: nameText.bottom}
-        font.pointSize: pageContent.listPointSize * (4/5);
+        font.pixelSize: pageContent.listpixelSize * (4/5);
         font.weight: Font.Light
         text: model.phoneNumber.number //+ ", " + model.contactId
         color: "lightgreen"

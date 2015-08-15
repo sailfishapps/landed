@@ -12,7 +12,7 @@ Rectangle {
     property int itemHeight: 60;
     property int headerHeight: itemHeight;
     property string headerText
-    property int fontSize: 24
+    property int fontPixelSize: 24
     property bool arrowVisible: true
     property color backgroundColor
     property color labelColorActive
@@ -40,7 +40,6 @@ Rectangle {
             height: thisModel.headerHeight
             anchors.left: parent.left
             anchors.right: parent.right
-            fontSize: thisModel.fontSize * 1.5
             fontBold: true
             onClicked:{
                 console.log("Area Header Clicked");
@@ -56,7 +55,6 @@ Rectangle {
             height: thisModel.itemHeight
             text: name
             checked: (model.primary_area == 1) ? true : false
-            fontSize: thisModel.fontSize
             backgroundColor: thisModel.backgroundColor
             onClicked:{
                 console.log("Area Delegate Clicked: area_id is: " + area_id);

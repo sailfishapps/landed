@@ -35,9 +35,10 @@ CoverBackground {
     Label {
         id: label
         anchors.centerIn: parent
-        text: "My Cover"
+        text: "Landed!!!"
     }
 
+    /*
     CoverActionList {
         id: coverAction
 
@@ -49,6 +50,7 @@ CoverBackground {
             iconSource: "image://theme/icon-cover-pause"
         }
     }
+    */
 }
 
 

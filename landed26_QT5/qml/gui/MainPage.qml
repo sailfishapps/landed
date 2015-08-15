@@ -6,10 +6,12 @@ import org.flyingsheep.abstractui 1.0
 import org.flyingsheep.abstractui.backend 1.0 //for Coordinate
 //import QtMobility.location 1.2
 import "../javascript/readDataModel.js" as DB
+import "../javascript/settings.js" as SETTINGS
 import "../javascript/landed.js" as LJS
 import "../backend"
 import LandedTheme 1.0
 
+import JSONStorage 1.0
 
 // we should move this to gui, but still has quite a lot of functionality,
 // especially in the TemplateButtons implementation
@@ -31,7 +33,7 @@ AUIPageWithMenu {id: mainPage
     property color textColorInactive
     property color labelColorActive
     property color labelColorInactive
-    property int fontSize
+    property int fontPixelSize
     property bool areaSet: false;
     property string area_id;
 
@@ -42,6 +44,20 @@ AUIPageWithMenu {id: mainPage
         property bool gpsAcquiredFaked: false
         property bool reliableLocationAcquired: false
         property bool gpsAcquired: (reliableLocationAcquired || gpsAcquiredFaked)
+    }
+
+    Component.onCompleted: {
+        console.log("MainPage: retrieving settings from Settings DB")
+        var db = new SETTINGS.Settings();
+        var rs = db.getDBLevel();
+        var dbLevel = rs.rows.item(0)
+        console.log ("MainPage: and the current dblevel is: " + dbLevel)
+        if (dbLevel == "prod") {
+            JSONStorage.setDbLevel(JSONStorage.Prod);
+        }
+        else if (dbLevel == "test") {
+            JSONStorage.setDbLevel(JSONStorage.Test);
+        }
     }
 
     onStatusChanged: {
@@ -79,6 +95,8 @@ AUIPageWithMenu {id: mainPage
         //temporary function, used by testing to simulate gps aquired
         //for use when testing in building with no GPS signal
         privateVars.gpsAcquiredFaked = true;
+        //as we have no signal, turn the thing off to save battery.
+        gpsBackEnd.offGPS();
     }
 
     function getLati() {
@@ -120,7 +138,7 @@ AUIPageWithMenu {id: mainPage
     //GUI: Header Bar at the top of the page
     Rectangle {
         id: landedHeader
-        anchors {left: parent.left; leftMargin: 5; right: parent.right; rightMargin: 5; top: parent.top; topMargin: 5}
+        anchors {left: parent.left; leftMargin: 5; right: parent.right; rightMargin: 5; top: parent.top; topMargin: 25}
         height: 50
         //color: (theme.inverted) ? "#333333" : "#006600" //harmattan
         //color: "#006600"
@@ -130,7 +148,7 @@ AUIPageWithMenu {id: mainPage
             text: "Landed!!! v26"
             //color: (theme.inverted) ? "white" : "white"
             color: "white"
-            font.pointSize: mainPage.fontSize
+            font.pixelSize: LandedTheme.FontSizeLarge
             font.weight: Font.DemiBold
             anchors.leftMargin: 10
             anchors.fill: parent
@@ -150,7 +168,6 @@ AUIPageWithMenu {id: mainPage
         anchors.left: parent.left
         anchors.right: parent.right
         //color: parent.backgroundColor
-        fontSize: parent.fontSize
         textColorActive: mainPage.textColorActive
         textColorInactive: mainPage.textColorInactive
         labelColorActive: mainPage.labelColorActive
@@ -188,7 +205,7 @@ AUIPageWithMenu {id: mainPage
         visible: !templateButtons.enabled
         anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: gpsDisplay.bottom; topMargin: 100}
         //anchors {left: parent.left; leftMargin: 10; right: parent.right; rightMargin: 10; top: compassApp.bottom; topMargin: 100}
-        font.pointSize: parent.fontSize
+        font.pixelSize: parent.fontPixelSize
         font.italic: true
         horizontalAlignment: Text.AlignHCenter
         color: mainPage.textColorInactive
@@ -204,7 +221,6 @@ AUIPageWithMenu {id: mainPage
         id: templateButtons
         enabled: privateVars.gpsAcquired
         visible: privateVars.gpsAcquired
-        fontSize: parent.fontSize
         itemHeight: parent.itemHeight
         headerHeight: parent.headerHeight
         //Commented out for Sailfish
@@ -295,33 +311,23 @@ AUIPageWithMenu {id: mainPage
     //GUI: Menu for various settings and test functions
     menuitems: [
         AUIMenuAction {
+            text: qsTr("Set Prod Database");
+            onClicked: {
+                appWindow.fontPixelSize++;
+                JSONStorage.setDbLevel(JSONStorage.Prod);
+            }
+        },
+        AUIMenuAction {
+            text: qsTr("Set Test Database");
+            onClicked: {
+                appWindow.fontPixelSize++;
+                JSONStorage.setDbLevel(JSONStorage.Test);
+            }
+        },
+        AUIMenuAction {
             text: qsTr("Fake GPS Aquired");
             onClicked: {
                 mainPage.fakeGPSAcquired();
-            }
-        },
-        AUIMenuAction {
-            text: (appWindow.fontSize >= appWindow.largeFonts) ? qsTr("Small Fonts" ) : qsTr("Large Fonts");
-            onClicked: (appWindow.fontSize == appWindow.largeFonts) ? appWindow.fontSize = appWindow.smallFonts : appWindow.fontSize = appWindow.largeFonts;
-        },
-        AUIMenuAction {
-            text: qsTr("Increase fontSize");
-            onClicked: {
-               appWindow.fontSize++;
-               console.log ("fontSize is now: " + appWindow.fontSize + "; Operating System is: " + OSId)
-            }
-        },
-        AUIMenuAction {
-            text: qsTr("Decrease fontSize");
-            onClicked: {
-               appWindow.fontSize--;
-               console.log ("fontSize is now: " + appWindow.fontSize + "; Operating System is: " + OSId)
-            }
-        },
-        AUIMenuAction {
-            text: qsTr("Toggle Theme");
-            onClicked: {
-               theme.inverted = !theme.inverted;
             }
         }
     ]

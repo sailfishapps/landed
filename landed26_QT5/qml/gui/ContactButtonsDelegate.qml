@@ -21,6 +21,9 @@ Rectangle {
         anchors.topMargin: 5
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 5
+        //AUIRadoButton is based on TextSwitch widget
+        //While TextSwitch offers text property, it does not seem to offer any way of changing the size of the text!!!
+        //fontPixelSize: LandedTheme.FontSizeLarge
         text: parent.text
         checked: parent.checked
         platformStyle: greenCheck;

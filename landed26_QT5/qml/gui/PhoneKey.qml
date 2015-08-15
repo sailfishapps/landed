@@ -7,7 +7,7 @@ import LandedTheme 1.0
 Rectangle { id: thisKey
 
     property alias text: label.text;
-    property int keyPointSize
+    property int keypixelSize
 
     signal keyPressed (string key)
     //color: "#fafafa" //harmattan
@@ -26,7 +26,7 @@ Rectangle { id: thisKey
         anchors.centerIn: parent;
         //color: "black" //harmattan
         color: "white" //sailfish
-        font.pointSize: thisKey.keyPointSize
+        font.pixelSize: thisKey.keypixelSize
         //font.bold: true //harmattan
         font.bold: false //sailfish
     }

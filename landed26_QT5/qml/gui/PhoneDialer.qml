@@ -17,8 +17,8 @@ Item {
 
     //orientationLock: AUIPageOrientation.LockPortrait
 
-    property int keyPointSize: (simulator) ? 16 : 40
-    property int displayInitialFontPointSize: (simulator) ? 42.8 : 100
+    property int keypixelSize: (simulator) ? 16 : 40
+    property int displayInitialFontpixelSize: (simulator) ? 42.8 : 100
 
     Rectangle {
         anchors.fill: parent
@@ -33,8 +33,8 @@ Item {
             property int marginWidth: 10;
             property int displayWidth: width - backSpaceButton.width;
             property int totalPaintedWidth: label1.paintedWidth + label2.paintedWidth;
-            property int initialFontPointSize: thisDialer.displayInitialFontPointSize;
-            property int fontPointSize: initialFontPointSize;
+            property int initialFontpixelSize: thisDialer.displayInitialFontpixelSize;
+            property int fontpixelSize: initialFontpixelSize;
             property string phoneNumber: label2.text + label1.text;
 
             AUIButton{id: backSpaceButton
@@ -56,7 +56,7 @@ Item {
             Text{ id: label1
                 //This is the "cell" on the right that receives the newest digit
                 anchors {right: backSpaceButton.left; top: parent.top; bottom: parent.bottom;leftMargin: 0; rightMargin: parent.marginWidth; topMargin: parent.marginWidth; bottomMargin: parent.marginWidth;}
-                font.pointSize: parent.fontPointSize;
+                font.pixelSize: parent.fontpixelSize;
                 color: "white";
                 horizontalAlignment: Text.AlignRight;
                 verticalAlignment: Text.AlignVCenter;
@@ -66,7 +66,7 @@ Item {
                 //This displays the previously entered digits
                 anchors {right: label1.left; top: parent.top; bottom: parent.bottom; leftMargin: parent.marginWidth; rightMargin: 0; topMargin: parent.marginWidth; bottomMargin: parent.marginWidth;}
                 width: parent.displayWidth - label1.width;
-                font.pointSize: parent.fontPointSize;
+                font.pixelSize: parent.fontpixelSize;
                 color: "grey";
                 horizontalAlignment: Text.AlignRight;
                 verticalAlignment: Text.AlignVCenter;
@@ -76,7 +76,7 @@ Item {
                 console.log("label1.paintedWidth: " + label1.paintedWidth);
                 label2.text = label2.text + label1.text;
                 label1.text = p_Char;
-                numDisplay.fontPointSize = getFontPointSize();
+                numDisplay.fontpixelSize = getFontpixelSize();
             }
 
             function delChar() {
@@ -85,13 +85,13 @@ Item {
                 //find the rightmost char in label2. This moves to label1
                 label1.text = label2.text.charAt(len-1);
                 label2.text = label2.text.slice(0, len-1);
-                numDisplay.fontPointSize = getFontPointSize();
+                numDisplay.fontpixelSize = getFontpixelSize();
             }
 
-            function getFontPointSize(){
+            function getFontpixelSize(){
                 var len = label1.text.length + label2.text.length;
                 var displayWidth = numDisplay.displayWidth - numDisplay.marginWidth;
-                var maxFontSize = numDisplay.initialFontPointSize;
+                var maxFontSize = numDisplay.initialFontpixelSize;
                 //1.35 for normal N9, 0.54 for simulator
                 //var magicNumber = (simulator) ? 0.54 : 1.35;
                 //for Sailfish something around 1.18 hits the spot
@@ -106,14 +106,14 @@ Item {
             function clear () {
                 label1.text = "";
                 label2.text = "";
-                fontPointSize = initialFontPointSize;
+                fontpixelSize = initialFontpixelSize;
             }
         }
 
         PhoneKeyPad{id: phoneKeyPad
             anchors {left: parent.left; right: parent.right; top: numDisplay.bottom; topMargin: 40;}
             height: 440;
-            keyPointSize: thisDialer.keyPointSize
+            keypixelSize: thisDialer.keypixelSize
             onKeyPressed: {
                 console.log("PhoneKeyPad.onKeyPressed: " + key);
                 numDisplay.addChar(key);

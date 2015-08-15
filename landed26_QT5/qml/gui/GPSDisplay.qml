@@ -4,6 +4,7 @@ import QtQuick 2.0
 //user interface abstraction layer so both harmattan and sailfish can be supported with the same code base
 import org.flyingsheep.abstractui 1.0
 //import com.nokia.meego 1.0
+import LandedTheme 1.0
 
 //By design this is component is a "thin" GUI layer.
 //This means it should be as simple / stupid as possible.
@@ -57,7 +58,7 @@ Item {id: thisGPSDisplay
     property color labelColor
     property color labelColorActive
     property color labelColorInactive
-    property int fontSize: 30
+    //property int fontPixelSize
 
     height: coordsDisplay.height;
 
@@ -77,24 +78,9 @@ Item {id: thisGPSDisplay
     //GUI Elements
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
-/*
-See gpsDialog for info why commented out
-    //GUI: when pressAndHeld, opens gpsDialog
-    //Note if the mousearea is placed after the coordsDisplay, then the gpsSwitch does not work
-    //placing the mousearea before, allows the switch to work! Wierd or what?
-    MouseArea {id: gpsMouseArea
-        anchors.fill: parent
-        onPressAndHold: {
-            console.log("gpsMouseArea.onPressAndHold")
-            rumbleEffect.start();
-            gpsDialog.open();
-        }
-        RumbleEffect {id: rumbleEffect}
-    }
-*/
+
     //GUI: GPS "Display" showing coords, alti, on off switche etc
     Column {id: coordsDisplay
-        //font.pointSize: 24
         anchors.top: parent.top
         anchors.topMargin: 10
         anchors.right: parent.right
@@ -130,8 +116,8 @@ See gpsDialog for info why commented out
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: coordsDisplay.rowSpacing;
-                Text {id: onOffLabel; text: "GPS:" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.labelColor; width: 150}
-                Text {id: onOff; text: "" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}
+                Text {id: onOffLabel; text: "GPS:" ; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.labelColor; width: 120}
+                Text {id: onOff; text: "" ; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.textColor}
             }
             AUISwitch {
                 id: gpsSwitch
@@ -146,38 +132,38 @@ See gpsDialog for info why commented out
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: latiLabel; text: "Lati:" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.labelColor; width: 150}
-            Text {id: lati; text: (thisGPSDisplay.reliableLocationAcquired) ? thisGPSDisplay.latitude: "!!! " + thisGPSDisplay.latitude + " !!!"; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}
+            Text {id: latiLabel; text: "Lati:" ; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.labelColor; width: 120}
+            Text {id: lati; text: (thisGPSDisplay.reliableLocationAcquired) ? thisGPSDisplay.latitude: "!!! " + thisGPSDisplay.latitude + " !!!"; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: lngiLabel; text: "Long:" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.labelColor; width: 150}
-            Text {id: lngi; text: (thisGPSDisplay.reliableLocationAcquired) ? thisGPSDisplay.longitude: "!!! " + thisGPSDisplay.longitude + " !!!"; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}
+            Text {id: lngiLabel; text: "Long:" ; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.labelColor; width: 120}
+            Text {id: lngi; text: (thisGPSDisplay.reliableLocationAcquired) ? thisGPSDisplay.longitude: "!!! " + thisGPSDisplay.longitude + " !!!"; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: altiLabel; text: "Alti:"; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.labelColor; width: 150}
-            Text {id: alti; text: isNaN(thisGPSDisplay.altitude) ? "n/a" : thisGPSDisplay.altitude + " m" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}
+            Text {id: altiLabel; text: "Alti:"; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.labelColor; width: 120}
+            Text {id: alti; text: isNaN(thisGPSDisplay.altitude) ? "n/a" : thisGPSDisplay.altitude + " m" ; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: speedLabel; text: "Speed:"; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.labelColor; width: 150}
-            Text {id: speed; text: (thisGPSDisplay.speedValid) ? Math.round(thisGPSDisplay.speed * 3.6)  +" km/h" : "n/a" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}
+            Text {id: speedLabel; text: "Speed:"; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.labelColor; width: 120}
+            Text {id: speed; text: (thisGPSDisplay.speedValid) ? Math.round(thisGPSDisplay.speed * 3.6)  +" km/h" : "n/a" ; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: horizAccLabel; text: "Horizontal Accuracy:"; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.labelColor; width: 320}
-            Text {id: horizAcc; text: (thisGPSDisplay.horizontalAccuracyValid) ? Math.round(thisGPSDisplay.horizontalAccuracy*10)/10 + " m" : "n/a" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}
+            Text {id: horizAccLabel; text: "Horizontal Accuracy:"; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.labelColor; width: 320}
+            Text {id: horizAcc; text: (thisGPSDisplay.horizontalAccuracyValid) ? Math.round(thisGPSDisplay.horizontalAccuracy*10)/10 + " m" : "n/a" ; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: vertAccLabel; text: "Vertical Accuracy:" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.labelColor; width: 320}
-            Text {id: vertAcc; text: (thisGPSDisplay.verticalAccuracyValid) ? Math.round(thisGPSDisplay.verticalAccuracy*10)/10 + " m" : "n/a" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}
+            Text {id: vertAccLabel; text: "Vertical Accuracy:" ; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.labelColor; width: 320}
+            Text {id: vertAcc; text: (thisGPSDisplay.verticalAccuracyValid) ? Math.round(thisGPSDisplay.verticalAccuracy*10)/10 + " m" : "n/a" ; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.textColor}
         }
         Row {
             spacing: coordsDisplay.rowSpacing;
-            Text {id: satsInViewUseLabel; text: "Sats in View / Use:" ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.labelColor; width: 320}
-            Text {id: satsInViewUse; text: thisGPSDisplay.satsInView + " / " + thisGPSDisplay.satsInUse ; font.family: "Arial"; font.pointSize: thisGPSDisplay.fontSize; color: thisGPSDisplay.textColor}   
+            Text {id: satsInViewUseLabel; text: "Sats in View / Use:" ; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.labelColor; width: 320}
+            Text {id: satsInViewUse; text: thisGPSDisplay.satsInView + " / " + thisGPSDisplay.satsInUse ; font.family: "Arial"; font.pixelSize: LandedTheme.FontSizeMedium; color: thisGPSDisplay.textColor}
         }
         Item {
             height: compassSwitch.height
@@ -187,8 +173,8 @@ See gpsDialog for info why commented out
                 height: 50
                 spacing: 10
                 anchors.verticalCenter: parent.verticalCenter
-                Text {id: compassTextLabel; font.pointSize: thisGPSDisplay.fontSize; color: compassOn ? thisGPSDisplay.labelColorActive : thisGPSDisplay.labelColorInactive; text: "Bearing:"; width: 150}
-                Text {id: compassText; text: thisGPSDisplay.bearing; font.pointSize: thisGPSDisplay.fontSize; color: compassOn ? thisGPSDisplay.textColorActive : thisGPSDisplay.textColorInactive; }
+                Text {id: compassTextLabel; font.pixelSize: LandedTheme.FontSizeMedium; color: compassOn ? thisGPSDisplay.labelColorActive : thisGPSDisplay.labelColorInactive; text: "Bearing:"; width: 120}
+                Text {id: compassText; text: thisGPSDisplay.bearing; font.pixelSize: LandedTheme.FontSizeMedium; color: compassOn ? thisGPSDisplay.textColorActive : thisGPSDisplay.textColorInactive; }
             //text: "No compass reading yet ..."
             }
 

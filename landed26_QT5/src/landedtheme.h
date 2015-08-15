@@ -25,6 +25,12 @@ class LandedTheme : public QObject
     Q_PROPERTY(QColor ButtonColorGrey READ ButtonColorGrey CONSTANT)
     Q_PROPERTY(QColor ButtonColorWhite READ ButtonColorWhite CONSTANT)
 
+    Q_PROPERTY(int FontSizeVeryLarge READ FontSizeVeryLarge CONSTANT)
+    Q_PROPERTY(int FontSizeLarge READ FontSizeLarge CONSTANT)
+    Q_PROPERTY(int FontSizeMedium READ FontSizeMedium CONSTANT)
+    Q_PROPERTY(int FontSizeSmall READ FontSizeSmall CONSTANT)
+    Q_PROPERTY(int FontSizeVerySmall READ FontSizeVerySmall CONSTANT)
+
 public:
     LandedTheme(QObject* parent = 0) : QObject(parent) {}
 
@@ -40,13 +46,19 @@ public:
     QColor TextColorActive() const { return  "lightgreen";}
     QColor TextColorEmergency() const { return  "red";}
     QColor TextColorInactive() const { return "grey";}
-    QColor LabelColorActive() const { return "darkgrey";}
+    QColor LabelColorActive() const { return "lightgrey";}
     QColor LabelColorInactive() const { return "grey";}
 
     QColor ButtonColorGreen() const { return "lightgreen";}
     QColor ButtonColorRed() const { return "red";}
     QColor ButtonColorGrey() const { return "grey";}
     QColor ButtonColorWhite() const { return "white";}
+
+    int FontSizeVeryLarge() const { return 72;}
+    int FontSizeLarge() const { return 40;}
+    int FontSizeMedium() const { return 32;}
+    int FontSizeSmall() const { return 24;}
+    int FontSizeVerySmall() const { return 16;}
 
     /*
     //harmattan

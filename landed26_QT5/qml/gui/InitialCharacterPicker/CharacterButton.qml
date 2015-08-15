@@ -2,6 +2,7 @@
 // This sofware is released under the MIT License --> http://en.wikipedia.org/wiki/MIT_license
 
 import QtQuick 2.0
+import LandedTheme 1.0
 
 Text {
     id: characterButton
@@ -33,7 +34,7 @@ Text {
     property real selectedOpacity: 0.1
 
     width : parent.width / 5
-    font.pointSize: 42
+    font.pixelSize: LandedTheme.FontSizeVeryLarge
     font.weight: Font.Light
     color: (hits > 0) ? normalColor : emptyColor
     horizontalAlignment: Text.AlignHCenter

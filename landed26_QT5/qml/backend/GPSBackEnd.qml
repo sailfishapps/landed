@@ -68,47 +68,133 @@ Item {id: thisGPSBackEnd
         return (dms) ? convertDDToDMS(longitude, 'Longi') : LJS.round(longitude, 4);
     }
 
+//47d 27m 45.6s N
+//09d 02m 20.9s E
+
+    function coordPart(original) {
+        this.original = original
+        this.quotient = LJS.getQuotient(original);
+        this.fraction = LJS.getFraction(original);
+        this.round = function(places) {
+            console.log("original: " + this.original + " places to round: " + places)
+            return LJS.round(this.original, places);
+        }
+    }
+    /*
+    CoordPart.prototype.round = function(places) {
+        return LJS.round(this.original, places);
+    }
+    */
+
+    function convertDDToDMS(dd, axis){
+        var ddOrig = dd;
+        console.log ("axis is: " + axis);
+        var ddAbs = Math.abs(dd);  //make positive
+        console.log(ddOrig);
+        if (isNaN(dd)) {
+            console.log ("yep, Nan");
+            return "No valid position yet";
+        }
+        //console.log ("dd is: " + dd);
+        var degs = new coordPart(ddAbs);
+        var mins = new coordPart(degs.fraction * 60);
+        var secs = new coordPart(mins.fraction * 60);
+        //console.log ("sec is: " + secsRnd);
+        var suffix
+        if (axis == "Lati") {
+            (ddOrig >= 0) ? (suffix = 'N') : (suffix = 'S')
+        }
+        else if (axis == "Longi") {
+            (ddOrig >= 0) ? (suffix = 'E') : (suffix = 'W')
+        }
+        return LJS.pad(degs.quotient) + "d " + LJS.pad(mins.quotient) + "m " + LJS.pad(secs.round(1)) + "s " + suffix;
+    }
+
+
+
+/*
+    function convertDDToDMS(dd, axis){
+        var ddOrig = dd;
+        console.log ("axis is: " + axis);
+        console.log(ddOrig);
+        if (isNaN(dd)) {
+            console.log ("yep, Nan");
+            return "No valid position yet";
+        }
+        var ddAbs = Math.abs(dd);  //make positive
+        //console.log ("dd is: " + dd);
+        var degsTrunc = LJS.getQuotient(ddAbs); // truncate dd to get degrees
+        //console.log ("deg is: " + degsTrunc);
+        var minsOrig = LJS.getFraction(ddAbs) * 60 // get fractional part
+        //console.log ("minsOrig is: " + minsOrig);
+        var minsTrunc = LJS.getQuotient(minsOrig);
+        //console.log ("minsTrunc is: " + minsTrunc);
+        var secsOrig = LJS.getFraction(minsOrig) * 60;
+        var secsRnd = LJS.round(secsOrig, 1)
+        //console.log ("sec is: " + secsRnd);
+        var suffix
+        if (axis == "Lati") {
+            (ddOrig >= 0) ? (suffix = 'N') : (suffix = 'S')
+        }
+        else if (axis == "Longi") {
+            (ddOrig >= 0) ? (suffix = 'E') : (suffix = 'W')
+        }
+        return LJS.pad(degsTrunc) + "d " + LJS.pad(minsTrunc) + "m " + LJS.pad(secsRnd) + "s " + suffix;
+    }
+*/
+
+    /*
+    Distance between 2 GPS points calculated by the Haversine formulae is:
+
+    http://www.movable-type.co.uk/scripts/latlong.html
+
+    Using Patras Greece as a reference
+    38 09 34N
+    21 31 15E
+
+    1 degree North is 111.2 km
+    1 degree East is 87.43 km
+
+    1 minute North is 1.853 km
+    1 degree East is 1.457 km
+
+    1 second North is 0.03089 km --> 31 meters
+    1 second East is 0.02429 km --> 24 meters
+
+    1 tenth of a second North is 0.003089 km --> 3 meters
+    1 tenth of a second East is 0.002429 km --> 2.4 meters
+
+    This means that one decimal point is acurate enough!!!!
+
+    */
+
+
+
+
+/*
     function convertDDToDMS(dd, axis){
 
-        /*
-        Distance between 2 GPS points calculated by the Haversine formulae is:
 
-        http://www.movable-type.co.uk/scripts/latlong.html
-
-        Using Patras Greece as a reference
-        38 09 34N
-        21 31 15E
-
-        1 degree North is 111.2 km
-        1 degree East is 87.43 km
-
-        1 minute North is 1.853 km
-        1 degree East is 1.457 km
-
-        1 second North is 0.03089 km --> 31 meters
-        1 second East is 0.02429 km --> 24 meters
-
-        1 tenth of a second North is 0.003089 km --> 3 meters
-        1 tenth of a second East is 0.002429 km --> 2.4 meters
-
-        This means that one decimal point is acurate enough!!!!
-
-        */
         var ddOrig = dd;
+        console.log ("axis is: " + axis);
         console.log(ddOrig);
         dd = Math.abs(dd);  //make positive
         if (isNaN(dd)) {
             console.log ("yep, Nan");
             return "No valid position yet";
         }
-        //console.log ("axis is: " + axis);
-        //console.log ("dd is: " + dd);
+        console.log ("dd is: " + dd);
         var deg = LJS.pad(dd | 0); // truncate dd to get degrees
-        //console.log ("deg is: " + deg);
+        console.log ("deg is: " + deg);
         var frac = dd - deg; // get fractional part
-        //console.log ("frac is: " + frac);
-        var min = LJS.pad((frac * 60) | 0); // multiply fraction by 60 and truncate
-        //console.log ("min is: " + min);
+        console.log ("frac is: " + frac);
+        var min = (frac * 60);
+        //if the console.log below is commmented out, I get zero for min! wierd
+        console.log ("min is: " + min);
+        min = LJS.pad(min | 0);
+        console.log ("min trunc is: " + min);
+        //this used to work, suddenly returns 0. presumably the priority of execution has changed on SailfishOS!
+        //var min = LJS.pad((frac * 60) | 0); // multiply fraction by 60 and truncate
         var sec = frac * 3600 - min * 60;
         sec = LJS.pad(LJS.round(sec, 1)); // round to ONE decmal place
         //console.log ("sec is: " + sec);
@@ -123,7 +209,7 @@ Item {id: thisGPSBackEnd
         return deg + "d " + min + "m " + sec + "s " + suffix;
     }
 
-
+*/
     //gives access to info on number of Sats in view / use
     SatInfoSource {
         id: satInfoSource

@@ -23,7 +23,7 @@ AUIPage {id: smsPage
     property string area_id
     property string template_id
     property string msg_status
-    property int fontSize: 16
+    property int fontPixelSize: 16
     property string lastPage
     property string contactName
     property string contactPhone
@@ -75,7 +75,8 @@ AUIPage {id: smsPage
             name: "stateOk";
             PropertyChanges{ target: smsPage; showNavigationIndicator: true }
             PropertyChanges{ target: smsDisplay; parent: smsPage }
-            PropertyChanges{ target: smsDisplay; anchors.top: parent.top }
+            //PropertyChanges{ target: smsDisplay; anchors.top: parent.top }
+            PropertyChanges{ target: smsDisplay; anchors.top: smsPage.top }
             PropertyChanges{ target: smsDisplay; anchors.topMargin: 30 }
             PropertyChanges{ target: smsDisplay; color: LandedTheme.BackgroundColorA }
             PropertyChanges{ target: torchApp; visible: false }
@@ -125,7 +126,7 @@ AUIPage {id: smsPage
         anchors.leftMargin: 0
         anchors.right: parent.right
         anchors.rightMargin: 0
-        fontSize: smsPage.fontSize
+        fontPixelSize: smsPage.fontPixelSize
         opacity: 1
         onCancelled: {
             console.log("cancelled Signal received by smsPage");
@@ -137,7 +138,8 @@ AUIPage {id: smsPage
             nextPage("Contact", template_id);
         }
         onSendSMS: {
-            smsBackEnd.sendSMS(phoneNumber, text);
+            console.log("about to send SMS to number: " + "tel:" + phoneNumber);
+            smsBackEnd.sendSMS("tel:" + phoneNumber, text);
             //The old SMSHelper used to emit this state, as a temporary workaround, do it here
             //later we can add this to the TelepathyHelper
             setState("ActiveState", null)

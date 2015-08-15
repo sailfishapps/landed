@@ -17,7 +17,7 @@ AUIPage {id: favouriteContactsPage
     backgroundColor: "lightgrey"
     property int itemHeight: 100;
     property int headerHeight: itemHeight;
-    property int fontSize: 30
+    property int fontPixelSize: 30
     property color labelColorActive
 
 
@@ -38,7 +38,7 @@ AUIPage {id: favouriteContactsPage
         anchors.top: parent.top
         //why do we need 55 here, when the AreaSelectionPage uses 20 for the same effect?
         anchors.topMargin: 55 //sailfish
-        fontSize: parent.fontSize
+        fontPixelSize: parent.fontPixelSize
         itemHeight: parent.itemHeight
         headerHeight: parent.headerHeight
         headerText: "Contacts";

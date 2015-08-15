@@ -1,6 +1,7 @@
 import QtQuick 2.0
 //import QtQuick 1.1
 import "../backend"
+//import theme for button colours etc
 import LandedTheme 1.0
 
 Item {
@@ -15,7 +16,6 @@ Item {
     property int headerHeight: itemHeight;
     property string headerText
     property string headerSubText
-    property int fontSize: 24
     property bool arrowVisible: true
     property color textColor
     //Commented out for Sailfish
@@ -70,7 +70,7 @@ Item {
             //TODO: find a better way of calculating the height based on height of text + subText
             //height: thisModel.headerHeight * 1.666 //harmattan
             height: thisModel.headerHeight * 2
-            fontSize: thisModel.fontSize
+            //fontPixelSize: thisModel.fontPixelSize
             arrowVisible: thisModel.arrowVisible
             textColor: thisModel.textColor
             onClicked:{
@@ -86,7 +86,6 @@ Item {
             width: thisModel.width - (marginWidth*2)
             height: thisModel.itemHeight
             text: button_label
-            fontSize: thisModel.fontSize
             buttonColor: (msg_status == "Ok") ? LandedTheme.ButtonColorGreen : LandedTheme.ButtonColorRed;
             onClicked:{
                 console.log("Template Delegate Clicked: area_id is: " + area_id + ", template_id is: " + template_id);

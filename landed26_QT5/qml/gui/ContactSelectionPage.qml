@@ -15,14 +15,16 @@ AUIPage {id: pageContactSelection
     //height: 828
     //height: 740
     orientationLock: AUIPageOrientation.LockPortrait
-    showNavigationIndicator: false
+    //don't show / enable the pagestack indicator on the contactsTab.
+    backNavigation: tabGroup.currentTab == contactsTab ? false : true
+    showNavigationIndicator: backNavigation
 
     property int toolbarHeight: 0
     //property int toolbarHeight: 110
     backgroundColor: "lightgrey"
     property int itemHeight: 100;
     property int headerHeight: itemHeight;
-    property int fontSize: 30
+    property int fontPixelSize: 30
     property color labelColorActive
 
     signal backPageWithInfo(string contactName, string contactPhone)
@@ -42,6 +44,8 @@ AUIPage {id: pageContactSelection
         }
     }
 
+
+
     //container for the 3 tab-pages
     AUITabGroup {id: tabGroup
         anchors.top: parent.top
@@ -50,7 +54,7 @@ AUIPage {id: pageContactSelection
 
         FavouriteContactsPage { id: favouriteTab
             //anchors //have no effect on Sailfish, as this is a page, and the parent will not be tabgroup
-            fontSize: pageContactSelection.fontSize
+            fontPixelSize: pageContactSelection.fontPixelSize
             itemHeight: pageContactSelection.itemHeight
             headerHeight: pageContactSelection.headerHeight
             backgroundColor: pageContactSelection.backgroundColor
@@ -79,6 +83,7 @@ AUIPage {id: pageContactSelection
         PhoneContactsTab {id: contactsTab
             anchors.topMargin: 0
             onContactSelected: {
+                console.log ("phone contact selected: " + name + ", ") + phoneNumber
                 pageContactSelection.backPageWithInfo(name, phoneNumber)
             }
         }

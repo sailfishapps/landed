@@ -24,7 +24,7 @@ Rectangle {
     //anchors.topMargin: 130 // required if the indicator is visible.
     color: LandedTheme.BackgroundColorB
 
-    property int listPointSize: (simulator) ? 9 : 24
+    property int listpixelSize: (simulator) ? 9 : 24
 
     signal contactSelected(string number, string name)
 
@@ -35,7 +35,7 @@ Rectangle {
         text: "Contacts loading ..."
         color: "lightblue"
         visible: true
-        font.pointSize: 30
+        font.pixelSize: 30
         anchors.centerIn : parent
     }
 

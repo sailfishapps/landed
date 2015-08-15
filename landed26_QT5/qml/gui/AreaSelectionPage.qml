@@ -13,7 +13,7 @@ AUIPage {id: areaSelectionPage
     //property int toolbarHeight: 110
     property int itemHeight: 100;
     property int headerHeight: itemHeight;
-    property int fontSize: 30
+    property int fontPixelSize
     property color labelColorActive
 
     signal backPageWithInfo(bool areaSet, string area_id)
@@ -42,7 +42,7 @@ AUIPage {id: areaSelectionPage
         id: areaRadioButtons
         anchors.top: parent.top
         anchors.topMargin: 20 //sailfish
-        fontSize: parent.fontSize
+        fontPixelSize: parent.fontPixelSize
         itemHeight: parent.itemHeight
         headerHeight: parent.headerHeight
         headerText: "Areas";

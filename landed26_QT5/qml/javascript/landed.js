@@ -13,3 +13,13 @@ function trim (str){
     //http://blog.stevenlevithan.com/archives/faster-trim-javascript
     return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 }
+
+function getQuotient (original) {
+    return ( original | 0);
+}
+
+function getFraction(original) {
+    return original - ( original | 0);
+}
+
+

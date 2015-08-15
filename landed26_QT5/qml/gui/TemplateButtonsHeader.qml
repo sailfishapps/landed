@@ -1,5 +1,6 @@
 import QtQuick 2.0
 //import QtQuick 1.1
+import LandedTheme 1.0
 
 Item {
     id: thisHeader
@@ -8,7 +9,6 @@ Item {
     signal copyClicked();
     signal deleteClicked();
 
-    property int fontSize: 24
     property string text
     property string subText: "sub Text will be here"
     property bool arrowVisible: true
@@ -17,7 +17,7 @@ Item {
     Text{
         id: mainText
         text: thisHeader.text
-        font.pointSize: thisHeader.fontSize
+        font.pixelSize: LandedTheme.FontSizeLarge
         font.weight: Font.DemiBold
         //color: "black"
         color: thisHeader.textColor
@@ -25,7 +25,7 @@ Item {
     }
     Text{
         text: ">"
-        font.pointSize: thisHeader.fontSize
+        font.pixelSize: LandedTheme.FontSizeLarge
         font.weight: Font.DemiBold
         color: "white"
         //verticalAlignment: Text.AlignVCenter
@@ -38,7 +38,7 @@ Item {
     Text{
         id: subText
         text: thisHeader.subText
-        font.pointSize: thisHeader.fontSize * 0.666
+        font.pixelSize: LandedTheme.FontSizeSmall
         font.weight: Font.DemiBold
         //color: "black"
         color: thisHeader.textColor

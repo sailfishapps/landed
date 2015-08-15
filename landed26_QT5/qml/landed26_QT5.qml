@@ -36,11 +36,12 @@ Note: the plugin library still needs installing on the physical device / Emulato
 AUIPageStackWindow {
     id: appWindow
 
-    property int fontSize: largeFonts;
-    //Note for some reason on the simulator (platform = 4), fonts are 2 1/3 larger than the N9 and QEMU, and thus smaller sizes must be used.
-    //property int largeFonts: (simulator == true) ? 8 : 22 // harmattan
-    property int largeFonts: 24
-    property int smallFonts: (simulator == true) ? 6 : 13
+    property int fontPixelSize: LandedTheme.FontSizeSmall;
+//TODO: the properties largeFonts and smallFonts are still accessed from MainPage.qml. Why?
+    property int largeFonts: LandedTheme.FontSizeSmall;
+    //Note for some reason on the Nokia simulator (platform = 4), fonts are 2 1/3 larger than the N9 and QEMU, and thus smaller sizes must be used.
+    //property int mediumFonts: (simulator == true) ? 8 : 22 // harmattan
+    //property int smallFonts: (simulator == true) ? 6 : LandedTheme.FontSizeSmall;
     //property color backgroundColor: (theme.inverted) ? "black" :"lightgrey"
     property color backgroundColor: LandedTheme.BackgroundColorA
 
@@ -68,10 +69,11 @@ AUIPageStackWindow {
     }
 
     initialPage: mainPage
+    cover: Qt.resolvedUrl("cover/CoverPage.qml")
 
     MainPage {
         id: mainPage
-        fontSize: appWindow.fontSize
+        fontPixelSize: appWindow.fontPixelSize
         backgroundColor: appWindow.backgroundColor
         textColorActive: appWindow.textColorActive
         textColorInactive: appWindow.textColorInactive
@@ -90,7 +92,7 @@ AUIPageStackWindow {
 
     AreaSelectionPage {
         id: areaSelectionPage
-        fontSize: appWindow.fontSize
+        fontPixelSize: appWindow.fontPixelSize
         backgroundColor: appWindow.backgroundColor
         labelColorActive: appWindow.labelColorActive
         onBackPageWithInfo: {
@@ -103,7 +105,7 @@ AUIPageStackWindow {
 
     SMSPage {
         id: smsPage
-        fontSize: appWindow.fontSize
+        fontPixelSize: appWindow.fontPixelSize
         onCancelled: pageStack.pop(mainPage);
         onNextPage: {
             pageStack.push(contactSelectionPage, {area_id: area_id, template_id: template_id})
@@ -112,7 +114,7 @@ AUIPageStackWindow {
 
     ContactSelectionPage {
         id: contactSelectionPage
-        fontSize: appWindow.fontSize
+        fontPixelSize: appWindow.fontPixelSize
         backgroundColor: appWindow.backgroundColor
         labelColorActive: appWindow.labelColorActive
         onBackPageWithInfo: {

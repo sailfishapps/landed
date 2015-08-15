@@ -18,8 +18,20 @@ Column {
     onCharactersPerRowChanged: createRows()
 
     signal clicked (string character, string rowName)
+    function resetGrid() {
+        console.log("resetting grid")
+        for(var i = grid.children.length; i > 0 ; i--) {
+          grid.children[i-1].destroy()
+        }
+    }
 
     function createRows() {
+        console.log("CharacterGrid; rows already in grid: " + grid.children.length);
+        if (grid.children.length > 0) {
+            //if the grid already exists, due to a previous onContactsChanged signal, we need to destroy
+            //existing child rows
+            resetGrid();
+        }
         if (charactersModel && charactersPerRow) {
             //we instantiate the rows based on the characters supplied in the characters array
             var component;
